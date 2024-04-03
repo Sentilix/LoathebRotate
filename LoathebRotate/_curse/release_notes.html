@@ -1,0 +1,154 @@
+<h1>LoathebRotate</h1>
+<p>This addon helps setting up rotations for specific classes or specific roles in raid.</p>
+<img src="https://cdn.discordapp.com/attachments/630388534087385099/785647216873701417/unknown.png" alt="Loatheb Mode" width="181" height="336" />
+&nbsp;
+<img src="https://cdn.discordapp.com/attachments/818969243050573835/901109415455899678/grounding-absorb.gif" alt="Grounding Totem" width="640" height="480" />
+&nbsp;
+<img src="https://cdn.discordapp.com/attachments/755861129523101777/904832857795625060/unknown.png" alt="History" width="381" height="104" />
+&nbsp;
+<p>While it is more efficient if all involved players can view the list by themselves, ultimately not all raid members need to install the addon, considering a raid leader/assistant is willing to tell the rotation e.g. with voice comm.</p>
+<p>This addon is heavily based on the work of Slivo for the <a href="https://www.curseforge.com/wow/addons/tranqrotate">TranqRotate addon</a>, which you might want to install if you are interested only in Hunter&rsquo;s Tranquilizing Shot rotation.</p>
+<h2>Preparation</h2>
+<ul>
+<li>Before the fight begins, choose the correct mode you want to setup (Loatheb, Misdirection, Grounding Totem, etc.).</li>
+<li>The LoathebRotate window displays the list of raid members who may be part of the rotation. Only relevant members are displayed for a given rotation, e.g. only hunters are displayed in Misdirection mode.</li>
+<li>Players in the list can be drag'n'dropped to change their order. Members pushed to the very bottom are <i>backup</i> players who do not enter the normal rotation.</li>
+<li>Right-clicking on a player in the list opens a context menu to assign a target. This functionality is enabled only in modes where pre-assignment makes sense, such as Misdirection or Fear Ward.</li>
+<li>The list may be setup by another class. For example, a warrior raid leader may select the "Loatheb" mode and change the order of players, even though the warrior will not be in the list.</li>
+<li>The list is shared across all raid members who have installed the addon. Each player can choose its own mode, in which case the list is shared between players who have selected the same mode.</li>
+</ul>
+<h2>Combat</h2>
+<ul>
+<li>The next player in the rotation is highlighted in the list.</li>
+<li>Once a player has cast a spell that triggers the rotation, a cooldown bar is shown in this player&rsquo;s bar and the next player in the rotation is highlighted.</li>
+<li>Disconnected players and dead players do not take part in the rotation anymore and appear as gray or red, respectively.</li>
+</ul>
+<h2>History</h2>
+<ul>
+<li>A History window keeps track of events that are relevant to a given mode.</li>
+<li>For example, in Grounding Totem mode, the History window displays when a totem is summoned, when it absorbs a spell, or when it has been replaced by another Wind totem.</li>
+</ul>
+<h2>Modes</h2>
+<p>There are up to 15 modes: Tranq, Loatheb, Distract, FearWard, AoE Taunt, Misdirection, Bloodlust, Grounding Totem, Battle Rez, Innervate, BoP, Freedom, Soulstone, Soulwell and Scorpid.</p>
+<p>The mode is selected automatically upon login and can be changed by clicking on top of the LoathebRotate window.</p>
+<p>Not all modes are visible because the number of buttons would make the UI too messy.</p>
+<p>These modes are visible by default in Classic Era:</p>
+<ul>
+<li>Tranq</li>
+<li>Loatheb</li>
+<li>Fear Ward</li>
+</ul>
+<p>These modes are visible by default in Burning Crusade Classic:</p>
+<ul>
+<li>Misdirection</li>
+<li>Bloodlust</li>
+<li>Fear Ward</li>
+</ul>
+<p>You can select which modes are visible in the Settings panel.</p>
+<h3>Tranq</h3>
+<ul>
+<li>Displays Hunters only</li>
+<li>Tracks when a tranq-able boss goes into Frenzy and shows an alert to the hunter who should cast Tranquilizing Shot</li>
+<li>The rotation switches to the next hunter when a hunter has cast or missed a Tranq Shot</li>
+<li>For more information, please check the <a href="https://www.curseforge.com/wow/addons/tranqrotate">TranqRotate details</a></li>
+<li>If you want the best experience for fighting Vanilla bosses using your level-60 hunter, TranqRotate provides additional options that you may find useful. Make sure to check it out!</li>
+</ul>
+<h3>Loatheb</h3>
+<ul>
+<li>Displays healer classes only (Druids, Paladins, Priests, Shamans)</li>
+<li>Tracks when Loatheb&rsquo;s Corrupted mind prevents a healer from casting a healing spell for 60 seconds</li>
+<li>This feature is still in development, so feel free to report any bugs</li>
+</ul>
+<h3>Distract</h3>
+<ul>
+<li>Displays Rogues only</li>
+<li>Tracks when a distract spell has been cast</li>
+</ul>
+<h3>Fear Ward</h3>
+<ul>
+<li>Displays Priests only, and only Dwarf Priests in Classic Era</li>
+<li>Tracks when a fear ward spell has been cast</li>
+</ul>
+<h3>AoE Taunt</h3>
+<ul>
+<li>Displays Warriors and Druids only</li>
+<li>Tracks when a Challenging Shout or a Challenging Roar ability has been cast</li>
+</ul>
+<h3>Misdirection</h3>
+<ul>
+<li><i>This mode is not available in Classic Era because the spell does not exist</i></li>
+<li>Displays Hunters only</li>
+<li>Tracks when a misdirection spell has been cast</li>
+</ul>
+<h3>Bloodlust</h3>
+<ul>
+<li><i>This mode is not available in Classic Era because the spell does not exist</i></li>
+<li>Displays Shamans only</li>
+<li>Tracks when Bloodlust (Horde) or Heroism (Alliance) has been cast</li>
+<li>The "target" is considered to be the shaman's group number</li>
+</ul>
+<h3>Grounding Totem</h3>
+<ul>
+<li>Displays Shamans only</li>
+<li>Tracks when Grounding Totem is put</li>
+<li>The "target" is considered to be the shaman's group number while the totem is active</li>
+<li>When the totem is destroyed, the "target" is the spell that destroyed it</li>
+</ul>
+<h3>Battle Rez</h3>
+<ul>
+<li>Displays Druids only</li>
+<li>Tracks when Rebirth resurrects someone</li>
+</ul>
+<h3>Innervate</h3>
+<ul>
+<li>Displays Druids only</li>
+<li>Tracks when Innervate regenerates mana to someone</li>
+</ul>
+<h3>BoP</h3>
+<ul>
+<li>Displays Paladins only</li>
+<li>Tracks when Blessing of Protection is cast on someone</li>
+</ul>
+<h3>Freedom</h3>
+<ul>
+<li>Displays Paladins only</li>
+<li>Tracks when Blessing of Freedom is cast on someone</li>
+</ul>
+<h3>Soulstone</h3>
+<ul>
+<li>Displays Warlocks only</li>
+<li>Tracks when a player is under the effect of a soulstone</li>
+</ul>
+<h3>Soulwell</h3>
+<ul>
+<li><i>This mode is not available in Classic Era because the spell does not exist</i></li>
+<li>Displays Warlocks only</li>
+<li>Tracks when a warlocks creates a Soulwell with a Ritual of Souls</li>
+</ul>
+<h3>Scorpid</h3>
+<ul>
+<li>Displays Hunters only</li>
+<li><i>This mode is not available in Classic Era because the spell does not exist</i></li>
+<li>Works similarly as the Tranq mode</li>
+<li>Tracks when a hunter casts Scorpid Sting, which starts the rotation</li>
+<li>The rotation only starts for the following bosses: Archimonde (Hyjal), Supremus (Black Temple), Teron Gorefiend (BT), Gurtogg Bloodboil (BT), Mother Shahraz (BT), Gathios The Shatterer (BT) and Illidan Stormrage (BT)</li>
+<li>Many thanks to Trollhealer-Arugal for the idea and his guild &lt;Lobang&gt; for their extensive testing!</li>
+</ul>
+<h2>Known Limitations</h2>
+<ul>
+<li>Only one mode can be active at a time</li>
+<li>Switching back and forth between modes may not restore the correct order of raid members and may display the wrong targets</li>
+<li>Loatheb mode does not filter out non-healer specs, such as Feral Druids</li>
+<li>AoE Taunt mode does not filter out non-tank specs, such as Restoration Druids</li>
+<li>Talents which modify spells, such as Guardian's Favor in the Paladin tree, are not tracked</li>
+<li>Group-based modes, such as Bloodlust, only track the buff from its initial caster, not every target in the group</li>
+<li>Tranq mode does not filter out hunters who have not learned the Tranquilizing Shot ability yet, e.g. l&oslash;&oslash;ted the Tome of Tranquilizing Shot from Lucifron</li>
+<li>More generally, the addon does not check, and sometimes cannot check, if players have learned their abilities from their respective class trainers</li>
+<li>Any raid member can change the order of players in the list</li>
+<li>Raid members who have not installed the addon must be in the range of 45-ish yards to detect their activity</li>
+<li>Localization is incomplete (see below)</li>
+</ul>
+<h2>Localization</h2>
+<p>The addon fully support English (en-US) and French (fr-FR).</p>
+<p>Other languages are partially supported, namely Russian (ru-RU), Simplified Chinese (zh-CN) and Traditional Chinese (zh-TW). They are mostly supported through TranqRotate translations and by native speakers contributing to the github repository. Feel free to join them! :)</p>
+<p>If you wish to contribue, either by filling the gaps of an existing language or by starting the translation for another language, simply send a Pull Request to the github repository: <a href="https://github.com/sentilix/loathebrotate">github.com/sentilix/loathebrotate</a></p>
