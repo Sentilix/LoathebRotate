@@ -13,26 +13,26 @@ function LoathebRotate:createMainFrame()
     mainFrame:SetClampedToScreen(true)
     mainFrame:SetScript("OnDragStart", function() mainFrame:StartMoving() end)
 
-    mainFrame.windowIndex = LoathebRotate.mainFrames and #(LoathebRotate.mainFrames)+1 or 1
+    --mainFrame.windowIndex = LoathebRotate.mainFrames and #(LoathebRotate.mainFrames)+1 or 1
 
     mainFrame:SetScript(
         "OnDragStop",
         function()
             mainFrame:StopMovingOrSizing()
 
-            local config = LoathebRotate.db.profile.windows[mainFrame.windowIndex]
+            local config = LoathebRotate.mainFrame
             config.point = 'TOPLEFT'
             config.y = mainFrame:GetTop()
             config.x = mainFrame:GetLeft()
         end
     )
 
-    if not LoathebRotate.mainFrames then
-        LoathebRotate.mainFrames = { mainFrame }
-    else
-        table.insert(LoathebRotate.mainFrames, mainFrame)
-        LoathebRotate.db.profile.windows[mainFrame.windowIndex] = LoathebRotate.db.profile.windows[1]
-    end
+    --if not LoathebRotate.mainFrames then
+    --    LoathebRotate.mainFrames = { mainFrame }
+    --else
+    --    table.insert(LoathebRotate.mainFrames, mainFrame)
+    --    LoathebRotate.db.profile.windows[mainFrame.windowIndex] = LoathebRotate.db.profile.windows[1]
+    --end
 
     return mainFrame
 end
@@ -566,97 +566,95 @@ function LoathebRotate:createBackupFrame(baseFrame, rotationFrame)
     return backupFrame
 end
 
--- Create single hunter frame
-function LoathebRotate:createHunterFrame(hunter, parentFrame, mainFrame)
-    hunter.frame = CreateFrame("Frame", nil, parentFrame)
-    hunter.frame:SetHeight(LoathebRotate.constants.hunterFrameHeight)
-    hunter.frame.GUID = hunter.GUID
+-- Create single healer frame
+function LoathebRotate:createHealerFrame(healer, parentFrame)
+	healer.frame = CreateFrame("Frame", nil, parentFrame);
+	healer.frame:SetHeight(LoathebRotate.constants.healerFrameHeight);
+	healer.frame.GUID = healer.GUID;
 
-    -- Set Texture
-    hunter.frame.texture = hunter.frame:CreateTexture(nil, "ARTWORK")
-    hunter.frame.texture:SetTexture("Interface\\AddOns\\LoathebRotate\\textures\\steel.tga")
-    hunter.frame.texture:SetAllPoints()
+	-- Set Texture
+	healer.frame.texture = healer.frame:CreateTexture(nil, "ARTWORK");
+	healer.frame.texture:SetTexture("Interface\\AddOns\\LoathebRotate\\textures\\steel.tga");
+	healer.frame.texture:SetAllPoints();
 
-    -- Tooltip
-    hunter.frame:SetScript("OnEnter", LoathebRotate.onHunterEnter)
-    hunter.frame:SetScript("OnLeave", LoathebRotate.onHunterLeave)
+	-- Tooltip
+	healer.frame:SetScript("OnEnter", LoathebRotate.onHealerEnter);
+	healer.frame:SetScript("OnLeave", LoathebRotate.onHealerLeave);
 
-    -- Set Text
-    hunter.frame.text = hunter.frame:CreateFontString(nil, "ARTWORK")
-    hunter.frame.text:SetPoint("LEFT",5,0)
-    LoathebRotate:setHunterName(hunter)
+	-- Set Text
+	healer.frame.text = healer.frame:CreateFontString(nil, "ARTWORK");
+	healer.frame.text:SetPoint("LEFT",5,0);
+	LoathebRotate:setHealerName(healer);
 
-    LoathebRotate:createCooldownFrame(hunter)
-    LoathebRotate:createBlindIconFrame(hunter)
-    LoathebRotate:configureHunterFrameDrag(hunter, mainFrame)
-    LoathebRotate:configureHunterFrameRightClick(hunter)
+	LoathebRotate:createCooldownFrame(healer);
+	LoathebRotate:createBlindIconFrame(healer);
+	LoathebRotate:configureHealerFrameDrag(healer);
+	LoathebRotate:configureHealerFrameRightClick(healer);
 
-    if (LoathebRotate.enableDrag) then
-        LoathebRotate:enableHunterFrameDragging(hunter, true)
-    end
-    local mode = LoathebRotate:getMode() -- @todo get mode of hunter frame
-    if mode and mode.assignable then
-        LoathebRotate:enableHunterFrameRightClick(hunter, true)
-    end
+	if (LoathebRotate.enableDrag) then
+		LoathebRotate:enableHealerFrameDragging(healer, true);
+	end
+
+	LoathebRotate:enableHealerFrameRightClick(healer, true);
 end
 
 -- Create the cooldown frame
-function LoathebRotate:createCooldownFrame(hunter)
+function LoathebRotate:createCooldownFrame(healer)
 
     -- Frame
-    hunter.frame.cooldownFrame = CreateFrame("Frame", nil, hunter.frame)
-    hunter.frame.cooldownFrame:SetPoint('LEFT', 5, 0)
-    hunter.frame.cooldownFrame:SetPoint('RIGHT', -5, 0)
-    hunter.frame.cooldownFrame:SetPoint('TOP', 0, -17)
-    hunter.frame.cooldownFrame:SetHeight(3)
+    healer.frame.cooldownFrame = CreateFrame("Frame", nil, healer.frame)
+    healer.frame.cooldownFrame:SetPoint('LEFT', 5, 0)
+    healer.frame.cooldownFrame:SetPoint('RIGHT', -5, 0)
+    healer.frame.cooldownFrame:SetPoint('TOP', 0, -17)
+    healer.frame.cooldownFrame:SetHeight(3)
 
     -- background
-    hunter.frame.cooldownFrame.background = hunter.frame.cooldownFrame:CreateTexture(nil, "ARTWORK")
-    hunter.frame.cooldownFrame.background:SetColorTexture(0,0,0,1)
-    hunter.frame.cooldownFrame.background:SetAllPoints()
+    healer.frame.cooldownFrame.background = healer.frame.cooldownFrame:CreateTexture(nil, "ARTWORK")
+    healer.frame.cooldownFrame.background:SetColorTexture(0,0,0,1)
+    healer.frame.cooldownFrame.background:SetAllPoints()
 
-    local statusBar = CreateFrame("StatusBar", nil, hunter.frame.cooldownFrame)
+    local statusBar = CreateFrame("StatusBar", nil, healer.frame.cooldownFrame)
     statusBar:SetAllPoints()
     statusBar:SetMinMaxValues(0,1)
     statusBar:SetStatusBarTexture("Interface\\AddOns\\LoathebRotate\\textures\\steel.tga")
     statusBar:GetStatusBarTexture():SetHorizTile(false)
     statusBar:GetStatusBarTexture():SetVertTile(false)
     statusBar:SetStatusBarColor(1, 0, 0)
-    hunter.frame.cooldownFrame.statusBar = statusBar
+    healer.frame.cooldownFrame.statusBar = statusBar
 
-    hunter.frame.cooldownFrame:SetScript(
+    healer.frame.cooldownFrame:SetScript(
         "OnUpdate",
         function(self, elapsed)
             self.statusBar:SetValue(GetTime())
 
-            local hunter = LoathebRotate:getHunter(self:GetParent().GUID)
-            if hunter and hunter.expirationTime and GetTime() > hunter.expirationTime then
+            local hunter = LoathebRotate:getHealer(self:GetParent().GUID)
+            if healer and healer.expirationTime and GetTime() > healer.expirationTime then
                 self:Hide()
             end
         end
     )
 
-    local statusTick = hunter.frame.cooldownFrame:CreateTexture(nil, "OVERLAY")
+    local statusTick = healer.frame.cooldownFrame:CreateTexture(nil, "OVERLAY")
     statusTick:SetColorTexture(1,0.8,0,1)
     statusTick:SetAllPoints()
     statusTick:Hide()
-    hunter.frame.cooldownFrame.statusTick = statusTick
+    healer.frame.cooldownFrame.statusTick = statusTick
 
-    hunter.frame.cooldownFrame:Hide()
+    healer.frame.cooldownFrame:Hide()
 end
 
 -- Create the blind icon frame
-function LoathebRotate:createBlindIconFrame(hunter)
+function LoathebRotate:createBlindIconFrame(healer)
 
     -- Frame
-    hunter.frame.blindIconFrame = CreateFrame("Frame", nil, hunter.frame)
-    hunter.frame.blindIconFrame:SetPoint('RIGHT', -5, 0)
-    hunter.frame.blindIconFrame:SetPoint('CENTER', 0, 0)
-    hunter.frame.blindIconFrame:SetWidth(16)
-    hunter.frame.blindIconFrame:SetHeight(16)
+    healer.frame.blindIconFrame = CreateFrame("Frame", nil, healer.frame)
+    healer.frame.blindIconFrame:SetPoint('RIGHT', -5, 0)
+    healer.frame.blindIconFrame:SetPoint('CENTER', 0, 0)
+    healer.frame.blindIconFrame:SetWidth(16)
+    healer.frame.blindIconFrame:SetHeight(16)
 
     -- Set Texture
-    hunter.frame.blindIconFrame.texture = hunter.frame.blindIconFrame:CreateTexture(nil, "ARTWORK")
+    healer.frame.blindIconFrame.texture = healer.frame.blindIconFrame:CreateTexture(nil, "ARTWORK")
     local blind_filename = ""
     local relativeHeight = select(2,GetCurrentScaledResolution())*UIParent:GetEffectiveScale()
     if relativeHeight <= 1080 then
@@ -664,23 +662,23 @@ function LoathebRotate:createBlindIconFrame(hunter)
     else
         blind_filename = "blind_256px.tga"
     end
-    hunter.frame.blindIconFrame.texture:SetTexture("Interface\\AddOns\\LoathebRotate\\textures\\"..blind_filename)
-    hunter.frame.blindIconFrame.texture:SetAllPoints()
-    hunter.frame.blindIconFrame.texture:SetTexCoord(0, 1, 0, 1);
+    healer.frame.blindIconFrame.texture:SetTexture("Interface\\AddOns\\LoathebRotate\\textures\\"..blind_filename)
+    healer.frame.blindIconFrame.texture:SetAllPoints()
+    healer.frame.blindIconFrame.texture:SetTexCoord(0, 1, 0, 1);
 
     -- Tooltip
-    hunter.frame.blindIconFrame:SetScript("OnEnter", LoathebRotate.onBlindIconEnter)
-    hunter.frame.blindIconFrame:SetScript("OnLeave", LoathebRotate.onBlindIconLeave)
+    healer.frame.blindIconFrame:SetScript("OnEnter", LoathebRotate.onBlindIconEnter)
+    healer.frame.blindIconFrame:SetScript("OnLeave", LoathebRotate.onBlindIconLeave)
 
     -- Drag & drop handlers
-    hunter.frame.blindIconFrame:SetScript("OnDragStart", function(self, ...)
+    healer.frame.blindIconFrame:SetScript("OnDragStart", function(self, ...)
         ExecuteFrameScript(self:GetParent(), "OnDragStart", ...);
     end)
-    hunter.frame.blindIconFrame:SetScript("OnDragStop", function(self, ...)
+    healer.frame.blindIconFrame:SetScript("OnDragStop", function(self, ...)
         ExecuteFrameScript(self:GetParent(), "OnDragStop", ...);
     end)
 
-    hunter.frame.blindIconFrame:Hide()
+    healer.frame.blindIconFrame:Hide()
 end
 
 -- Blind icon tooltip show
@@ -699,138 +697,139 @@ function LoathebRotate.onBlindIconLeave(frame, motion)
     GameTooltip:Hide()
 end
 
--- Hunter frame tooltip show
-function LoathebRotate.onHunterEnter(frame)
-    local mode = LoathebRotate:getMode()
-    if mode and mode.tooltip then
-        local tooltip
-        if type(mode.tooltip) == 'string' then
-            tooltip = mode.tooltip
-        elseif type(mode.tooltip) == 'function' then
-            local hunter = LoathebRotate:getHunter(frame.GUID)
-            tooltip = mode.tooltip(mode, hunter)
-        end
-        if tooltip then
-            GameTooltip:SetOwner(frame, "ANCHOR_TOP")
-            GameTooltip:SetText(tooltip)
-            GameTooltip:Show()
-        end
+-- Healer frame tooltip show
+function LoathebRotate.onHealerEnter(frame)
+	local mode = LoathebRotate:getMode();
+	if mode and mode.tooltip then
+		local tooltip
+		if type(mode.tooltip) == 'string' then
+			tooltip = mode.tooltip
+		elseif type(mode.tooltip) == 'function' then
+			local healer = LoathebRotate:getHealer(frame.GUID);
+			tooltip = mode.tooltip(mode, healer);
+		end
+		if tooltip then
+			GameTooltip:SetOwner(frame, "ANCHOR_TOP");
+			GameTooltip:SetText(tooltip);
+			GameTooltip:Show();
+		end
 
-    else
-        local hunter = LoathebRotate:getHunter(frame.GUID)
-        if hunter then
-            local getAssignmentAndTarget = function(hunter)
-                local assignmentText, targetText
+	else
+		local healer = LoathebRotate:getHealer(frame.GUID)
+		if healer then
+--            local getAssignmentAndTarget = function(healer)
+--                local assignmentText, targetText
 
-                local assignment, _ = LoathebRotate:getHunterAssignment(hunter)
-                if assignment then
-                    assignmentText = string.format(L['TOOLTIP_ASSIGNED_TO'], assignment)
-                end
+--				--local assignment = LoathebRotate:getHealerAssignment(healer);
+--				--if assignment then
+--				--	assignmentText = string.format(L['TOOLTIP_ASSIGNED_TO'], assignment);
+--				--end
 
-                local lastTarget, buffMode = LoathebRotate:getHunterTarget(hunter)
-                if lastTarget and lastTarget ~= '' and buffMode and buffMode ~= 'not_a_buff' then
-                    if buffMode == 'has_buff' then
-                        targetText = string.format(L['TOOLTIP_EFFECT_CURRENT'], lastTarget)
-                    else
-                        targetText = string.format(L['TOOLTIP_EFFECT_PAST'], lastTarget)
+--                --local lastTarget, buffMode = LoathebRotate:getHunterTarget(healer)
+--                --if lastTarget and lastTarget ~= '' and buffMode and buffMode ~= 'not_a_buff' then
+--                --    if buffMode == 'has_buff' then
+--                --        targetText = string.format(L['TOOLTIP_EFFECT_CURRENT'], lastTarget)
+--                --    else
+--                --        targetText = string.format(L['TOOLTIP_EFFECT_PAST'], lastTarget)
+--                --    end
+--                --end
+
+--                return assignmentText, targetText
+--            end
+
+			if (healer.endTimeOfEffect and GetTime() < healer.endTimeOfEffect) or (healer.expirationTime and GetTime() < healer.expirationTime) then
+				local tooltipRefreshFunc = function()
+					local effectRemaining = healer and healer.endTimeOfEffect-GetTime() or 0
+					local cooldownRemaining = healer and healer.expirationTime-GetTime() or 0
+
+					local assignmentText, targetText = getAssignmentAndTarget(healer)
+
+					local text = ''
+					local appendText = function(newtext)
+						if text ~= '' then
+							text = text..'\n'
+						end
+						text = text..newtext
+					end
+
+					if assignmentText then
+						appendText(assignmentText)
+					end
+					if targetText then
+						appendText(targetText)
+					end
+
+					if effectRemaining > 0 or cooldownRemaining > 0 then
+						local hrEffect
+						if effectRemaining > 60 then
+							hrEffect = string.format(L['TOOLTIP_DURATION_MINUTES'], ceil(effectRemaining/60))
+						elseif effectRemaining > 0 then
+							hrEffect = string.format(L['TOOLTIP_DURATION_SECONDS'], ceil(effectRemaining))
+						end
+                        --if hrEffect then
+                        --    -- The effect is not real if the buff was lost
+                        --    local _, buffMode = LoathebRotate:getHealerTarget(healer)
+                        --    if buffMode == 'buff_lost' then
+                        --        local mode = LoathebRotate:getMode() -- @todo get mode of hunter
+                        --        if mode and not mode.buffCanReturn then
+                        --            hrEffect = nil
+                        --        end
+                        --    end
+                        --end
+
+						local hrCooldown
+						if cooldownRemaining > 60 then
+							hrCooldown = string.format(L['TOOLTIP_DURATION_MINUTES'], ceil(cooldownRemaining/60));
+						elseif cooldownRemaining > 0 then
+							hrCooldown = string.format(L['TOOLTIP_DURATION_SECONDS'], ceil(cooldownRemaining));
+						end
+
+						if hrEffect then
+							appendText(string.format(L['TOOLTIP_EFFECT_REMAINING'], hrEffect));
+						end
+						if hrCooldown then
+							appendText(string.format(L['TOOLTIP_COOLDOWN_REMAINING'], hrCooldown));
+						end 
                     end
-                end
+					if text ~= '' then
+						GameTooltip:SetText(text);
+					else
+						frame.tooltipRefreshTicker:Cancel();
+						frame.tooltipRefreshTicker = nil;
+						GameTooltip:Hide();
+					end
+				end
 
-                return assignmentText, targetText
-            end
+				if not frame.tooltipRefreshTicker or frame.tooltipRefreshTicker:IsCancelled() then
+					local refreshInterval = 0.5;
+					frame.tooltipRefreshTicker = C_Timer.NewTicker(refreshInterval, tooltipRefreshFunc);
+				end
 
-            if (hunter.endTimeOfEffect and GetTime() < hunter.endTimeOfEffect) or (hunter.expirationTime and GetTime() < hunter.expirationTime) then
-                local tooltipRefreshFunc = function()
-                    local effectRemaining = hunter and hunter.endTimeOfEffect-GetTime() or 0
-                    local cooldownRemaining = hunter and hunter.expirationTime-GetTime() or 0
-
-                    local assignmentText, targetText = getAssignmentAndTarget(hunter)
-
-                    local text = ''
-                    local appendText = function(newtext)
-                        if text ~= '' then
-                            text = text..'\n'
-                        end
-                        text = text..newtext
-                    end
-                    if assignmentText then
-                        appendText(assignmentText)
-                    end
-                    if targetText then
-                        appendText(targetText)
-                    end
-
-                    if effectRemaining > 0 or cooldownRemaining > 0 then
-                        local hrEffect
-                        if effectRemaining > 60 then
-                            hrEffect = string.format(L['TOOLTIP_DURATION_MINUTES'], ceil(effectRemaining/60))
-                        elseif effectRemaining > 0 then
-                            hrEffect = string.format(L['TOOLTIP_DURATION_SECONDS'], ceil(effectRemaining))
-                        end
-                        if hrEffect then
-                            -- The effect is not real if the buff was lost
-                            local _, buffMode = LoathebRotate:getHunterTarget(hunter)
-                            if buffMode == 'buff_lost' then
-                                local mode = LoathebRotate:getMode() -- @todo get mode of hunter
-                                if mode and not mode.buffCanReturn then
-                                    hrEffect = nil
-                                end
-                            end
-                        end
-
-                        local hrCooldown
-                        if cooldownRemaining > 60 then
-                            hrCooldown = string.format(L['TOOLTIP_DURATION_MINUTES'], ceil(cooldownRemaining/60))
-                        elseif cooldownRemaining > 0 then
-                            hrCooldown = string.format(L['TOOLTIP_DURATION_SECONDS'], ceil(cooldownRemaining))
-                        end
-
-                        if hrEffect then
-                            appendText(string.format(L['TOOLTIP_EFFECT_REMAINING'], hrEffect))
-                        end
-                        if hrCooldown then
-                            appendText(string.format(L['TOOLTIP_COOLDOWN_REMAINING'], hrCooldown))
-                        end 
-                    end
-                    if text ~= '' then
-                        GameTooltip:SetText(text)
-                    else
-                        frame.tooltipRefreshTicker:Cancel()
-                        frame.tooltipRefreshTicker = nil
-                        GameTooltip:Hide()
-                    end
-                end
-
-                if not frame.tooltipRefreshTicker or frame.tooltipRefreshTicker:IsCancelled() then
-                    local refreshInterval = 0.5
-                    frame.tooltipRefreshTicker = C_Timer.NewTicker(refreshInterval, tooltipRefreshFunc)
-                end
-
-                GameTooltip:SetOwner(frame, "ANCHOR_TOP")
-                tooltipRefreshFunc()
-                GameTooltip:Show()
-            else
-                local assignmentText, targetText = getAssignmentAndTarget(hunter)
-                if assignmentText or targetText then
-                    local text = ''
-                    if not assignmentText then
-                        text = targetText
-                    elseif not targetText then
-                        text = assignmentText
-                    else
-                        text = assignmentText..'\n'..targetText
-                    end
-                    GameTooltip:SetOwner(frame, "ANCHOR_TOP")
-                    GameTooltip:SetText(text)
-                    GameTooltip:Show()
-                end
+				GameTooltip:SetOwner(frame, "ANCHOR_TOP")
+				tooltipRefreshFunc()
+				GameTooltip:Show()
+			else
+                --local assignmentText, targetText = getAssignmentAndTarget(healer)
+                --if assignmentText or targetText then
+                --    local text = ''
+                --    if not assignmentText then
+                --        text = targetText
+                --    elseif not targetText then
+                --        text = assignmentText
+                --    else
+                --        text = assignmentText..'\n'..targetText
+                --    end
+                --    GameTooltip:SetOwner(frame, "ANCHOR_TOP")
+                --    GameTooltip:SetText(text)
+                --    GameTooltip:Show()
+                --end
             end
         end
     end
 end
 
--- Hunter frame tooltip hide
-function LoathebRotate.onHunterLeave(frame, motion)
+-- Healer frame tooltip hide
+function LoathebRotate.onHealerLeave(frame, motion)
     GameTooltip:Hide() -- @TODO hide only if it was shown
     if frame.tooltipRefreshTicker then
         frame.tooltipRefreshTicker:Cancel()

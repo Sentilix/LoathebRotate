@@ -30,13 +30,20 @@ LoathebRotate.colors = {
 }
 
 LoathebRotate.constants = {
-    ['hunterFrameHeight'] = 22,
-    ['hunterFrameSpacing'] = 4,
+    ['healerFrameHeight'] = 22,
+    ['healerFrameSpacing'] = 4,
     ['titleBarHeight'] = 18,
     ['modeBarHeight'] = 18,
     ['modeFrameFontSize'] = 12,
     ['modeFrameMargin'] = 2,
     ['rotationFramesBaseHeight'] = 20,
+
+	['healerClasses'] = {
+		['Druid'] = 1,
+		['Paladin'] = 2,
+		['Priest'] = 3,
+		['Shaman'] = 4,
+	},
 
     history = {
         fontFace = "Fonts\\ARIALN.ttf",
@@ -50,6 +57,11 @@ LoathebRotate.constants = {
     ['commsChannel'] = 'RAID',
 
     ['commsTypes'] = {
+		['versionRequest']		= 'tx-version',
+		['versionResponse']		= 'rx-version',
+		['moveHealerRequest']		= 'tx-move',
+		['moveHealerResponse']		= 'rx-move',		-- Dummy: There is no response to a tx-move
+
         ['tranqshotDone'] = 'tranqshot-done',
         ['syncOrder'] = 'sync-order',
         ['syncRequest'] = 'sync-request',
@@ -61,7 +73,8 @@ LoathebRotate.constants = {
     ['minimumCooldownElapsedForEligibility'] = 10,
 
     ['sounds'] = {
-        ['nextToTranq'] = 'Interface\\AddOns\\LoathebRotate\\sounds\\ding.ogg',
+		--['nextToTranq'] = 'Interface\\AddOns\\LoathebRotate\\sounds\\ding.ogg',
+		['nextToHeal'] = 'Interface\\AddOns\\LoathebRotate\\sounds\\ding.ogg',
         ['alarms'] = {
             ['alarm1'] = 'Interface\\AddOns\\LoathebRotate\\sounds\\alarm.ogg',
             ['alarm2'] = 'Interface\\AddOns\\LoathebRotate\\sounds\\alarm2.ogg',

@@ -1,30 +1,40 @@
 local LoathebRotate = select(2, ...)
 
+local L = LibStub("AceLocale-3.0"):GetLocale("LoathebRotate")
+
 local AceComm = LibStub("AceComm-3.0")
 local AceSerializer = LibStub("AceSerializer-3.0")
 
 -- Register comm prefix at initialization steps
 function LoathebRotate:initComms()
+	LoathebRotate.syncVersion = 0;
+	LoathebRotate.syncLastSender = '';
 
-    LoathebRotate.syncVersion = 0
-    LoathebRotate.syncLastSender = ''
-
-    AceComm:RegisterComm(LoathebRotate.constants.commsPrefix, LoathebRotate.OnCommReceived)
+	AceComm:RegisterComm(LoathebRotate.constants.commsPrefix, LoathebRotate.OnCommReceived);
 end
 
 -- Handle message reception and
 function LoathebRotate.OnCommReceived(prefix, data, channel, sender)
-
     if not UnitIsUnit('player', sender) then
 
-        local success, message = AceSerializer:Deserialize(data)
+		local success, message = AceSerializer:Deserialize(data)
 
-        if (success) then
-            if message.type == LoathebRotate.constants.commsTypes.syncOrder
-            or message.type == LoathebRotate.constants.commsTypes.syncRequest then
-                -- Get addon version from messages who have this information
-                LoathebRotate:updatePlayerAddonVersion(sender, message.addonVersion)
-            end
+		if (success) then
+			--	Version:
+			if (message.type == LoathebRotate.constants.commsTypes.versionRequest) then
+				LoathebRotate:receiveVersionRequest(prefix, message, channel, sender)
+			elseif (message.type == LoathebRotate.constants.commsTypes.versionResponse) then
+				LoathebRotate:receiveVersionResponse(prefix, message, channel, sender)
+			--	MoveHealer:
+			elseif (message.type == LoathebRotate.constants.commsTypes.moveHealerRequest) then
+				LoathebRotate:receiveMoveHealerRequest(prefix, message, channel, sender)
+			end;
+
+            --if message.type == LoathebRotate.constants.commsTypes.syncOrder
+            --or message.type == LoathebRotate.constants.commsTypes.syncRequest then
+            --    -- Get addon version from messages who have this information
+            --    LoathebRotate:updatePlayerAddonVersion(sender, message.addonVersion)
+            --end
 
             if (message.mode ~= LoathebRotate.db.profile.currentMode) then
                 -- Received a message from another mode
@@ -39,21 +49,26 @@ function LoathebRotate.OnCommReceived(prefix, data, channel, sender)
                 return
             end
 
-            if (message.type == LoathebRotate.constants.commsTypes.tranqshotDone) then
-                LoathebRotate:receiveSyncTranq(prefix, message, channel, sender)
-            elseif (message.type == LoathebRotate.constants.commsTypes.syncOrder) then
-                LoathebRotate:receiveSyncOrder(prefix, message, channel, sender)
-            elseif (message.type == LoathebRotate.constants.commsTypes.syncRequest) then
-                LoathebRotate:receiveSyncRequest(prefix, message, channel, sender)
-            end
+				
+            --if (message.type == LoathebRotate.constants.commsTypes.tranqshotDone) then
+            --    LoathebRotate:receiveSyncTranq(prefix, message, channel, sender)
+            --elseif (message.type == LoathebRotate.constants.commsTypes.syncOrder) then
+            --    LoathebRotate:receiveSyncOrder(prefix, message, channel, sender)
+            --elseif (message.type == LoathebRotate.constants.commsTypes.syncRequest) then
+            --    LoathebRotate:receiveSyncRequest(prefix, message, channel, sender)
+            --end
+		else
+			print('could not serialize data');
         end
     end
 end
 
 -- Checks if a given version from a given sender should be applied
 function LoathebRotate:isVersionEligible(version, sender)
-    return version > LoathebRotate.syncVersion or (version == LoathebRotate.syncVersion and sender < LoathebRotate.syncLastSender)
+	return version > LoathebRotate.syncVersion or (version == LoathebRotate.syncVersion and sender < LoathebRotate.syncLastSender)
 end
+
+
 
 -----------------------------------------------------------------------------------------------------------------------
 -- Messaging functions
@@ -79,6 +94,65 @@ function LoathebRotate:sendAddonMessage(message, channel, name)
     )
 end
 
+function LoathebRotate:createAddonMessage(requestType, target)
+    local request = {
+        ['type'] = requestType,
+        ['from'] = UnitName('player'),
+        ['to'] = target or '',
+    }
+
+	return request;
+end;
+
+
+
+-----------------------------------------------------------------------------------------------------------------------
+-- VERSION request/response
+-----------------------------------------------------------------------------------------------------------------------
+
+function LoathebRotate:requestVersionCheck()
+	local message = LoathebRotate:createAddonMessage(LoathebRotate.constants.commsTypes.versionRequest);
+    LoathebRotate:sendRaidAddonMessage(message);
+end;
+
+function LoathebRotate:receiveVersionRequest(prefix, message, channel, sender)
+	local message = LoathebRotate:createAddonMessage(LoathebRotate.constants.commsTypes.versionResponse, sender);
+	message['version'] = LoathebRotate.version;
+
+    LoathebRotate:sendRaidAddonMessage(message);
+end;
+
+function LoathebRotate:receiveVersionResponse(prefix, message, channel, sender)
+    LoathebRotate:printPrefixedMessage(string.format(L["VERSION_INFO"], sender, message.version));
+end;
+
+
+-----------------------------------------------------------------------------------------------------------------------
+-- MOVEHEALER request/response
+-----------------------------------------------------------------------------------------------------------------------
+
+function LoathebRotate:requestMoveHealer(healer, group, position)
+	local message = LoathebRotate:createAddonMessage(LoathebRotate.constants.commsTypes.moveHealerRequest);
+
+	message['GUID'] = healer.GUID;
+	message['group'] = group;
+	message['position'] = position;
+
+	LoathebRotate:sendRaidAddonMessage(message);
+end;
+
+function LoathebRotate:receiveMoveHealerRequest(prefix, message, channel, sender)
+	local healer = LoathebRotate:getHealer(message.GUID);
+	if healer then
+		--LoathebRotate:printAll(message);
+		LoathebRotate:moveHealer(healer, message.group, message.position);
+	end;
+end;
+
+
+
+
+
 -----------------------------------------------------------------------------------------------------------------------
 -- OUTPUT
 -----------------------------------------------------------------------------------------------------------------------
@@ -100,36 +174,36 @@ end
 -- Broadcast current rotation configuration
 function LoathebRotate:sendSyncOrder(whisperName)
 
-    LoathebRotate.syncVersion = LoathebRotate.syncVersion + 1
-    LoathebRotate.syncLastSender = UnitName("player")
+    LoathebRotate.syncVersion = LoathebRotate.syncVersion + 1;
+    LoathebRotate.syncLastSender = UnitName("player");
 
-    local message = {
-        ['type'] = LoathebRotate.constants.commsTypes.syncOrder,
-        ['mode'] = LoathebRotate.db.profile.currentMode,
-        ['version'] = LoathebRotate.syncVersion,
-        ['rotation'] = LoathebRotate:getSimpleRotationTables(),
-        ['assignment'] = LoathebRotate:getAssignmentTable(LoathebRotate.db.profile.currentMode),
-        ['addonVersion'] = LoathebRotate.version,
-    }
+--    local message = {
+--        ['type'] = LoathebRotate.constants.commsTypes.syncOrder,
+--        ['mode'] = LoathebRotate.db.profile.currentMode,
+--        ['version'] = LoathebRotate.syncVersion,
+--        ['rotation'] = LoathebRotate:getSimpleRotationTables(),
+--        ['assignment'] = LoathebRotate:getAssignmentTable(LoathebRotate.db.profile.currentMode),
+--        ['addonVersion'] = LoathebRotate.version,
+--    }
 
-    if whisperName and whisperName ~= '' then
-        LoathebRotate:sendWhisperAddonMessage(message, whisperName)
-    else
-        LoathebRotate:sendRaidAddonMessage(message)
-    end
+--    if whisperName and whisperName ~= '' then
+--        LoathebRotate:sendWhisperAddonMessage(message, whisperName)
+--    else
+--        LoathebRotate:sendRaidAddonMessage(message)
+--    end
 end
 
--- Broadcast a request for the current rotation configuration
-function LoathebRotate:sendSyncOrderRequest()
+---- Broadcast a request for the current rotation configuration
+--function LoathebRotate:sendSyncOrderRequest()
 
-    local message = {
-        ['type'] = LoathebRotate.constants.commsTypes.syncRequest,
-        ['mode'] = LoathebRotate.db.profile.currentMode,
-        ['addonVersion'] = LoathebRotate.version,
-    }
+--    local message = {
+--        ['type'] = LoathebRotate.constants.commsTypes.syncRequest,
+--        ['mode'] = LoathebRotate.db.profile.currentMode,
+--        ['addonVersion'] = LoathebRotate.version,
+--    }
 
-    LoathebRotate:sendRaidAddonMessage(message)
-end
+--    LoathebRotate:sendRaidAddonMessage(message)
+--end
 
 -----------------------------------------------------------------------------------------------------------------------
 -- INPUT

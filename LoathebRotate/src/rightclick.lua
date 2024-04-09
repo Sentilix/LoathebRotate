@@ -1,30 +1,34 @@
 local LoathebRotate = select(2, ...)
 local L = LibStub("AceLocale-3.0"):GetLocale("LoathebRotate")
 
--- Enable/disable right click for all hunter frames
+-- Enable/disable right click for all healer frames
 function LoathebRotate:enableRightClick(assignable)
-    for key,hunter in pairs(LoathebRotate.hunterTable) do
-        LoathebRotate:enableHunterFrameRightClick(hunter, assignable)
+    for key,healer in pairs(LoathebRotate.rotationTable) do
+        LoathebRotate:enableHealerFrameRightClick(healer, assignable)
+    end
+
+    for key,healer in pairs(LoathebRotate.backupTable) do
+        LoathebRotate:enableHealerFrameRightClick(healer, assignable)
     end
 end
 
--- Enable or disable right click for one hunter frame
-function LoathebRotate:enableHunterFrameRightClick(hunter, assignable)
-    hunter.assignable = assignable
-    hunter.frame:EnableMouse(hunter.assignable or hunter.movable)
-    if hunter.frame.context then
+-- Enable or disable right click for one healer frame
+function LoathebRotate:enableHealerFrameRightClick(healer, assignable)
+    healer.assignable = assignable
+    healer.frame:EnableMouse(healer.assignable or healer.movable)
+    if healer.frame.context then
         -- Close any remaining context menu
-        hunter.frame.context:Hide()
-        hunter.frame.context = nil
+        healer.frame.context:Hide()
+        healer.frame.context = nil
     end
 end
 
--- Configure hunter frame right click behavior
-function LoathebRotate:configureHunterFrameRightClick(hunter)
-    hunter.frame:SetScript(
+-- Configure healer frame right click behavior
+function LoathebRotate:configureHealerFrameRightClick(healer)
+    healer.frame:SetScript(
         "OnMouseUp",
         function(frame, button)
-            if not frame.hunter.assignable then
+            if not frame.healer.assignable then
                 return
             end
             if button == "RightButton" then
@@ -35,8 +39,7 @@ function LoathebRotate:configureHunterFrameRightClick(hunter)
                     frame.context = nil
                 end
                 frame.context = CreateFrame("Frame", nil, frame, "UIDropDownMenuTemplate")
-                local mode = LoathebRotate:getMode() -- @todo get hunter mode
-                local menu = LoathebRotate:populateMenu(frame.hunter, frame, mode)
+                local menu = LoathebRotate:populateMenu(frame.healer, frame)
                 EasyMenu(menu, frame.context, "cursor", 0 , 0, "MENU");
             end
         end
@@ -50,37 +53,37 @@ end
 -- * or "MANA" to select mana users (independently of their spec)
 -- * or "REZ" to select classes who can resurrect (including druids)
 -- * ...or an array of strings to select multiple classes or roles
-function LoathebRotate:doesPlayerFitAssignment(classFilename, role, assignmentType)
-    if type(assignmentType) == 'table' then
-        for _, subtype in ipairs(assignmentType) do
-            if self:doesPlayerFitAssignment(classFilename, role, subtype) then
-                return true
-            end
-        end
-        return false
-    end
+--function LoathebRotate:doesPlayerFitAssignment(classFilename, role, assignmentType)
+--    if type(assignmentType) == 'table' then
+--        for _, subtype in ipairs(assignmentType) do
+--            if self:doesPlayerFitAssignment(classFilename, role, subtype) then
+--                return true
+--            end
+--        end
+--        return false
+--    end
 
-    if assignmentType == 'TANK' then
-        return role == 'MAINTANK' or role == 'MAINASSIST'
-    elseif assignmentType == 'MANA' then
-        return classFilename == 'MAGE'
-            or classFilename == 'PRIEST'
-            or classFilename == 'WARLOCK'
-            or classFilename == 'DRUID'
-            or classFilename == 'HUNTER'
-            or classFilename == 'SHAMAN'
-            or classFilename == 'PALADIN'
-    elseif assignmentType == 'REZ' or assignmentType == 'HEAL' then
-        return classFilename == 'PRIEST'
-            or classFilename == 'DRUID'
-            or classFilename == 'SHAMAN'
-            or classFilename == 'PALADIN'
-    elseif type(assignmentType) == 'string' then
-        return classFilename == assignmentType
-    end
+--    if assignmentType == 'TANK' then
+--        return role == 'MAINTANK' or role == 'MAINASSIST'
+--    elseif assignmentType == 'MANA' then
+--        return classFilename == 'MAGE'
+--            or classFilename == 'PRIEST'
+--            or classFilename == 'WARLOCK'
+--            or classFilename == 'DRUID'
+--            or classFilename == 'HUNTER'
+--            or classFilename == 'SHAMAN'
+--            or classFilename == 'PALADIN'
+--    elseif assignmentType == 'REZ' or assignmentType == 'HEAL' then
+--        return classFilename == 'PRIEST'
+--            or classFilename == 'DRUID'
+--            or classFilename == 'SHAMAN'
+--            or classFilename == 'PALADIN'
+--    elseif type(assignmentType) == 'string' then
+--        return classFilename == assignmentType
+--    end
 
-    return false
-end
+--    return false
+--end
 
 -- Assign a player to another player for a specific mode
 -- @param author The name of the player who initiates this assignment
@@ -109,10 +112,10 @@ function LoathebRotate:assignPlayer(author, actor, target, modeName, timestamp)
         end
         self:addHistoryMessage(historyMessage, mode)
 
-        -- Update hunter frame to display the new target
-        local hunter = self:getHunter(actor)
-        if hunter then
-            self:setHunterName(hunter)
+        -- Update healer frame to display the new target
+        local healer = self:getHealer(actor)
+        if healer then
+            self:setHealerName(healer)
         -- @todo else report an error
         end
 

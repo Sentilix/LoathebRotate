@@ -12,32 +12,32 @@ function LoathebRotate:tableContains(table, element)
     return false
 end
 
--- Checks if a hunter is alive
-function LoathebRotate:isHunterAlive(hunter)
-    return UnitIsFeignDeath(hunter.name) or not UnitIsDeadOrGhost(hunter.name)
+-- Checks if a healer is alive
+function LoathebRotate:isHealerAlive(healer)
+    return not UnitIsDeadOrGhost(healer.name)
 end
 
--- Checks if a hunter is offline
-function LoathebRotate:isHunterOnline(hunter)
-    return UnitIsConnected(hunter.name)
+-- Checks if a healer is offline
+function LoathebRotate:isHealerOnline(healer)
+    return UnitIsConnected(healer.name)
 end
 
--- Checks if a hunter is online and alive
-function LoathebRotate:isHunterAliveAndOnline(hunter)
-    return LoathebRotate:isHunterOnline(hunter) and LoathebRotate:isHunterAlive(hunter)
+-- Checks if a healer is online and alive
+function LoathebRotate:isHealerAliveAndOnline(healer)
+    return LoathebRotate:isHealerOnline(healer) and LoathebRotate:isHealerAlive(healer)
 end
 
--- Checks if a hunter tranqshot is ready
-function LoathebRotate:isHunterTranqCooldownReady(hunter)
-    return hunter.lastTranqTime <= GetTime() - 20
+-- Checks if a healer heal is ready
+function LoathebRotate:isHealerCooldownReady(healer)
+    return healer.lastHealTime <= GetTime() - 20
 end
 
--- Checks if a hunter is elligible to tranq next
-function LoathebRotate:isEligibleForNextTranq(hunter)
+-- Checks if a healer is eligible to heal next
+function LoathebRotate:isEligibleForNextHeal(healer)
 
-    local isCooldownShortEnough = hunter.lastTranqTime <= GetTime() - LoathebRotate.constants.minimumCooldownElapsedForEligibility
+    local isCooldownShortEnough = healer.lastHealTime <= GetTime() - LoathebRotate.constants.minimumCooldownElapsedForEligibility
 
-    return LoathebRotate:isHunterAliveAndOnline(hunter) and isCooldownShortEnough
+    return LoathebRotate:isHealerAliveAndOnline(healer) and isCooldownShortEnough;
 end
 
 -- Get the target name and the buff mode of a hunter
@@ -71,24 +71,25 @@ function LoathebRotate:getHunterTarget(hunter)
     return targetName, buffMode
 end
 
--- Get the current assignment of the hunter and when it was assigned
--- Returns nil if no assignment is done
--- May return the name of a player not in the raid group if the assignment left the raid
-function LoathebRotate:getHunterAssignment(hunter)
-    local mode = LoathebRotate:getMode() -- @todo get mode from hunter
 
-    local assignment, timestamp
-    if mode.assignment then
-        assignment = mode.assignment[hunter.name]
-    end
-    if mode.assignedAt then
-        timestamp = mode.assignedAt[hunter.name]
-    end
+---- Get the current assignment of the hunter and when it was assigned
+---- Returns nil if no assignment is done
+---- May return the name of a player not in the raid group if the assignment left the raid
+--function LoathebRotate:getHunterAssignment(hunter)
+--    local mode = LoathebRotate:getMode() -- @todo get mode from hunter
 
-    return assignment, timestamp
-end
+--    local assignment, timestamp
+--    if mode.assignment then
+--        assignment = mode.assignment[hunter.name]
+--    end
+--    if mode.assignedAt then
+--        timestamp = mode.assignedAt[hunter.name]
+--    end
 
--- Checks if a hunter is in a battleground
+--    return assignment, timestamp
+--end
+
+-- Checks if a player is in a battleground
 function LoathebRotate:isPlayerInBattleground()
     return UnitInBattleground('player') ~= nil
 end
@@ -243,3 +244,37 @@ function LoathebRotate:getUserDefinedColor(colorName)
 
     return color
 end
+
+function LoathebRotate:printAll(object, name, level)
+	if not name then name = ""; end;
+	if not level then level = 0; end;
+
+	local indent = "";
+	for n= 1, level, 1 do
+		indent = indent .."  ";
+	end;
+
+	if type(object) == "string" then
+		print(string.format("%s%s => %s", indent, name, object));
+	elseif type(object) == "number" then
+		print(string.format("%s%s => %s", indent, name, object));
+	elseif type(object) == "boolean" then
+		if object then
+			print(string.format("%s%s => %s", indent, name, "true"));
+		else
+			print(string.format("%s%s => %s", indent, name, "false"));
+		end;
+	elseif type(object) == "function" then
+		print(string.format("%s%s => %s", indent, name, "FUNCTION"));
+	elseif type(object) == "nil" then
+		print(string.format("%s%s => %s", indent, name, "NIL"));
+	elseif type(object) == "table" then
+		print(string.format("%s%s => {", indent, name));
+
+		for key, value in next, object do
+			self:printAll(value, key, level + 1);
+		end;
+
+		print(string.format("%s}", indent));
+	end;
+end;

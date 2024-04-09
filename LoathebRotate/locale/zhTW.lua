@@ -186,7 +186,7 @@ L["OFFLINE_BG_DESC"] = "Background color for offline units"
 
     --- Sounds
 L["SETTING_SOUNDS"] = "音效"
-L["ENABLE_NEXT_TO_TRANQ_SOUND"] = "當下壹個寧神射擊是您時，播放提示音"
+L["ENABLE_NEXT_TO_HEAL_SOUND"] = "當下壹個寧神射擊是您時，播放提示音"
 L["ENABLE_TRANQ_NOW_SOUND"] = "當您需要立即寧神射擊時，播放提示音"
 L["TRANQ_NOW_SOUND_CHOICE"] = "選擇要用於“寧神射擊”提示的聲音"
 L["DBM_SOUND_WARNING"] = "DBM在瘋狂時播放的'flag taken'提示音，可能導致您無法聽到LoathebRotate的提示音。建議選擇壹個響亮的提示音，或者在DBM中禁用瘋狂的警告。"
@@ -249,9 +249,7 @@ L["DIALOG_ASSIGNMENT_CHANGE_FOCUS"] = "Change Focus"
 L["UPDATE_AVAILABLE"] = "A new version is available, please update to get the latest features."
 L["BREAKING_UPDATE_AVAILABLE"] = "A new, CRITICAL update is available, you MUST update AS SOON AS possible! LoathebRotate may not work correctly between you and up-to-date players."
 
-L["VERSION_CHECK"] = "## Version check ##"
-L["VERSION_UNDETECTABLE"] = "Not installed or older than 0.7.0"
-L["VERSION_YOU"] = "You"
+L["VERSION_INFO"] = "%s: version %s"
 
     --- Profiles
 L["SETTING_PROFILES"] = "設定檔"

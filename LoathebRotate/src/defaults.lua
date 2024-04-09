@@ -40,7 +40,7 @@ function LoathebRotate:LoadDefaults()
 			offlineBackgroundColor = {LoathebRotate.colors.darkGray:GetRGB()},
 
 			-- Sounds
-			enableNextToTranqSound = true,
+			enableNextToHealSound = true,
 			enableTranqNowSound = true,
 			tranqNowSound = 'alarm1',
 

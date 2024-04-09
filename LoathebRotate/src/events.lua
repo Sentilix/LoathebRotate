@@ -108,16 +108,16 @@ function LoathebRotate:COMBAT_LOG_EVENT_UNFILTERED()
 
     -- COMBAT_LOG_EVENT_UNFILTERED is used exclusively by spell-based modes
     if self:isSpellInteresting(mode, spellId, spellName) then
-        local hunter = self:getHunter(sourceGUID)
-        if hunter and event == "SPELL_CAST_SUCCESS" or (mode.canFail and event == "SPELL_MISSED") then
+        local healer = self:getHealer(sourceGUID)
+        if healer and event == "SPELL_CAST_SUCCESS" or (mode.canFail and event == "SPELL_MISSED") then
             local failed = event == "SPELL_MISSED"
             local targetGUID = type(mode.targetGUID) == 'function' and self:getPlayerGuid(mode.targetGUID(mode, sourceGUID, destGUID)) or nil
             local buffName = type(mode.buffName) == 'function' and mode.buffName(mode, spellId, spellName) or nil
-            self:sendSyncTranq(hunter, failed, timestamp)
-            self:rotate(hunter, failed, nil, nil, nil, targetGUID, buffName)
-            self:addHistorySpellMessage(hunter, sourceName, destName, spellName, failed, mode)
+            self:sendSyncTranq(healer, failed, timestamp)
+            self:rotate(healer, failed, nil, nil, nil, targetGUID, buffName)
+            self:addHistorySpellMessage(healer, sourceName, destName, spellName, failed, mode)
             if (sourceGUID == UnitGUID("player")) then
-                self:sendSpellAnnounceMessage(mode, spellName, failed, hunter, destName)
+                self:sendSpellAnnounceMessage(mode, spellName, failed, healer, destName)
             end
         end
     end
@@ -158,9 +158,9 @@ function LoathebRotate:UNIT_AURA(unitID, isEcho)
     if not mode or type(mode.auraTest) ~= 'function' then return end
 
     -- Whether the unit really got the debuff or not, it's pointless if the unit is not tracked (e.g. not a healer)
-    local hunter = self:getHunter(UnitGUID(unitID))
+    local healer = self:getHealer(UnitGUID(unitID))
     if not hunter then return end
-    local previousExpirationTime = hunter.expirationTime
+    local previousExpirationTime = healer.expirationTime
 
     if not isEcho then
         -- Try again in 1 second to secure lags between UNIT_AURA and the actual aura applied
@@ -192,11 +192,11 @@ function LoathebRotate:UNIT_AURA(unitID, isEcho)
                 return
             end
             -- Send the rotate order, this is the most important part of the addon
-            self:rotate(hunter, false, nil, endTime)
-            self:addHistoryDebuffMessage(hunter, hunter.name, name, mode)
+            self:rotate(healer, false, nil, endTime)
+            self:addHistoryDebuffMessage(healer, healer.name, name, mode)
             if (UnitIsUnit(unitID, "player")) then
                 -- Announce to the channel selected in the addon options, but announce only ourselves
-                self:sendAuraAnnounceMessage(mode, name, hunter)
+                self:sendAuraAnnounceMessage(mode, name, healer)
             end
             return
         end
@@ -204,33 +204,37 @@ function LoathebRotate:UNIT_AURA(unitID, isEcho)
 
     -- The unit is not affected by Corrupted Mind: reset its expiration time
     if previousExpirationTime and previousExpirationTime > 0 then
-        hunter.expirationTime = 0
+        healer.expirationTime = 0
     end
 end
 
--- Register single unit events for a given hunter
-function LoathebRotate:registerUnitEvents(hunter)
+-- Register single unit events for a given healer
+function LoathebRotate:registerUnitEvents(healer)
 
-    hunter.frame:RegisterUnitEvent("PARTY_MEMBER_DISABLE", hunter.name)
-    hunter.frame:RegisterUnitEvent("PARTY_MEMBER_ENABLE", hunter.name)
-    hunter.frame:RegisterUnitEvent("UNIT_HEALTH", hunter.name)
-    hunter.frame:RegisterUnitEvent("UNIT_CONNECTION", hunter.name)
-    hunter.frame:RegisterUnitEvent("UNIT_FLAGS", hunter.name)
+	if healer.frame then
+		healer.frame:RegisterUnitEvent("PARTY_MEMBER_DISABLE", healer.name)
+		healer.frame:RegisterUnitEvent("PARTY_MEMBER_ENABLE", healer.name)
+		healer.frame:RegisterUnitEvent("UNIT_HEALTH", healer.name)
+		healer.frame:RegisterUnitEvent("UNIT_CONNECTION", healer.name)
+		healer.frame:RegisterUnitEvent("UNIT_FLAGS", healer.name)
 
-    hunter.frame:SetScript(
-        "OnEvent",
-        function(self, event, ...)
-            LoathebRotate:updateHunterStatus(hunter)
-        end
-    )
+		healer.frame:SetScript(
+			"OnEvent",
+			function(self, event, ...)
+				LoathebRotate:updateHealerStatus(healer)
+			end
+		)
+	end;
 
 end
 
--- Unregister single unit events for a given hunter
-function LoathebRotate:unregisterUnitEvents(hunter)
-    hunter.frame:UnregisterEvent("PARTY_MEMBER_DISABLE")
-    hunter.frame:UnregisterEvent("PARTY_MEMBER_ENABLE")
-    hunter.frame:UnregisterEvent("UNIT_HEALTH_FREQUENT")
-    hunter.frame:UnregisterEvent("UNIT_CONNECTION")
-    hunter.frame:UnregisterEvent("UNIT_FLAGS")
+-- Unregister single unit events for a given healer
+function LoathebRotate:unregisterUnitEvents(healer)
+	if healer.frame then
+		healer.frame:UnregisterEvent("PARTY_MEMBER_DISABLE")
+		healer.frame:UnregisterEvent("PARTY_MEMBER_ENABLE")
+		healer.frame:UnregisterEvent("UNIT_HEALTH_FREQUENT")
+		healer.frame:UnregisterEvent("UNIT_CONNECTION")
+		healer.frame:UnregisterEvent("UNIT_FLAGS")
+	end;
 end

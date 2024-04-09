@@ -5,93 +5,94 @@ local L = LibStub("AceLocale-3.0"):GetLocale("LoathebRotate")
 -- Get the mode from a mode name
 -- If modeName is nil, get the current mode
 function LoathebRotate:getMode(modeName)
-    if not modeName then
-        modeName = LoathebRotate.db.profile.currentMode
-    end
+	return LoathebRotate.modes.loatheb;
+--    if not modeName then
+--        modeName = LoathebRotate.db.profile.currentMode
+--    end
 
-    if modeName and modeName:sub(-1) == 'z' then -- All old mode names end with 'z'
-        modeName = LoathebRotate.backwardCompatibilityModeMap[modeName] or modeName
-    end
+--    if modeName and modeName:sub(-1) == 'z' then -- All old mode names end with 'z'
+--        modeName = LoathebRotate.backwardCompatibilityModeMap[modeName] or modeName
+--    end
 
-    -- return the mode object, or TranqShot as the default mode if no mode is set
-    if modeName then
-        local mode = LoathebRotate.modes[modeName]
-        if mode then -- mode may be nil when downgrading the addon version
-            return mode
-        end
-    end
-    return LoathebRotate.modes[LoathebRotate.modes.tranqShot.modeName]
+--    -- return the mode object, or TranqShot as the default mode if no mode is set
+--    if modeName then
+--        local mode = LoathebRotate.modes[modeName]
+--        if mode then -- mode may be nil when downgrading the addon version
+--            return mode
+--        end
+--    end
+--    return LoathebRotate.modes[LoathebRotate.modes.tranqShot.modeName]
 end
 
--- Activate the specific mode
-function LoathebRotate:activateMode(modeName, mainFrame)
-    local currentMode = self:getMode()
-    local paramMode = self:getMode(modeName)
-    if currentMode.modeName == paramMode.modeName then return end
+---- Activate the specific mode
+--function LoathebRotate:activateMode(modeName, mainFrame)
+--    local currentMode = self:getMode()
+--    local paramMode = self:getMode(modeName)
+--    if currentMode.modeName == paramMode.modeName then return end
 
-    local oldFrame = mainFrame.modeFrames[currentMode.modeName]
-    if oldFrame then
-        oldFrame.texture:SetColorTexture(LoathebRotate.colors.darkBlue:GetRGB())
-    end
+--    local oldFrame = mainFrame.modeFrames[currentMode.modeName]
+--    if oldFrame then
+--        oldFrame.texture:SetColorTexture(LoathebRotate.colors.darkBlue:GetRGB())
+--    end
 
-    local newFrame = mainFrame.modeFrames[modeName]
-    if newFrame then
-        LoathebRotate.db.profile.currentMode = modeName
-        newFrame.texture:SetColorTexture(LoathebRotate.colors.blue:GetRGB())
-        LoathebRotate:updateRaidStatus()
-        LoathebRotate:enableRightClick(LoathebRotate.modes[modeName] and LoathebRotate.modes[modeName].assignable)
-        local AceConfigDialog = LibStub("AceConfigDialog-3.0")
-        AceConfigDialog:ConfigTableChanged("", Addon)
-    end
-end
+--    local newFrame = mainFrame.modeFrames[modeName]
+--    if newFrame then
+--        LoathebRotate.db.profile.currentMode = modeName
+--        newFrame.texture:SetColorTexture(LoathebRotate.colors.blue:GetRGB())
+--        LoathebRotate:updateRaidStatus()
+--        LoathebRotate:enableRightClick(LoathebRotate.modes[modeName] and LoathebRotate.modes[modeName].assignable)
+--        local AceConfigDialog = LibStub("AceConfigDialog-3.0")
+--        AceConfigDialog:ConfigTableChanged("", Addon)
+--    end
+--end
 
--- Get the color associated to a specific mode
-function LoathebRotate:getModeColor(mode)
-    if type(mode.color) == 'string' then
-        return mode.color
-    elseif type(mode.color) == 'function' then
-        return mode.color()
-    elseif type(mode.wanted) == 'string' then
-        -- Assume a wingle string for mode.wanted is always the class name
-        return select(4, GetClassColor(mode.wanted))
-    else
-        return 'ffffffff'
-    end
-end
+---- Get the color associated to a specific mode
+--function LoathebRotate:getModeColor(mode)
+--    if type(mode.color) == 'string' then
+--        return mode.color
+--    elseif type(mode.color) == 'function' then
+--        return mode.color()
+--    elseif type(mode.wanted) == 'string' then
+--        -- Assume a wingle string for mode.wanted is always the class name
+--        return select(4, GetClassColor(mode.wanted))
+--    else
+--        return 'ffffffff'
+--    end
+--end
 
 -- Return true if the player is recommended for a specific mode
 -- If className is nil, the class is fetched from the unit
 -- If mode is nil, use the current mode instead
-function LoathebRotate:isPlayerWanted(mode, unit, className)
-    if className == nil then
-        -- The 'select' result must be in parentheses to prevent argument bleeding
-        className = (select(2,UnitClass(unit)))
-    end
+--function LoathebRotate:isPlayerWanted(mode, unit, className)
+--    if className == nil then
+--        -- The 'select' result must be in parentheses to prevent argument bleeding
+--        className = (select(2,UnitClass(unit)))
+--    end
 
-    if mode and mode.wanted then
-        if type(mode.wanted) == 'string' then
-            -- Single string: check the class matches
-            return className == mode.wanted
+--    if mode and mode.wanted then
+--        if type(mode.wanted) == 'string' then
+--            -- Single string: check the class matches
+--            return className == mode.wanted
 
-        elseif type(mode.wanted) == 'table' then
-            -- Table: check the class matches with at least one of them
-            for _, c in pairs(mode.wanted) do
-                if className == c then
-                    return true
-                end
-            end
-            return false
+--        elseif type(mode.wanted) == 'table' then
+--            -- Table: check the class matches with at least one of them
+--            for _, c in pairs(mode.wanted) do
+--                if className == c then
+--                    return true
+--                end
+--            end
+--            return false
 
-        elseif type(mode.wanted) == 'function' then
-            -- Function: invoke callback, alongside race info
-            local raceName = select(2,UnitRace(unit))
-            return mode.wanted(mode, className, raceName)
+--        elseif type(mode.wanted) == 'function' then
+--            -- Function: invoke callback, alongside race info
+--            local raceName = select(2,UnitRace(unit))
+--            return mode.wanted(mode, className, raceName)
 
-        end
-    end
+--        end
+--    end
 
-    return nil
-end
+--    return nil
+--end
 
 -- Return true if the spellId/spellName matches one of the spells of spellWanted
 -- spellWanted can be either a spell id, a spell name, a list of ids and names, or a function(spellId, spellName)
@@ -171,6 +172,39 @@ end
 
 LoathebRotate.modes = {}
 
+LoathebRotate.modes.loatheb = {
+    oldModeName = 'healerz',
+    default = true,
+    raidOnly = true,
+    color = 'ff3fe7cc', -- Green-ish gooey of Loatheb HS card
+    wanted = {'PRIEST', 'PALADIN', 'SHAMAN', 'DRUID'},
+    cooldown = 60,
+    -- effectDuration = nil,
+    -- canFail = nil,
+    -- alertWhenFail = nil,
+    -- spell = nil,
+    auraTest = function(self, spellId, spellName)
+        return LoathebRotate.testMode and spellId == 11196	-- 11196 is the spell ID of "Recently Bandaged"
+            or spellId == 29184 -- priest debuff
+            or spellId == 29195 -- druid debuff
+            or spellId == 29197 -- paladin debuff
+            or spellId == 29199 -- shaman debuff
+    end,
+    -- customCombatlogFunc = nil,
+    -- effectDuration = nil,
+    -- targetGUID = nil,
+    -- buffName = nil,
+    -- buffCanReturn = nil,
+    -- customTargetName = nil,
+    -- customHistoryFunc = nil,
+    -- groupChangeFunc = nil,
+    announceArg = 'sourceName',
+    -- tooltip = nil,
+    -- assignable = nil,
+    -- metadata = nil
+}
+
+--[[
 LoathebRotate.modes.tranqShot = {
     oldModeName = 'hunterz',
     default = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC,
@@ -209,35 +243,28 @@ LoathebRotate.modes.tranqShot = {
     -- metadata = nil
 }
 
-LoathebRotate.modes.loatheb = {
-    oldModeName = 'healerz',
-    default = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC,
-    raidOnly = true,
-    color = 'ff3fe7cc', -- Green-ish gooey of Loatheb HS card
-    wanted = {'PRIEST', 'PALADIN', 'SHAMAN', 'DRUID'},
-    cooldown = 60,
-    -- effectDuration = nil,
-    -- canFail = nil,
+LoathebRotate.modes.fearWard = {
+    oldModeName = 'fearz',
+    default = true,
+    raidOnly = false,
+    color = select(4,GetClassColor('PRIEST')),
+    wanted = function(self, className, raceName) return className == 'PRIEST' and (WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC or raceName == 'Dwarf') end,
+    cooldown = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) and 30 or 180,
+    effectDuration = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) and 600 or 180,
+    canFail = false,
     -- alertWhenFail = nil,
-    -- spell = nil,
-    auraTest = function(self, spellId, spellName)
-        return LoathebRotate.testMode and spellId == 11196 -- 11196 is the spell ID of "Recently Bandaged"
-            or spellId == 29184 -- priest debuff
-            or spellId == 29195 -- druid debuff
-            or spellId == 29197 -- paladin debuff
-            or spellId == 29199 -- shaman debuff
-    end,
+    spell = GetSpellInfo(6346),
+    -- auraTest = nil,
     -- customCombatlogFunc = nil,
-    -- effectDuration = nil,
-    -- targetGUID = nil,
-    -- buffName = nil,
-    -- buffCanReturn = nil,
+    targetGUID = function(self, sourceGUID, destGUID) return destGUID end,
+    buffName = function(self, spellId, spellName) return spellName end,
+    buffCanReturn = false,
     -- customTargetName = nil,
     -- customHistoryFunc = nil,
     -- groupChangeFunc = nil,
-    announceArg = 'sourceName',
+    announceArg = 'destName',
     -- tooltip = nil,
-    -- assignable = nil,
+    assignable = {'TANK', 'HEAL'},
     -- metadata = nil
 }
 
@@ -263,31 +290,6 @@ LoathebRotate.modes.distract = {
     announceArg = 'destName',
     -- tooltip = nil,
     -- assignable = nil,
-    -- metadata = nil
-}
-
-LoathebRotate.modes.fearWard = {
-    oldModeName = 'fearz',
-    default = true,
-    raidOnly = false,
-    color = select(4,GetClassColor('PRIEST')),
-    wanted = function(self, className, raceName) return className == 'PRIEST' and (WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC or raceName == 'Dwarf') end,
-    cooldown = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) and 30 or 180,
-    effectDuration = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) and 600 or 180,
-    canFail = false,
-    -- alertWhenFail = nil,
-    spell = GetSpellInfo(6346),
-    -- auraTest = nil,
-    -- customCombatlogFunc = nil,
-    targetGUID = function(self, sourceGUID, destGUID) return destGUID end,
-    buffName = function(self, spellId, spellName) return spellName end,
-    buffCanReturn = false,
-    -- customTargetName = nil,
-    -- customHistoryFunc = nil,
-    -- groupChangeFunc = nil,
-    announceArg = 'destName',
-    -- tooltip = nil,
-    assignable = {'TANK', 'HEAL'},
     -- metadata = nil
 }
 
@@ -736,8 +738,9 @@ LoathebRotate.modes.scorpid = {
         timerAlertSoon = nil,
     }
 }
-
 end
+]]
+
 
 -- Create a backward compatibility map between old mode names and new ones
 -- And fill some attributes automatically

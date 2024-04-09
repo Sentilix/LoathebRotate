@@ -1,69 +1,78 @@
 local LoathebRotate = select(2, ...)
 
--- Enable drag & drop for all hunter frames
+-- Enable drag & drop for all healer frames
 function LoathebRotate:enableListSorting()
-    for key,hunter in pairs(LoathebRotate.hunterTable) do
-        LoathebRotate:enableHunterFrameDragging(hunter, true)
-    end
+	for key,healer in pairs(LoathebRotate.rotationTable) do
+		LoathebRotate:enableHealerFrameDragging(healer, true)
+	end
+
+	for key,healer in pairs(LoathebRotate.backupTable) do
+		LoathebRotate:enableHealerFrameDragging(healer, true)
+	end
 end
 
--- Enable or disable drag & drop for the hunter frame
-function LoathebRotate:enableHunterFrameDragging(hunter, movable)
-    hunter.movable = movable
-    hunter.frame:EnableMouse(hunter.movable or hunter.assignable)
-    hunter.frame:SetMovable(movable)
+-- Enable or disable drag & drop for the healer frame
+function LoathebRotate:enableHealerFrameDragging(healer, movable)
+    healer.movable = movable
+    healer.frame:EnableMouse(healer.movable or healer.assignable)
+    healer.frame:SetMovable(movable)
 end
 
--- configure hunter frame drag behavior
-function LoathebRotate:configureHunterFrameDrag(hunter, mainFrame)
+-- configure healer frame drag behavior
+function LoathebRotate:configureHealerFrameDrag(healer)
+	local MF = LoathebRotate.mainFrame;
 
-    hunter.frame:RegisterForDrag("LeftButton")
-    hunter.frame:SetClampedToScreen(true)
+	healer.frame:RegisterForDrag("LeftButton");
+	healer.frame:SetClampedToScreen(true);
 
-    hunter.frame.blindIconFrame:RegisterForDrag("LeftButton")
-    hunter.frame.blindIconFrame:SetClampedToScreen(true)
+	healer.frame.blindIconFrame:RegisterForDrag("LeftButton");
+	healer.frame.blindIconFrame:SetClampedToScreen(true);
 
-    hunter.frame:SetScript(
-        "OnDragStart",
-        function()
-            hunter.frame:StartMoving()
-            hunter.frame:SetFrameStrata("HIGH")
+	healer.frame:SetScript(
+		"OnDragStart",
+		function()
+			healer.frame:StartMoving()
+			healer.frame:SetFrameStrata("HIGH")
 
-            hunter.frame:SetScript(
-                "OnUpdate",
-                function ()
-                    LoathebRotate:setDropHintPosition(hunter.frame, mainFrame)
-                end
-            )
+			healer.frame:SetScript(
+				"OnUpdate",
+				function ()
+					LoathebRotate:setDropHintPosition(healer.frame, MF);
+				end
+			)
 
-            mainFrame.dropHintFrame:Show()
-            mainFrame.backupFrame:Show()
-        end
-    )
+			MF.dropHintFrame:Show()
+			MF.backupFrame:Show()
+		end
+	)
 
-    hunter.frame:SetScript(
-        "OnDragStop",
-        function()
-            hunter.frame:StopMovingOrSizing()
-            hunter.frame:SetFrameStrata(mainFrame:GetFrameStrata())
-            mainFrame.dropHintFrame:Hide()
+	healer.frame:SetScript(
+		"OnDragStop",
+		function()
+			healer.frame:StopMovingOrSizing()
+			healer.frame:SetFrameStrata(mainFrame:GetFrameStrata())
+			MF.dropHintFrame:Hide()
 
-            -- Removes the onUpdate event used for drag & drop
-            hunter.frame:SetScript("OnUpdate", nil)
+			-- Removes the onUpdate event used for drag & drop
+			healer.frame:SetScript("OnUpdate", nil)
 
-            if (#LoathebRotate.rotationTables.backup < 1) then
-                mainFrame.backupFrame:Hide()
-            end
+			if (#LoathebRotate.backupTable < 1) then
+				MF.backupFrame:Hide()
+			end
 
-            local group, position = LoathebRotate:getDropPosition(hunter.frame, mainFrame)
-            LoathebRotate:handleDrop(hunter, group, position)
-            LoathebRotate:sendSyncOrder()
-        end
-    )
+			local group, position = LoathebRotate:getDropPosition(healer.frame, MF);
+			LoathebRotate:handleDrop(healer, group, position);
+			--LoathebRotate:sendSyncOrder();
+			if position == 0 then
+				position = 1;
+			end;
+			LoathebRotate:requestMoveHealer(healer, group, position);
+		end
+	)
 end
 
-function LoathebRotate:getDragFrameHeight(hunterFrame, mainFrame)
-    return math.abs(hunterFrame:GetTop() - mainFrame.rotationFrame:GetTop())
+function LoathebRotate:getDragFrameHeight(healerFrame, mainFrame)
+    return math.abs(healerFrame:GetTop() - mainFrame.rotationFrame:GetTop())
 end
 
 -- create and initialize the drop hint frame
@@ -72,7 +81,7 @@ function LoathebRotate:createDropHintFrame(mainFrame)
     local hintFrame = CreateFrame("Frame", nil, mainFrame.rotationFrame)
 
     hintFrame:SetPoint('TOP', mainFrame.rotationFrame, 'TOP', 0, 0)
-    hintFrame:SetHeight(LoathebRotate.constants.hunterFrameHeight)
+    hintFrame:SetHeight(LoathebRotate.constants.healerFrameHeight)
     hintFrame:SetWidth(LoathebRotate.db.profile.windows[1].width - 10)
 
     hintFrame.texture = hintFrame:CreateTexture(nil, "BACKGROUND")
@@ -88,19 +97,19 @@ function LoathebRotate:createDropHintFrame(mainFrame)
 end
 
 -- Set the drop hint frame position to match dragged frame position
-function LoathebRotate:setDropHintPosition(hunterFrame, mainFrame)
+function LoathebRotate:setDropHintPosition(healerFrame, mainFrame)
 
-    local hunterFrameHeight = LoathebRotate.constants.hunterFrameHeight
-    local hunterFrameSpacing = LoathebRotate.constants.hunterFrameSpacing
+    local healerFrameHeight = LoathebRotate.constants.healerFrameHeight
+    local healerFrameSpacing = LoathebRotate.constants.healerFrameSpacing
     local hintPosition = 0
 
-    local group, position = LoathebRotate:getDropPosition(hunterFrame, mainFrame)
+    local group, position = LoathebRotate:getDropPosition(healerFrame, mainFrame)
 
     if (group == 'ROTATION') then
         if (position == 0) then
             hintPosition = -2
         else
-            hintPosition = (position) * (hunterFrameHeight + hunterFrameSpacing) - hunterFrameSpacing / 2;
+            hintPosition = (position) * (healerFrameHeight + healerFrameSpacing) - healerFrameSpacing / 2;
         end
     else
         hintPosition = mainFrame.rotationFrame:GetHeight()
@@ -108,7 +117,7 @@ function LoathebRotate:setDropHintPosition(hunterFrame, mainFrame)
         if (position == 0) then
             hintPosition = hintPosition - 2
         else
-            hintPosition = hintPosition + (position) * (hunterFrameHeight + hunterFrameSpacing) - hunterFrameSpacing / 2;
+            hintPosition = hintPosition + (position) * (healerFrameHeight + healerFrameSpacing) - healerFrameSpacing / 2;
         end
     end
 
@@ -116,52 +125,51 @@ function LoathebRotate:setDropHintPosition(hunterFrame, mainFrame)
 end
 
 -- Compute drop group and position
-function LoathebRotate:getDropPosition(hunterFrame, mainFrame)
+function LoathebRotate:getDropPosition(healerFrame, mainFrame)
 
-    local height = LoathebRotate:getDragFrameHeight(hunterFrame, mainFrame)
-    local group = 'ROTATION'
-    local position = 0
+	local height = LoathebRotate:getDragFrameHeight(healerFrame, mainFrame);
+	local group = 'ROTATION';
+	local position = 0;
 
-    local hunterFrameHeight = LoathebRotate.constants.hunterFrameHeight
-    local hunterFrameSpacing = LoathebRotate.constants.hunterFrameSpacing
+	local healerFrameHeight = LoathebRotate.constants.healerFrameHeight;
+	local healerFrameSpacing = LoathebRotate.constants.healerFrameSpacing;
 
-    -- Dragged frame is above rotation frames
-    if (hunterFrame:GetTop() > mainFrame.rotationFrame:GetTop()) then
-        height = 0
-    end
+	-- Dragged frame is above rotation frames
+	if (healerFrame:GetTop() > mainFrame.rotationFrame:GetTop()) then
+		height = 0;
+	end
 
-    position = floor(height / (hunterFrameHeight + hunterFrameSpacing))
+	position = floor(height / (healerFrameHeight + healerFrameSpacing));
 
-    -- Dragged frame is bellow rotation frame
-    if (height > mainFrame.rotationFrame:GetHeight()) then
+	-- Dragged frame is below rotation frame
+	if (height > mainFrame.rotationFrame:GetHeight()) then
+		group = 'BACKUP';
 
-        group = 'BACKUP'
+		-- Removing rotation frame size from calculation, using it's height as base hintPosition offset
+		height = height - mainFrame.rotationFrame:GetHeight();
 
-        -- Removing rotation frame size from calculation, using it's height as base hintPosition offset
-        height = height - mainFrame.rotationFrame:GetHeight()
+		if (height > mainFrame.backupFrame:GetHeight()) then
+			-- Dragged frame is below backup frame
+			position = #LoathebRotate.backupTable
+		else
+			position = floor(height / (healerFrameHeight + healerFrameSpacing))
+		end
+	end
 
-        if (height > mainFrame.backupFrame:GetHeight()) then
-            -- Dragged frame is bellow backup frame
-            position = #LoathebRotate.rotationTables.backup
-        else
-            position = floor(height / (hunterFrameHeight + hunterFrameSpacing))
-        end
-    end
-
-    return group, position
+	return group, position
 end
 
 -- Compute the table final position from the drop position
-function LoathebRotate:handleDrop(hunter, group, position)
+function LoathebRotate:handleDrop(healer, group, position)
 
-    local originTable = LoathebRotate:getHunterRotationTable(hunter)
-    local originIndex = LoathebRotate:getHunterIndex(hunter, originTable)
+	local originTable = LoathebRotate:getHealerRotationTable(healer);
+	local originIndex = LoathebRotate:getHealerIndex(healer, originTable);
 
-    local destinationTable = LoathebRotate.rotationTables.rotation
+    local destinationTable = LoathebRotate.rotationTable
     local finalPosition = 1
 
     if (group == "BACKUP") then
-        destinationTable = LoathebRotate.rotationTables.backup
+        destinationTable = LoathebRotate.backupTable
     end
 
     if (destinationTable == originTable) then
@@ -180,5 +188,5 @@ function LoathebRotate:handleDrop(hunter, group, position)
         finalPosition = position + 1
     end
 
-    LoathebRotate:moveHunter(hunter, group, finalPosition)
+    LoathebRotate:moveHealer(healer, group, finalPosition)
 end

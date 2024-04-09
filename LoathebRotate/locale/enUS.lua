@@ -194,7 +194,7 @@ L["OFFLINE_BG_DESC"] = "Background color for offline units"
 
     --- Sounds
 L["SETTING_SOUNDS"] = "Sounds"
-L["ENABLE_NEXT_TO_TRANQ_SOUND"] = "Play a sound when you are the next to shoot"
+L["ENABLE_NEXT_TO_HEAL_SOUND"] = "Play a sound when you are the next to heal"
 L["ENABLE_TRANQ_NOW_SOUND"] = "Play a sound when you have to shoot your spell"
 L["TRANQ_NOW_SOUND_CHOICE"] = "Select the sound you want to use for the 'cast now' alert"
 L["DBM_SOUND_WARNING"] = "DBM is playing the 'flag taken' sound on each frenzy, it may prevent you from earing gentle sounds from LoathebRotate. I would either suggest to pick a strong sound or disable DBM frenzy sound."
@@ -257,9 +257,7 @@ L["DIALOG_ASSIGNMENT_CHANGE_FOCUS"] = "Change Focus"
 L["UPDATE_AVAILABLE"] = "A new version is available, please update to get the latest features."
 L["BREAKING_UPDATE_AVAILABLE"] = "A new, CRITICAL update is available, you MUST update AS SOON AS possible! LoathebRotate may not work correctly between you and up-to-date players."
 
-L["VERSION_CHECK"] = "## Version check ##"
-L["VERSION_UNDETECTABLE"] = "No version detected."
-L["VERSION_YOU"] = "You"
+L["VERSION_INFO"] = "%s: version %s"
 
     --- Profiles
 L["SETTING_PROFILES"] = "Profiles"

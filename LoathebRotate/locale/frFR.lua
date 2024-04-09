@@ -186,7 +186,7 @@ L["OFFLINE_BG_DESC"] = "Couleur de fond pour les unités déconnectées"
 
     --- Sounds
 L["SETTING_SOUNDS"] = "Sons"
-L["ENABLE_NEXT_TO_TRANQ_SOUND"] = "Jouer un son lorsque vous êtes le prochain à devoir tranq"
+L["ENABLE_NEXT_TO_HEAL_SOUND"] = "Jouer un son lorsque vous êtes le prochain à devoir heal"
 L["ENABLE_TRANQ_NOW_SOUND"] = "Jouer un son au moment ou vous devez tranq"
 L["TRANQ_NOW_SOUND_CHOICE"] = "Son à jouer au moment ou vous devez tranq"
 L["DBM_SOUND_WARNING"] = "DBM joue le son de capture de drapeau à chaque frénésie, cela pourrait couvrir un son trop doux. Je suggère de choisir un son assez marquant ou de désactiver les alertes de frénésie DBM si vous choisissez un son plus doux."
@@ -249,9 +249,7 @@ L["DIALOG_ASSIGNMENT_CHANGE_FOCUS"] = "Changer le focus"
 L["UPDATE_AVAILABLE"] = "Une nouvelle version est disponible, veuillez mettre à jour pour profiter des dernières fonctionnalités."
 L["BREAKING_UPDATE_AVAILABLE"] = "Une mise à jour IMPORTANTE est disponible, vous DEVEZ mettre à jour le plus rapidement possible ! Des conflits sont possibles entre vous et les joueurs qui ont installé la version à jour de LoathebRotate."
 
-L["VERSION_CHECK"] = "## Vérification de version ##"
-L["VERSION_UNDETECTABLE"] = "Pas installé ou antérieur à 0.7.0"
-L["VERSION_YOU"] = "Vous"
+L["VERSION_INFO"] = "%s: version %s"
 
     --- Profiles
 L["SETTING_PROFILES"] = "Profils"

@@ -3,281 +3,282 @@ local L = LibStub("AceLocale-3.0"):GetLocale("LoathebRotate")
 
 -- Initialize GUI frames. Shouldn't be called more than once
 function LoathebRotate:initGui()
+	print('in initGui');
+	LoathebRotate.mainFrame = LoathebRotate:createMainFrame();
 
-    local mainFrame = LoathebRotate:createMainFrame()
-    local titleFrame = LoathebRotate:createTitleFrame(mainFrame)
-    LoathebRotate:createMainFrameButtons(titleFrame)
-    LoathebRotate:createModeFrame(mainFrame)
-    local rotationFrame = LoathebRotate:createRotationFrame(mainFrame)
-    local backupFrame = LoathebRotate:createBackupFrame(mainFrame, rotationFrame)
-    LoathebRotate:createHorizontalResizer(mainFrame, LoathebRotate.db.profile.windows[1], "LEFT", rotationFrame, backupFrame)
-    LoathebRotate:createHorizontalResizer(mainFrame, LoathebRotate.db.profile.windows[1], "RIGHT", rotationFrame, backupFrame)
+	local titleFrame = LoathebRotate:createTitleFrame(LoathebRotate.mainFrame);
+	LoathebRotate:createMainFrameButtons(titleFrame);
+	LoathebRotate:createModeFrame(LoathebRotate.mainFrame);
+	local rotationFrame = LoathebRotate:createRotationFrame(LoathebRotate.mainFrame);
+	local backupFrame = LoathebRotate:createBackupFrame(LoathebRotate.mainFrame, rotationFrame);
+	LoathebRotate:createHorizontalResizer(LoathebRotate.mainFrame, LoathebRotate.db.profile.windows[1], "LEFT", rotationFrame, backupFrame);
+	LoathebRotate:createHorizontalResizer(LoathebRotate.mainFrame, LoathebRotate.db.profile.windows[1], "RIGHT", rotationFrame, backupFrame);
 
-    local historyFrame = LoathebRotate:createHistoryFrame()
-    local historyTitleFrame = LoathebRotate:createTitleFrame(historyFrame, L['SETTING_HISTORY'])
-    LoathebRotate:createHistoryFrameButtons(historyTitleFrame)
-    local historyBackgroundFrame = LoathebRotate:createBackgroundFrame(historyFrame, LoathebRotate.constants.titleBarHeight, LoathebRotate.db.profile.history.height)
-    LoathebRotate:createTextFrame(historyBackgroundFrame)
-    LoathebRotate:createCornerResizer(historyFrame, LoathebRotate.db.profile.history)
+	local historyFrame = LoathebRotate:createHistoryFrame();
+	local historyTitleFrame = LoathebRotate:createTitleFrame(historyFrame, L['SETTING_HISTORY']);
+	LoathebRotate:createHistoryFrameButtons(historyTitleFrame);
+	local historyBackgroundFrame = LoathebRotate:createBackgroundFrame(historyFrame, LoathebRotate.constants.titleBarHeight, LoathebRotate.db.profile.history.height);
+	LoathebRotate:createTextFrame(historyBackgroundFrame);
+	LoathebRotate:createCornerResizer(historyFrame, LoathebRotate.db.profile.history);
 
-    LoathebRotate:drawHunterFrames(mainFrame)
-    LoathebRotate:createDropHintFrame(mainFrame)
+	LoathebRotate:drawHealerFrames();
+	LoathebRotate:createDropHintFrame(LoathebRotate.mainFrame);
 
-    LoathebRotate:updateDisplay()
+	LoathebRotate:updateDisplay()
 end
 
 -- Show/Hide main window based on user settings
 function LoathebRotate:updateDisplay()
-    for _, mainFrame in pairs(LoathebRotate.mainFrames) do
-        if LoathebRotate:isActive() then
-            mainFrame:Show()
-        else
-            if (LoathebRotate.db.profile.hideNotInRaid) then
-                mainFrame:Hide()
-            end
-        end
-    end
+	if LoathebRotate:isActive() then
+		LoathebRotate.mainFrame:Show()
+	else
+		if (LoathebRotate.db.profile.hideNotInRaid) then
+			LoathebRotate.mainFrame:Hide()
+		end
+	end
 end
 
--- render / re-render hunter frames to reflect table changes.
-function LoathebRotate:drawHunterFrames(mainFrame)
+-- render / re-render healer frames to reflect table changes.
+function LoathebRotate:drawHealerFrames()
+	local MF = LoathebRotate.mainFrame;
 
-    -- Different height to reduce spacing between both groups
-    mainFrame:SetHeight(LoathebRotate.constants.rotationFramesBaseHeight + LoathebRotate.constants.titleBarHeight)
-    mainFrame.rotationFrame:SetHeight(LoathebRotate.constants.rotationFramesBaseHeight)
+	-- Different height to reduce spacing between both groups
+	MF:SetHeight(LoathebRotate.constants.rotationFramesBaseHeight + LoathebRotate.constants.titleBarHeight);
+	MF.rotationFrame:SetHeight(LoathebRotate.constants.rotationFramesBaseHeight);
+	LoathebRotate:drawList(LoathebRotate.rotationTable, MF.rotationFrame);
 
-    LoathebRotate:drawList(LoathebRotate.rotationTables.rotation, mainFrame.rotationFrame, mainFrame)
 
-    if (#LoathebRotate.rotationTables.backup > 0) then
-        mainFrame:SetHeight(mainFrame:GetHeight() + LoathebRotate.constants.rotationFramesBaseHeight)
-    end
+	if (#LoathebRotate.backupTable > 0) then
+		MF:SetHeight(MF:GetHeight() + LoathebRotate.constants.rotationFramesBaseHeight);
+	end
 
-    mainFrame.backupFrame:SetHeight(LoathebRotate.constants.rotationFramesBaseHeight)
-    LoathebRotate:drawList(LoathebRotate.rotationTables.backup, mainFrame.backupFrame, mainFrame)
-
+	MF.backupFrame:SetHeight(LoathebRotate.constants.rotationFramesBaseHeight);
+	LoathebRotate:drawList(LoathebRotate.backupTable, MF.backupFrame);
 end
 
 -- Method provided for convenience, until hunters will be dedicated to a specific mainFrame
-function LoathebRotate:drawHunterFramesOfAllMainFrames()
-    for _, mainFrame in pairs(LoathebRotate.mainFrames) do
-        LoathebRotate:drawHunterFrames(mainFrame)
-    end
-end
+--function LoathebRotate:drawHunterFramesOfAllMainFrames()
+--    for _, mainFrame in pairs(LoathebRotate.mainFrames) do
+--        LoathebRotate:drawHunterFrames(mainFrame)
+--    end
+--end
 
--- Handle the render of a single hunter frames group
-function LoathebRotate:drawList(hunterList, parentFrame, mainFrame)
+-- Handle the render of a single healer frames group
+function LoathebRotate:drawList(healerList, parentFrame)
+	local MF = LoathebRotate.mainFrame;
+    local index = 1;
+    local healerFrameHeight = LoathebRotate.constants.healerFrameHeight;
+    local healerFrameSpacing = LoathebRotate.constants.healerFrameSpacing;
 
-    local index = 1
-    local hunterFrameHeight = LoathebRotate.constants.hunterFrameHeight
-    local hunterFrameSpacing = LoathebRotate.constants.hunterFrameSpacing
-
-    if (#hunterList < 1 and parentFrame == mainFrame.backupFrame) then
-        parentFrame:Hide()
+    if (#healerList < 1 and parentFrame == MF.backupFrame) then
+        parentFrame:Hide();
     else
-        parentFrame:Show()
+        parentFrame:Show();
     end
 
-    for key,hunter in pairs(hunterList) do
+    for key,healer in pairs(healerList) do
+		-- Using existing frame if possible
+		if healer.frame then
+			healer.frame:SetParent(parentFrame);
+		else
+			LoathebRotate:createHealerFrame(healer, parentFrame);
+		end
 
-        -- Using existing frame if possible
-        if (hunter.frame == nil) then
-            LoathebRotate:createHunterFrame(hunter, parentFrame, mainFrame)
-        else
-            hunter.frame:SetParent(parentFrame)
-        end
+		healer.frame:ClearAllPoints();
+		healer.frame:SetPoint('LEFT', 10, 0);
+		healer.frame:SetPoint('RIGHT', -10, 0);
 
-        hunter.frame:ClearAllPoints()
-        hunter.frame:SetPoint('LEFT', 10, 0)
-        hunter.frame:SetPoint('RIGHT', -10, 0)
+		-- Setting top margin
+		local marginTop = 10 + (index - 1) * (healerFrameHeight + healerFrameSpacing);
+		healer.frame:SetPoint('TOP', parentFrame, 'TOP', 0, -marginTop);
 
-        -- Setting top margin
-        local marginTop = 10 + (index - 1) * (hunterFrameHeight + hunterFrameSpacing)
-        hunter.frame:SetPoint('TOP', parentFrame, 'TOP', 0, -marginTop)
+		-- Handling parent windows height increase
+		if (index == 1) then
+			parentFrame:SetHeight(parentFrame:GetHeight() + healerFrameHeight);
+			mainFrame:SetHeight(mainFrame:GetHeight() + healerFrameHeight);
+		else
+			parentFrame:SetHeight(parentFrame:GetHeight() + healerFrameHeight + healerFrameSpacing);
+			mainFrame:SetHeight(mainFrame:GetHeight() + healerFrameHeight + healerFrameSpacing);
+		end
 
-        -- Handling parent windows height increase
-        if (index == 1) then
-            parentFrame:SetHeight(parentFrame:GetHeight() + hunterFrameHeight)
-            mainFrame:SetHeight(mainFrame:GetHeight() + hunterFrameHeight)
-        else
-            parentFrame:SetHeight(parentFrame:GetHeight() + hunterFrameHeight + hunterFrameSpacing)
-            mainFrame:SetHeight(mainFrame:GetHeight() + hunterFrameHeight + hunterFrameSpacing)
-        end
+		-- SetColor
+		LoathebRotate:setHealerFrameColor(healer);
 
-        -- SetColor
-        LoathebRotate:setHunterFrameColor(hunter)
+		healer.frame:Show();
+		healer.frame.healer = healer;
 
-        hunter.frame:Show()
-        hunter.frame.hunter = hunter
-
-        index = index + 1
-    end
-end
-
--- Hide the hunter frame
-function LoathebRotate:hideHunter(hunter)
-    if (hunter.frame ~= nil) then
-        hunter.frame:Hide()
+		index = index + 1;
     end
 end
 
--- Refresh a single hunter frame
-function LoathebRotate:refreshHunterFrame(hunter)
-    LoathebRotate:setHunterFrameColor(hunter)
-    LoathebRotate:setHunterName(hunter)
-    LoathebRotate:updateBlindIcon(hunter)
+-- Hide the healer frame
+function LoathebRotate:hideHealer(healer)
+    if (healer.frame ~= nil) then
+        healer.frame:Hide()
+    end
+end
+
+-- Refresh a single healer frame
+function LoathebRotate:refreshHealerFrame(healer)
+	LoathebRotate:setHealerFrameColor(healer);
+	LoathebRotate:setHealerName(healer);
+	LoathebRotate:updateBlindIcon(healer);
 end
 
 -- Toggle blind icon display based on addonVersion
-function LoathebRotate:updateBlindIcon(hunter)
+function LoathebRotate:updateBlindIcon(healer)
     if (
         not LoathebRotate.db.profile.showBlindIcon or
-        hunter.addonVersion ~= nil or
-        hunter.name == UnitName('player') or
-        not LoathebRotate:isHunterOnline(hunter)
+        healer.addonVersion ~= nil or
+        healer.name == UnitName('player') or
+        not LoathebRotate:isHealerOnline(healer)
     ) then
-        hunter.frame.blindIconFrame:Hide()
+        healer.frame.blindIconFrame:Hide()
     else
-        hunter.frame.blindIconFrame:Show()
+        healer.frame.blindIconFrame:Show()
     end
 end
 
 -- Refresh all blind icons
 function LoathebRotate:refreshBlindIcons()
-    for _, hunter in pairs(LoathebRotate.hunterTable) do
-        LoathebRotate:updateBlindIcon(hunter)
-    end
+	for _, healer in pairs(LoathebRotate.rotationTable) do
+		LoathebRotate:updateBlindIcon(healer);
+	end
+
+	for _, healer in pairs(LoathebRotate.backupTable) do
+		LoathebRotate:updateBlindIcon(healer);
+	end
 end
 
--- Set the hunter frame color regarding it's status
-function LoathebRotate:setHunterFrameColor(hunter)
+-- Set the healer frame color regarding it's status
+function LoathebRotate:setHealerFrameColor(healer)
+	local color = LoathebRotate:getUserDefinedColor('neutral');
 
-    local color = LoathebRotate:getUserDefinedColor('neutral')
+	if (not LoathebRotate:isHealerOnline(healer)) then
+		color = LoathebRotate:getUserDefinedColor('offline');
+	elseif (not LoathebRotate:isHealerAlive(healer)) then
+		color = LoathebRotate:getUserDefinedColor('dead');
+	elseif (healer.nextHeal) then
+		color = LoathebRotate:getUserDefinedColor('active');
+	end
 
-    if (not LoathebRotate:isHunterOnline(hunter)) then
-        color = LoathebRotate:getUserDefinedColor('offline')
-    elseif (not LoathebRotate:isHunterAlive(hunter)) then
-        color = LoathebRotate:getUserDefinedColor('dead')
-    elseif (hunter.nextTranq) then
-        color = LoathebRotate:getUserDefinedColor('active')
-    end
-
-    hunter.frame.texture:SetVertexColor(color:GetRGB())
+	healer.frame.texture:SetVertexColor(color:GetRGB());
 end
 
--- Set the hunter's name regarding its class and group index
-function LoathebRotate:setHunterName(hunter)
+-- Set the healer's name regarding its class and group index
+function LoathebRotate:setHealerName(healer)
+	local currentText = healer.frame.text:GetText() or '';
+	local currentFont, _, currentOutline = healer.frame.text:GetFont();
 
-    local currentText = hunter.frame.text:GetText()
-    local currentFont, _, currentOutline = hunter.frame.text:GetFont()
+	local newText = healer.name;
+	local newFont = LoathebRotate:getPlayerNameFont();
+	local newOutline = LoathebRotate.db.profile.useNameOutline and "OUTLINE" or "";
+	local hasClassColor = false;
+	local shadowOpacity = 1.0;
 
-    local newText = hunter.name
-    local newFont = LoathebRotate:getPlayerNameFont()
-    local newOutline = LoathebRotate.db.profile.useNameOutline and "OUTLINE" or ""
-    local hasClassColor = false
-    local shadowOpacity = 1.0
+	if (LoathebRotate.db.profile.useClassColor) then
+		local _, _classFilename, _ = UnitClass(healer.name)
+		if (_classFilename) then
+			if _classFilename == "PRIEST" then
+				shadowOpacity = 1.0;
+			elseif _classFilename == "PALADIN" then
+				shadowOpacity = 0.8;
+			elseif _classFilename == "SHAMAN" then
+				shadowOpacity = 0.4;
+			else
+				shadowOpacity = 0.6;
+			end
 
-    if (LoathebRotate.db.profile.useClassColor) then
-        local _, _classFilename, _ = UnitClass(hunter.name)
-        if (_classFilename) then
-            if _classFilename == "PRIEST" then
-                shadowOpacity = 1.0
-            elseif _classFilename == "ROGUE" or _classFilename == "PALADIN" then
-                shadowOpacity = 0.8
-            elseif _classFilename == "SHAMAN" then
-                shadowOpacity = 0.4
-            else
-                shadowOpacity = 0.6
-            end
-            local _, _, _, _classColorHex = GetClassColor(_classFilename)
-            newText = WrapTextInColorCode(hunter.name, _classColorHex)
-            hasClassColor = true
-        end
-    end
+			local _, _, _, _classColorHex = GetClassColor(_classFilename);
+			newText = WrapTextInColorCode(newText, _classColorHex);
+			hasClassColor = true;
+		end
+	end
 
-    if (LoathebRotate.db.profile.prependIndex) then
-        local rowIndex = 0
-        local rotationTable = LoathebRotate.rotationTables.rotation
-        for index = 1, #rotationTable, 1 do
-            local candidate = rotationTable[index]
-            if (candidate ~= nil and candidate.name == hunter.name) then
-                rowIndex = index
-                break
-            end
-        end
-        if (rowIndex > 0) then
-            local indexText = string.format("%s.", rowIndex)
-            local color = LoathebRotate:getUserDefinedColor('indexPrefix')
-            newText = color:WrapTextInColorCode(indexText)..newText
-        end
-    end
+	if (LoathebRotate.db.profile.prependIndex) then
+		local rowIndex = 0;
+		local rotationTable = LoathebRotate.rotationTable;
+		for index = 1, #rotationTable, 1 do
+			local candidate = rotationTable[index];
+			if (candidate ~= nil and candidate.name == healer.name) then
+				rowIndex = index;
+				break
+			end
+		end
 
-    local targetName, buffMode, assignedName, assignedAt
-    if LoathebRotate.db.profile.appendTarget then
-        if hunter.targetGUID then
-            targetName, buffMode = self:getHunterTarget(hunter)
-            if targetName == "" then targetName = nil end
-        end
-        assignedName, assignedAt = self:getHunterAssignment(hunter)
-        if assignedName == "" then assignedName = nil end
-    end
-    local showTarget
-    if assignedName then
-        showTarget = true
-    elseif not targetName then
-        showTarget = false
-    else
-        showTarget = buffMode and (buffMode == 'not_a_buff' or buffMode == 'has_buff' or not LoathebRotate.db.profile.appendTargetBuffOnly)
-    end
-    hunter.showingTarget = showTarget
+		if (rowIndex > 0) then
+			local indexText = string.format("%s.", rowIndex);
+			local color = LoathebRotate:getUserDefinedColor('indexPrefix');
+			newText = color:WrapTextInColorCode(indexText)..newText;
+		end
+	end
 
-    if (LoathebRotate.db.profile.appendGroup and hunter.subgroup) then
-        if not showTarget or not LoathebRotate.db.profile.appendTargetNoGroup then -- Do not append the group if the target name hides the group for clarity
-            local groupText = string.format(LoathebRotate.db.profile.groupSuffix, hunter.subgroup)
-            local color = LoathebRotate:getUserDefinedColor('groupSuffix')
-            newText = newText.." "..color:WrapTextInColorCode(groupText)
-        end
-    end
+    --local targetName, buffMode, assignedName, assignedAt
+    --if LoathebRotate.db.profile.appendTarget then
+    --    if healer.targetGUID then
+    --        targetName, buffMode = self:getHealerTarget(healer)
+    --        if targetName == "" then targetName = nil end
+    --    end
+    --    assignedName, assignedAt = self:getHunterAssignment(hunter)
+    --    if assignedName == "" then assignedName = nil end
+    --end
+    --local showTarget
+    --if assignedName then
+    --    showTarget = true
+    --elseif not targetName then
+    --    showTarget = false
+    --else
+    --    showTarget = buffMode and (buffMode == 'not_a_buff' or buffMode == 'has_buff' or not LoathebRotate.db.profile.appendTargetBuffOnly)
+    --end
+    --hunter.showingTarget = showTarget
 
-    if showTarget then
-        local targetColorName
-        local blameAssignment
-        if assignedName and targetName and (assignedName ~= targetName) then
-            blameAssignment = hunter.cooldownStarted and assignedAt and assignedAt < hunter.cooldownStarted
-        end
-        if     blameAssignment then                 targetColorName = 'flashyRed'
-        elseif assignedName and not targetName then targetColorName = 'white'
-        elseif buffMode == 'buff_expired' then      targetColorName = assignedName and 'white' or 'darkGray'
-        elseif buffMode == 'buff_lost' then         targetColorName = 'lightRed'
-        elseif buffMode == 'has_buff' then          targetColorName = 'white'
-        else                                        targetColorName = 'white'
-        end
-        local mode = self:getMode()
-        if assignedName and (not targetName or buffMode == 'buff_expired') then
-            targetName = assignedName
-        elseif type(mode.customTargetName) == 'function' then
-            targetName = mode.customTargetName(mode, hunter, targetName)
-        end
-        if targetName then
-            newText = newText..LoathebRotate.colors['white']:WrapTextInColorCode(" > ")
-            newText = newText..LoathebRotate.colors[targetColorName]:WrapTextInColorCode(targetName)
-        end
-    end
+    --if (LoathebRotate.db.profile.appendGroup and hunter.subgroup) then
+    --    if not showTarget or not LoathebRotate.db.profile.appendTargetNoGroup then -- Do not append the group if the target name hides the group for clarity
+    --        local groupText = string.format(LoathebRotate.db.profile.groupSuffix, hunter.subgroup)
+    --        local color = LoathebRotate:getUserDefinedColor('groupSuffix')
+    --        newText = newText.." "..color:WrapTextInColorCode(groupText)
+    --    end
+    --end
 
-    if (newFont ~= currentFont or newOutline ~= currentOutline) then
-        hunter.frame.text:SetFont(newFont, 12, newOutline)
-    end
-    if (newText ~= currentText) then
-        hunter.frame.text:SetText(newText)
-    end
-    if (newText ~= currentText or newOutline ~= currentOutline) then
-        if (LoathebRotate.db.profile.useNameOutline) then
-            hunter.frame.text:SetShadowOffset(0, 0)
-        else
-            hunter.frame.text:SetShadowColor(0, 0, 0, shadowOpacity)
-            hunter.frame.text:SetShadowOffset(1, -1)
-        end
-    end
+    --if showTarget then
+    --    local targetColorName
+    --    local blameAssignment
+    --    if assignedName and targetName and (assignedName ~= targetName) then
+    --        blameAssignment = hunter.cooldownStarted and assignedAt and assignedAt < hunter.cooldownStarted
+    --    end
+    --    if     blameAssignment then                 targetColorName = 'flashyRed'
+    --    elseif assignedName and not targetName then targetColorName = 'white'
+    --    elseif buffMode == 'buff_expired' then      targetColorName = assignedName and 'white' or 'darkGray'
+    --    elseif buffMode == 'buff_lost' then         targetColorName = 'lightRed'
+    --    elseif buffMode == 'has_buff' then          targetColorName = 'white'
+    --    else                                        targetColorName = 'white'
+    --    end
+    --    local mode = self:getMode()
+    --    if assignedName and (not targetName or buffMode == 'buff_expired') then
+    --        targetName = assignedName
+    --    elseif type(mode.customTargetName) == 'function' then
+    --        targetName = mode.customTargetName(mode, hunter, targetName)
+    --    end
+    --    if targetName then
+    --        newText = newText..LoathebRotate.colors['white']:WrapTextInColorCode(" > ")
+    --        newText = newText..LoathebRotate.colors[targetColorName]:WrapTextInColorCode(targetName)
+    --    end
+    --end
 
+	if (newFont ~= currentFont or newOutline ~= currentOutline) then
+		healer.frame.text:SetFont(newFont, 12, newOutline);
+	end
+	if (newText ~= currentText) then
+		healer.frame.text:SetText(newText);
+	end
+	if (newText ~= currentText or newOutline ~= currentOutline) then
+		if (LoathebRotate.db.profile.useNameOutline) then
+			healer.frame.text:SetShadowOffset(0, 0);
+		else
+			healer.frame.text:SetShadowColor(0, 0, 0, shadowOpacity);
+			healer.frame.text:SetShadowOffset(1, -1);
+		end
+	end
 end
 
 function LoathebRotate:startHunterCooldown(hunter, endTimeOfCooldown, endTimeOfEffect, targetGUID, buffName)

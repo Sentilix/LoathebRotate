@@ -403,13 +403,13 @@ function LoathebRotate:CreateConfig()
                 type = "group",
                 order = 5,
                 args = {
-                    enableNextToTranqSound = {
-                        name = L["ENABLE_NEXT_TO_TRANQ_SOUND"],
-                        desc = L["ENABLE_NEXT_TO_TRANQ_SOUND"],
-                        type = "toggle",
-                        order = 1,
-                        width = "full",
-                    },
+					enableNextToHealSound = {
+						name = L["ENABLE_NEXT_TO_HEAL_SOUND"],
+						desc = L["ENABLE_NEXT_TO_HEAL_SOUND"],
+						type = "toggle",
+						order = 1,
+						width = "full",
+					},
                     enableTranqNowSound = {
                         name = L["ENABLE_TRANQ_NOW_SOUND"],
                         desc = L["ENABLE_TRANQ_NOW_SOUND"],

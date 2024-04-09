@@ -186,7 +186,7 @@ L["OFFLINE_BG_DESC"] = "Background color for offline units"
 
     --- Sounds
 L["SETTING_SOUNDS"] = "Звуки"
-L["ENABLE_NEXT_TO_TRANQ_SOUND"] = "Проигрывать звук когда подходит ваша очередь"
+L["ENABLE_NEXT_TO_HEAL_SOUND"] = "Проигрывать звук когда подходит ваша очередь"
 L["ENABLE_TRANQ_NOW_SOUND"] = "Проигрывать звук когда пора использовать Усмиряющий выстрел"
 L["TRANQ_NOW_SOUND_CHOICE"] = "Выберите звук для Усмиряющего выстрела"
 L["DBM_SOUND_WARNING"] = "DBM проигрывает звук для каждого Бешенства, из-за этого вы можете не устышать оповещение от LoathebRotate. Рекомендуется выбрать хорошо различимый звук для LoathebRotate или отключить оповещение от DBM"
@@ -249,9 +249,7 @@ L["DIALOG_ASSIGNMENT_CHANGE_FOCUS"] = "Change Focus"
 L["UPDATE_AVAILABLE"] = "A new version is available, please update to get the latest features."
 L["BREAKING_UPDATE_AVAILABLE"] = "A new, CRITICAL update is available, you MUST update AS SOON AS possible! LoathebRotate may not work correctly between you and up-to-date players."
 
-L["VERSION_CHECK"] = "## Version check ##"
-L["VERSION_UNDETECTABLE"] = "Not installed or older than 0.7.0"
-L["VERSION_YOU"] = "Бы"
+L["VERSION_INFO"] = "%s: version %s"
 
     --- Profiles
 L["SETTING_PROFILES"] = "Профили"
