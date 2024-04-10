@@ -184,11 +184,12 @@ LoathebRotate.modes.loatheb = {
     -- alertWhenFail = nil,
     -- spell = nil,
     auraTest = function(self, spellId, spellName)
-        return LoathebRotate.testMode and spellId == 11196	-- 11196 is the spell ID of "Recently Bandaged"
-            or spellId == 29184 -- priest debuff
-            or spellId == 29195 -- druid debuff
-            or spellId == 29197 -- paladin debuff
-            or spellId == 29199 -- shaman debuff
+        return false
+			--or (LoathebRotate.testMode and spellId == 11196)		-- 11196 is the spell ID of "Recently Bandaged"
+			or spellId == 29184 -- priest debuff
+			or spellId == 29195 -- druid debuff
+			or spellId == 29197 -- paladin debuff
+			or spellId == 29199 -- shaman debuff
     end,
     -- customCombatlogFunc = nil,
     -- effectDuration = nil,

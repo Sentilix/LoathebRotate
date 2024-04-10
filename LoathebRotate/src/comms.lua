@@ -17,9 +17,16 @@ end
 function LoathebRotate.OnCommReceived(prefix, data, channel, sender)
     if not UnitIsUnit('player', sender) then
 
-		local success, message = AceSerializer:Deserialize(data)
+		local success, message = AceSerializer:Deserialize(data);
+		if (success) then	
+			local myFullName = LoathebRotate:getPlayerAndRealm('player');
+			local senderFullName = LoathebRotate:getFullPlayerName(message.to);
 
-		if (success) then
+			if (message.to ~= '' and myFullName ~= senderFullName) then
+				--	Skip if message is not for me!
+				return;
+			end;
+
 			--	Version:
 			if (message.type == LoathebRotate.constants.commsTypes.versionRequest) then
 				LoathebRotate:receiveVersionRequest(prefix, message, channel, sender)
@@ -144,7 +151,6 @@ end;
 
 function LoathebRotate:requestMoveHealer(healer, group, position)
 	local message = LoathebRotate:createAddonMessage(LoathebRotate.constants.commsTypes.moveHealerRequest);
-
 	message['GUID'] = healer.GUID;
 	message['group'] = group;
 	message['position'] = position;

@@ -32,14 +32,15 @@ function LoathebRotate:removeHealer(deletedHealer)
 
 	for key, healer in pairs(LoathebRotate.rotationTable) do
 		if (healer.name == deletedHealer.name) then
-			--LoathebRotate:hideHealer(healer)
-			table.remove(LoathebRotate.rotationTable, key)
+			LoathebRotate:hideHealer(healer);
+			table.remove(LoathebRotate.rotationTable, key);
 			break;
 		end
 	end
 
 	for key, healer in pairs(LoathebRotate.backupTable) do
 		if (healer.name == deletedHealer.name) then
+			LoathebRotate:hideHealer(healer);
 			table.remove(LoathebRotate.backupTable, key)
 			break
 		end
@@ -546,13 +547,21 @@ end
 -- Update the status of one healer
 function LoathebRotate:updateUnitStatus(name)
 	local GUID = UnitGUID(name);
-    local healer = LoathebRotate:getHealer(GUID);
+	local healer = LoathebRotate:getHealer(GUID);
 
 	if not healer then
 		healer = LoathebRotate:registerHealer(name)
 	end;
 end
 
+--	Force an update every second. This endures disconnects etc. are shown correct.
+function LoathebRotate:updateRaidStatusTask()
+	LoathebRotate:updateRaidStatus();
+
+	C_Timer.After(1, function()
+		LoathebRotate:updateRaidStatusTask()
+	end);
+end;
 
 -- Iterate over all raid members to find healers and update their status
 function LoathebRotate:updateRaidStatus()

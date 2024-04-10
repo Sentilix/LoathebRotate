@@ -1,5 +1,11 @@
 ## LoathebRotate Changelog
 
+#### v0.2.1 (2024-04-10)
+- Fixed LUA error in history.
+- Fixed message delivery, including cross-realm handling.
+- Fixed disconnect status not being shown correctly.
+- Fixed loading/joining raid nut being updated correctly.
+
 #### v0.2.0 (2024-04-10)
 - All modes except Loatheb removed
 - Synchronization rewritten

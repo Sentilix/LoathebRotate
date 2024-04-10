@@ -6,27 +6,30 @@ eventFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
 eventFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
-eventFrame:RegisterEvent("UNIT_AURA")
+--eventFrame:RegisterEvent("UNIT_AURA")
 
 eventFrame:SetScript(
-    "OnEvent",
-    function(self, event, ...)
-        if (event == "PLAYER_LOGIN") then
-            LoathebRotate:init()
-            self:UnregisterEvent("PLAYER_LOGIN")
+	"OnEvent",
+	function(self, event, ...)
+		if (event == "PLAYER_LOGIN") then
+			LoathebRotate:init()
+			self:UnregisterEvent("PLAYER_LOGIN")
 
-            -- Delayed raid update because raid data is unreliable at PLAYER_LOGIN
-            C_Timer.After(5, function()
-                LoathebRotate:updateRaidStatus()
-            end)
-        else
-            LoathebRotate[event](LoathebRotate, ...)
-        end
-    end
+			-- Delayed raid update because raid data is unreliable at PLAYER_LOGIN
+			--C_Timer.After(5, function()
+			--	LoathebRotate:updateRaidStatus()
+			--end);
+
+			C_Timer.After(5, function()
+				LoathebRotate:updateRaidStatusTask()
+			end);
+		else
+			LoathebRotate[event](LoathebRotate, ...)
+		end
+	end
 )
 
 function LoathebRotate:COMBAT_LOG_EVENT_UNFILTERED()
-
     -- @todo : Improve this with register / unregister event to save ressources
     -- Avoid parsing combat log when not able to use it
     if not self.raidInitialized then return end
@@ -61,46 +64,52 @@ function LoathebRotate:COMBAT_LOG_EVENT_UNFILTERED()
     end
 
     -- Analyze suffix
-    if     event:sub(-7) == "_DAMAGE"
-        or event == "DAMAGE_SPLIT"
-        or event == "DAMAGE_SHIELD" then
-        amount, overkill, school, resisted, blocked, absorbed, critical, glancing, crushing, isOffHand = select(suffixOffset, CombatLogGetCurrentEventInfo())
-    elseif event:sub(-7) == "_MISSED" then
-        missType, isOffHand, amountMissed, critical = select(suffixOffset, CombatLogGetCurrentEventInfo())
-    elseif event:sub(-5) == "_HEAL" then
-        amount, overhealing, absorbed, critical = select(suffixOffset, CombatLogGetCurrentEventInfo())
-    elseif event:sub(-14) == "_HEAL_ABSORBED" then
-        extraGUID, extraName, extraFlags, extraRaidFlags, extraSpellID, extraSpellName, extraSchool, amount = select(suffixOffset, CombatLogGetCurrentEventInfo())
-    elseif event:sub(-9) == "_ENERGIZE" then
-        amount, overEnergize, powerType, alternatePowerType = select(suffixOffset, CombatLogGetCurrentEventInfo())
-    elseif event:sub(-6) == "_DRAIN"
-        or event:sub(-6) == "_LEECH" then
-        amount, powerType, extraAmount = select(suffixOffset, CombatLogGetCurrentEventInfo())
-    elseif event:sub(-10) == "_INTERRUPT"
-        or event:sub(-14) == "_DISPEL_FAILED" then
-        extraSpellID, extraSpellName, extraSchool = select(suffixOffset, CombatLogGetCurrentEventInfo())
-    elseif event:sub(-7) == "_DISPEL"
-        or event:sub(-7) == "_STOLEN"
-        or event:sub(-18) == "_AURA_BROKEN_SPELL" then
-        extraSpellID, extraSpellName, extraSchool, auraType = select(suffixOffset, CombatLogGetCurrentEventInfo())
-    elseif event:sub(-14) == "_EXTRA_ATTACKS" then
-        amount = select(suffixOffset, CombatLogGetCurrentEventInfo())
-    elseif event:sub(-13) == "_AURA_APPLIED"
-        or event:sub(-13) == "_AURA_REMOVED"
-        or event:sub(-18) == "_AURA_APPLIED_DOSE"
-        or event:sub(-18) == "_AURA_REMOVED_DOSE"
-        or event:sub(-13) == "_AURA_REFRESH" then
-        auraType, amount = select(suffixOffset, CombatLogGetCurrentEventInfo())
-    elseif event:sub(-12) == "_AURA_BROKEN" then
-        auraType = select(suffixOffset, CombatLogGetCurrentEventInfo())
-    elseif event:sub(-12) == "_CAST_FAILED" then
-        failedType = select(suffixOffset, CombatLogGetCurrentEventInfo())
-    end
+
+	if event:sub(-5) == "_HEAL" then
+		amount, overhealing, absorbed, critical = select(suffixOffset, CombatLogGetCurrentEventInfo())
+	end;
+
+    --if event:sub(-7) == "_DAMAGE"
+    --    or event == "DAMAGE_SPLIT"
+    --    or event == "DAMAGE_SHIELD" then
+    --    amount, overkill, school, resisted, blocked, absorbed, critical, glancing, crushing, isOffHand = select(suffixOffset, CombatLogGetCurrentEventInfo())
+    --elseif event:sub(-7) == "_MISSED" then
+    --    missType, isOffHand, amountMissed, critical = select(suffixOffset, CombatLogGetCurrentEventInfo())
+    --elseif event:sub(-5) == "_HEAL" then
+    --    amount, overhealing, absorbed, critical = select(suffixOffset, CombatLogGetCurrentEventInfo())
+    --elseif event:sub(-14) == "_HEAL_ABSORBED" then
+    --    extraGUID, extraName, extraFlags, extraRaidFlags, extraSpellID, extraSpellName, extraSchool, amount = select(suffixOffset, CombatLogGetCurrentEventInfo())
+    --elseif event:sub(-9) == "_ENERGIZE" then
+    --    amount, overEnergize, powerType, alternatePowerType = select(suffixOffset, CombatLogGetCurrentEventInfo())
+    --elseif event:sub(-6) == "_DRAIN"
+    --    or event:sub(-6) == "_LEECH" then
+    --    amount, powerType, extraAmount = select(suffixOffset, CombatLogGetCurrentEventInfo())
+    --elseif event:sub(-10) == "_INTERRUPT"
+    --    or event:sub(-14) == "_DISPEL_FAILED" then
+    --    extraSpellID, extraSpellName, extraSchool = select(suffixOffset, CombatLogGetCurrentEventInfo())
+    --elseif event:sub(-7) == "_DISPEL"
+    --    or event:sub(-7) == "_STOLEN"
+    --    or event:sub(-18) == "_AURA_BROKEN_SPELL" then
+    --    extraSpellID, extraSpellName, extraSchool, auraType = select(suffixOffset, CombatLogGetCurrentEventInfo())
+    --elseif event:sub(-14) == "_EXTRA_ATTACKS" then
+    --    amount = select(suffixOffset, CombatLogGetCurrentEventInfo())
+    --elseif event:sub(-13) == "_AURA_APPLIED"
+    --    or event:sub(-13) == "_AURA_REMOVED"
+    --    or event:sub(-18) == "_AURA_APPLIED_DOSE"
+    --    or event:sub(-18) == "_AURA_REMOVED_DOSE"
+    --    or event:sub(-13) == "_AURA_REFRESH" then
+    --    auraType, amount = select(suffixOffset, CombatLogGetCurrentEventInfo())
+    --elseif event:sub(-12) == "_AURA_BROKEN" then
+    --    auraType = select(suffixOffset, CombatLogGetCurrentEventInfo())
+    --elseif event:sub(-12) == "_CAST_FAILED" then
+    --    failedType = select(suffixOffset, CombatLogGetCurrentEventInfo())
+    --end
 
     -- Special events
-    if event == "ENCHANT_APPLIED" or event == "ENCHANT_REMOVED" then
-        spellName, itemID, itemName = select(prefixOffset, CombatLogGetCurrentEventInfo())
-    elseif event == "UNIT_DIED" or event == "UNIT_DESTROYED" or event == "UNIT_DISSIPATES" then
+    --if event == "ENCHANT_APPLIED" or event == "ENCHANT_REMOVED" then
+    --    spellName, itemID, itemName = select(prefixOffset, CombatLogGetCurrentEventInfo())
+    --else
+	if event == "UNIT_DIED" or event == "UNIT_DESTROYED" or event == "UNIT_DISSIPATES" then
         recapID, unconsciousOnDeath = select(prefixOffset, CombatLogGetCurrentEventInfo())
     end
 
@@ -130,8 +139,10 @@ end
 
 -- Raid group has changed
 function LoathebRotate:GROUP_ROSTER_UPDATE()
-    self:updateRaidStatus()
+	self:updateRaidStatus();
+	LoathebRotate:refreshHealerFrame(healer);
 end
+
 
 -- Player left combat
 function LoathebRotate:PLAYER_REGEN_ENABLED()
@@ -148,65 +159,65 @@ function LoathebRotate:PLAYER_TARGET_CHANGED()
     end
 end
 
--- One of the auras of the unitID has changed (gained, faded)
-function LoathebRotate:UNIT_AURA(unitID, isEcho)
-    if not self:isActive() then return end
+---- One of the auras of the unitID has changed (gained, faded)
+--function LoathebRotate:UNIT_AURA(unitID, isEcho)
+--    if not self:isActive() then return end
 
-    local mode = self:getMode()
+--    local mode = self:getMode()
 
-    -- UNIT_AURA is used exclusively by aura-based modes
-    if not mode or type(mode.auraTest) ~= 'function' then return end
+--    -- UNIT_AURA is used exclusively by aura-based modes
+--    if not mode or type(mode.auraTest) ~= 'function' then return end
 
-    -- Whether the unit really got the debuff or not, it's pointless if the unit is not tracked (e.g. not a healer)
-    local healer = self:getHealer(UnitGUID(unitID))
-    if not hunter then return end
-    local previousExpirationTime = healer.expirationTime
+--    -- Whether the unit really got the debuff or not, it's pointless if the unit is not tracked (e.g. not a healer)
+--    local healer = self:getHealer(UnitGUID(unitID))
+--    if not hunter then return end
+--    local previousExpirationTime = healer.expirationTime
 
-    if not isEcho then
-        -- Try again in 1 second to secure lags between UNIT_AURA and the actual aura applied
-        -- But set the isEcho flag so that the repetition will not be repeated over and over
-        C_Timer.After(1, function()
-            self:UNIT_AURA(unitID, true)
-        end)
-    end
+--    if not isEcho then
+--        -- Try again in 1 second to secure lags between UNIT_AURA and the actual aura applied
+--        -- But set the isEcho flag so that the repetition will not be repeated over and over
+--        C_Timer.After(1, function()
+--            self:UNIT_AURA(unitID, true)
+--        end)
+--    end
 
-    -- Loop through the unit's debuffs to check if s/he is affected by a specific debuff, e.g. Loatheb's Corrupted Mind
-    local maxNbDebuffs = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) and 16 or 40
-    for i=1,maxNbDebuffs do
-        local name, _,_,_,_, endTime ,_,_,_, spellId = UnitDebuff(unitID, i)
-        if not name then
-            -- name is not defined, meaning there is no other debuff left
-            break
-        end
-        -- At this point:
-        -- name and spellId correspond to the debuff at index i
-        -- endTime knows exactly when the debuff ends if unitID is the player, i.e. if UnitIsUnit(unitID, "player")
-        -- endTime is set to 0 is unitID is not the player ; this is a known limitation in WoW Classic that makes buff/debuff duration much harder to track
-        if mode:auraTest(spellId, name) then
-            if (endTime and endTime > 0 and previousExpirationTime == endTime) then
-                -- If the endTime matches exactly the previous expirationTime of the status bar, it means we are duplicating an already registered rotation
-                return
-            end
-            if (previousExpirationTime and GetTime() < previousExpirationTime) then
-                -- If the current time is before the previously seen expirationTime for this player, it means the debuff was already registered
-                return
-            end
-            -- Send the rotate order, this is the most important part of the addon
-            self:rotate(healer, false, nil, endTime)
-            self:addHistoryDebuffMessage(healer, healer.name, name, mode)
-            if (UnitIsUnit(unitID, "player")) then
-                -- Announce to the channel selected in the addon options, but announce only ourselves
-                self:sendAuraAnnounceMessage(mode, name, healer)
-            end
-            return
-        end
-    end
+--    -- Loop through the unit's debuffs to check if s/he is affected by a specific debuff, e.g. Loatheb's Corrupted Mind
+--    local maxNbDebuffs = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) and 16 or 40
+--    for i=1,maxNbDebuffs do
+--        local name, _,_,_,_, endTime ,_,_,_, spellId = UnitDebuff(unitID, i)
+--        if not name then
+--            -- name is not defined, meaning there is no other debuff left
+--            break
+--        end
+--        -- At this point:
+--        -- name and spellId correspond to the debuff at index i
+--        -- endTime knows exactly when the debuff ends if unitID is the player, i.e. if UnitIsUnit(unitID, "player")
+--        -- endTime is set to 0 is unitID is not the player ; this is a known limitation in WoW Classic that makes buff/debuff duration much harder to track
+--        if mode:auraTest(spellId, name) then
+--            if (endTime and endTime > 0 and previousExpirationTime == endTime) then
+--                -- If the endTime matches exactly the previous expirationTime of the status bar, it means we are duplicating an already registered rotation
+--                return
+--            end
+--            if (previousExpirationTime and GetTime() < previousExpirationTime) then
+--                -- If the current time is before the previously seen expirationTime for this player, it means the debuff was already registered
+--                return
+--            end
+--            -- Send the rotate order, this is the most important part of the addon
+--            self:rotate(healer, false, nil, endTime)
+--            self:addHistoryDebuffMessage(healer, healer.name, name, mode)
+--            if (UnitIsUnit(unitID, "player")) then
+--                -- Announce to the channel selected in the addon options, but announce only ourselves
+--                self:sendAuraAnnounceMessage(mode, name, healer)
+--            end
+--            return
+--        end
+--    end
 
-    -- The unit is not affected by Corrupted Mind: reset its expiration time
-    if previousExpirationTime and previousExpirationTime > 0 then
-        healer.expirationTime = 0
-    end
-end
+--    -- The unit is not affected by Corrupted Mind: reset its expiration time
+--    if previousExpirationTime and previousExpirationTime > 0 then
+--        healer.expirationTime = 0
+--    end
+--end
 
 -- Register single unit events for a given healer
 function LoathebRotate:registerUnitEvents(healer)

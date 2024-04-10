@@ -14,12 +14,20 @@ end
 
 -- Checks if a healer is alive
 function LoathebRotate:isHealerAlive(healer)
-    return not UnitIsDeadOrGhost(healer.name)
+	if healer then
+	    return not UnitIsDeadOrGhost(healer.name)
+	end;
+
+	return false;
 end
 
 -- Checks if a healer is offline
 function LoathebRotate:isHealerOnline(healer)
-    return UnitIsConnected(healer.name)
+	if healer then
+		return UnitIsConnected(healer.name)
+	end;
+
+	return false;
 end
 
 -- Checks if a healer is online and alive
@@ -272,3 +280,43 @@ function LoathebRotate:printAll(object, name, level)
 		print(string.format("%s}", indent));
 	end;
 end;
+
+
+function LoathebRotate:getFullPlayerName(playerName)
+	local _, _, name, realm = string.find(playerName, "([^-]*)-(%S*)");
+	
+	if realm then
+		if string.find(realm, " ") then
+			local _, _, name1, name2 = string.find(realm, "([a-zA-Z]*) ([a-zA-Z]*)");
+			realm = name1 .. name2; 
+		end;
+	else
+		name = playerName;
+		realm = self:getMyRealm();
+	end;
+
+	return name .."-".. realm;
+end;
+
+function LoathebRotate:getPlayerAndRealm(unitid)
+	local playername, realmname = UnitName(unitid);
+	if not playername then return nil; end;
+
+	if not realmname or realmname == "" then
+		realmname = self:getMyRealm();
+	end;
+
+	return playername.."-".. realmname;
+end;
+
+function LoathebRotate:getMyRealm()
+	local realmname = GetRealmName();
+	
+	if string.find(realmname, " ") then
+		local _, _, name1, name2 = string.find(realmname, "([a-zA-Z]*) ([a-zA-Z]*)");
+		realmname = name1 .. name2; 
+	end;
+
+	return realmname;
+end;
+

@@ -5,16 +5,16 @@ local L = LibStub("AceLocale-3.0"):GetLocale("LoathebRotate")
 -- @param message   Message to add
 -- @param mode      The mode object corresponding to the message
 function LoathebRotate:addHistoryMessage(msg, mode)
-    local modeName = WrapTextInColorCode(L["FILTER_SHOW_"..mode.modeNameUpper], self:getModeColor(mode))
-    local timestamp = GetTime()
-    local hrTime = date("%H:%M:%S", GetServerTime())
-    LoathebRotate.historyFrame.backgroundFrame.textFrame:AddMessage(string.format("%s [%s] %s", modeName, hrTime, msg))
-    table.insert(LoathebRotate.db.profile.history.messages, {
-        mode = mode.modeName,
-        timestamp = timestamp,
-        humanReadableTime = hrTime,
-        text = msg
-    })
+	local modeName = WrapTextInColorCode(L["FILTER_SHOW_"..mode.modeNameUpper], LoathebRotate.modes.loatheb.color)
+	local timestamp = GetTime()
+	local hrTime = date("%H:%M:%S", GetServerTime())
+	LoathebRotate.historyFrame.backgroundFrame.textFrame:AddMessage(string.format("%s [%s] %s", modeName, hrTime, msg))
+	table.insert(LoathebRotate.db.profile.history.messages, {
+		mode = mode.modeName,
+		timestamp = timestamp,
+		humanReadableTime = hrTime,
+		text = msg
+	})
 end
 
 -- Add one message for a spell cast
@@ -57,7 +57,7 @@ function LoathebRotate:loadHistory()
     for _, item in pairs(LoathebRotate.db.profile.history.messages) do
         local mode = LoathebRotate:getMode(item.mode)
         if mode then
-            local modeName = WrapTextInColorCode(L["FILTER_SHOW_"..mode.modeNameUpper], self:getModeColor(mode))
+            local modeName = WrapTextInColorCode(L["FILTER_SHOW_"..mode.modeNameUpper], LoathebRotate.modes.loatheb.color)
             local hrTime = item.humanReadableTime
             local msg = item.text
             LoathebRotate.historyFrame.backgroundFrame.textFrame:AddMessage(string.format("%s [%s] %s", modeName, hrTime, msg))

@@ -117,6 +117,17 @@ function LoathebRotate:hideHealer(healer)
     end
 end
 
+--  Refresh all healer frames
+function LoathebRotate:refreshHealerFrames()
+	for _, healer in pairs(LoathebRotate.rotationTable) do
+		LoathebRotate:refreshHealerFrame(healer);
+	end
+
+	for _, healer in pairs(LoathebRotate.backupTable) do
+		LoathebRotate:refreshHealerFrame(healer);
+	end
+end
+
 -- Refresh a single healer frame
 function LoathebRotate:refreshHealerFrame(healer)
 	LoathebRotate:setHealerFrameColor(healer);
