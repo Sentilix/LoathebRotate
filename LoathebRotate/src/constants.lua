@@ -59,12 +59,13 @@ LoathebRotate.constants = {
     ['commsTypes'] = {
 		['versionRequest']		= 'tx-version',
 		['versionResponse']		= 'rx-version',
-		['moveHealerRequest']		= 'tx-move',
-		['moveHealerResponse']		= 'rx-move',		-- Dummy: There is no response to a tx-move
-
-        ['tranqshotDone'] = 'tranqshot-done',
-        ['syncOrder'] = 'sync-order',
-        ['syncRequest'] = 'sync-request',
+		['moveHealerRequest']	= 'tx-move',
+		['moveHealerResponse']	= 'rx-move',		-- Dummy: There is no response to a tx-move
+		['syncRequest']			= 'tx-sync',
+		['syncResponse']		= 'rx-sync',
+		['syncBeginRequest']	= 'tx-sync-begin',
+		['resetRequest']		= 'tx-reset',
+		['resetResponse']		= 'rx-reset',		-- Dummy: There is no response to a tx-reset
     },
 
     ['printPrefix'] = 'LoathebRotate - ',
@@ -92,22 +93,22 @@ LoathebRotate.constants = {
         ['flagtaken'] = 'Flag Taken (DBM)',
     },
 
-    ['tranqableBosses'] = {
-        [11982] = 19451, -- Magmadar (MC)
-        [11981] = 23342, -- Flamegor (BWL)
-        [14020] = 23342, -- Chromaggus (BWL)
-        [15509] = 19451, -- Huhuran (AQ40)
-        [15932] = 19451, -- Gluth (Naxx)
-    },
+--    ['tranqableBosses'] = {
+--        [11982] = 19451, -- Magmadar (MC)
+--        [11981] = 23342, -- Flamegor (BWL)
+--        [14020] = 23342, -- Chromaggus (BWL)
+--        [15509] = 19451, -- Huhuran (AQ40)
+--        [15932] = 19451, -- Gluth (Naxx)
+--    },
 
-    ['scorpidableBosses'] = {
-        -- 17842, -- Azgalor (Hyjal)
-        17968, -- Archimonde (Hyjal)
-        22898, -- Supremus (BT)
-        22871, -- Teron Gorefiend (BT)
-        22948, -- Gurtogg Bloodboil (BT)
-        22947, -- Mother Shahraz (BT)
-        22949, -- Gathios The Shatterer (BT)
-        22917, -- Illidan Stormrage (BT)
-    },
+--    ['scorpidableBosses'] = {
+--        -- 17842, -- Azgalor (Hyjal)
+--        17968, -- Archimonde (Hyjal)
+--        22898, -- Supremus (BT)
+--        22871, -- Teron Gorefiend (BT)
+--        22948, -- Gurtogg Bloodboil (BT)
+--        22947, -- Mother Shahraz (BT)
+--        22949, -- Gathios The Shatterer (BT)
+--        22917, -- Illidan Stormrage (BT)
+--    },
 }

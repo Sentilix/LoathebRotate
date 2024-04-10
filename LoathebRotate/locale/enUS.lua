@@ -14,7 +14,7 @@ L["BUTTON_CLEAR_HISTORY"] = "Clear"
     -- Settings
 L["SETTING_GENERAL"] = "General"
 L["SETTING_GENERAL_REPORT"] = "Please report any issue at"
-L["SETTING_GENERAL_DESC"] = "Work in Progress: LoathebRotate is an extension of TranqRotate. While TranqRotate is dedicated to hunter tranqshots, LoathebRotate adds \"modes\" for other classes or spells."
+L["SETTING_GENERAL_DESC"] = "Work in Progress: LoathebRotate is an extension of TranqRotate but without the dedicated hunter tranqshots."
 
 L["LOCK_WINDOW"] = "Lock window"
 L["LOCK_WINDOW_DESC"] = "Lock window"
@@ -22,19 +22,19 @@ L["HIDE_WINDOW_NOT_IN_RAID"] = "Hide the window when not in a raid"
 L["HIDE_WINDOW_NOT_IN_RAID_DESC"] = "Hide the window when not in a raid"
 L["DO_NOT_SHOW_WHEN_JOINING_RAID"] = "Do not show window when joining a raid"
 L["DO_NOT_SHOW_WHEN_JOINING_RAID_DESC"] = "Check this if you don't want the window to show up each time you join a raid"
-L["SHOW_WHEN_TARGETING_BOSS"] = "Show window when you target a tranq-able boss"
-L["SHOW_WHEN_TARGETING_BOSS_DESC"] = "Show window when you target a tranq-able boss"
+L["SHOW_WHEN_TARGETING_BOSS"] = "Show window when you target Loatheb"
+L["SHOW_WHEN_TARGETING_BOSS_DESC"] = "Show window when you target the Loatheb boss"
 L["WINDOW_LOCKED"] = "LoathebRotate: Window locked"
 L["WINDOW_UNLOCKED"] = "LoathebRotate: Window unlocked"
 
-L["TEST_MODE_HEADER"] = "Test mode"
-L["ENABLE_ARCANE_SHOT_TESTING"] = "Toggle testing mode"
-L["ENABLE_ARCANE_SHOT_TESTING_DESC"] =
-        "While testing mode is enabled, arcane shot will be registered as a tranqshot\n" ..
-        "Testing mode will last 60 minutes unless you toggle it off\n" ..
-        "For Loatheb, testing consists in using the Recently Bandaged as the healer debuff"
-L["ARCANE_SHOT_TESTING_ENABLED"] = "Arcane shot testing mode enabled for 60 minutes"
-L["ARCANE_SHOT_TESTING_DISABLED"] = "Arcane shot testing mode disabled"
+--L["TEST_MODE_HEADER"] = "Test mode"
+--L["ENABLE_ARCANE_SHOT_TESTING"] = "Toggle testing mode"
+--L["ENABLE_ARCANE_SHOT_TESTING_DESC"] =
+--        "While testing mode is enabled, arcane shot will be registered as a tranqshot\n" ..
+--        "Testing mode will last 60 minutes unless you toggle it off\n" ..
+--        "For Loatheb, testing consists in using the Recently Bandaged as the healer debuff"
+--L["ARCANE_SHOT_TESTING_ENABLED"] = "Arcane shot testing mode enabled for 60 minutes"
+--L["ARCANE_SHOT_TESTING_DISABLED"] = "Arcane shot testing mode disabled"
 
     --- Announces
 L["SETTING_ANNOUNCES"] = "Announces"

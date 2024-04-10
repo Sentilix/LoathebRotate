@@ -231,13 +231,13 @@ function LoathebRotate:createMainFrameButtons(baseFrame)
             tooltip = L["BUTTON_SETTINGS"],
         },
         {
-            texture = 'Interface/Buttons/UI-RefreshButton',
-            callback = function()
-                    LoathebRotate:updateRaidStatus()
-                    LoathebRotate:resetRotation()
-                    LoathebRotate:sendSyncOrderRequest()
-                end,
-            tooltip = L["BUTTON_RESET_ROTATION"],
+			texture = 'Interface/Buttons/UI-RefreshButton',
+			callback = function()
+				LoathebRotate:updateRaidStatus();
+				LoathebRotate:resetRotation();
+				LoathebRotate:requestResetRotation();
+			end,
+			tooltip = L["BUTTON_RESET_ROTATION"],
         },
         {
             texture = 'Interface/Buttons/UI-GuildButton-MOTD-Up',
@@ -391,15 +391,19 @@ function LoathebRotate:createModeFrame(baseFrame)
 
     baseFrame.modeFrame = modeFrame
     baseFrame.modeFrames = {}
-    local commonModeWidth = LoathebRotate.db.profile.windows[1].width/3
-    local modeIndex = 0
-    for modeName, mode in pairs(LoathebRotate.modes) do
-        LoathebRotate:createSingleModeFrame(baseFrame, modeName, L["FILTER_SHOW_"..mode.modeNameUpper], modeIndex*commonModeWidth, (modeIndex+1)*commonModeWidth, LoathebRotate.db.profile.currentMode == modeName)
-        modeIndex = modeIndex+1
-    end
-    LoathebRotate:applyModeFrameSettings(baseFrame)
+    local commonModeWidth = LoathebRotate.db.profile.windows[1].width/3;
 
-    return modeFrame
+    --local modeIndex = 0
+    --for modeName, mode in pairs(LoathebRotate.modes) do
+    --    LoathebRotate:createSingleModeFrame(baseFrame, modeName, L["FILTER_SHOW_"..mode.modeNameUpper], modeIndex*commonModeWidth, (modeIndex+1)*commonModeWidth, true)
+    --    modeIndex = modeIndex+1
+    --end
+
+	local mode = LoathebRotate:getMode();
+    LoathebRotate:createSingleModeFrame(baseFrame, 'Loatheb', L["FILTER_SHOW_"..mode.modeNameUpper], commonModeWidth, 2*commonModeWidth, true);
+    LoathebRotate:applyModeFrameSettings(baseFrame);
+
+    return modeFrame;
 end
 
 -- Create single mode button
@@ -447,70 +451,45 @@ end
 
 -- Setup mode frame appearance, based on user-defined settings
 function LoathebRotate:applyModeFrameSettings(mainFrame, width)
-    local modeFrameMapping = {}
-    for modeName, mode in pairs(LoathebRotate.modes) do
-        table.insert(modeFrameMapping, {
-            modeName = modeName,
-            visibilityFlag = modeName.."ModeButton",
-            textVariable = modeName.."ModeText",
-        })
-    end
+--    local modeFrameMapping = {}
 
-    -- First, count how many buttons should be visible
-    local nbButtonsVisible = 0
-    for _, mapping in ipairs(modeFrameMapping) do
-        local isVisible = LoathebRotate.db.profile[mapping.visibilityFlag]
-        if (isVisible) then nbButtonsVisible = nbButtonsVisible+1 end
-    end
+    --for modeName, mode in pairs(LoathebRotate.modes) do
+    --    table.insert(modeFrameMapping, {
+    --        modeName = modeName,
+    --        visibilityFlag = modeName.."ModeButton",
+    --        textVariable = modeName.."ModeText",
+    --    })
+    --end
 
-    local modeFrameText = mainFrame.modeFrame and mainFrame.modeFrame.text
-    if (nbButtonsVisible == 0) then
-        -- Special case: no buttons visible
-        if (not modeFrameText) then
-            modeFrameText = mainFrame.modeFrame:CreateFontString(nil, "ARTWORK")
-            modeFrameText:SetPoint("LEFT",2,0)
-            modeFrameText:SetTextColor(1,1,1,1)
-            modeFrameText:SetFont("Fonts\\ARIALN.ttf", 11, "")
-            modeFrameText:SetShadowColor(0,0,0,0.5)
-            modeFrameText:SetShadowOffset(1,-1)
-            mainFrame.modeFrame.text = modeFrameText
-        else
-            modeFrameText:Show()
-        end
-        modeFrameText:SetText(L["NO_MODE_AVAILABLE"])
-        for _, mapping in ipairs(modeFrameMapping) do
-            local modeName = mapping.modeName
-            mainFrame.modeFrames[modeName]:Hide()
-        end
-        return
-    end
+	local modeName = 'Loatheb';
+	local visibilityFlag = "LoathebModeButton";
+	local textVariable = "LoathebModeText";
 
-    if modeFrameText then
-        modeFrameText:Hide()
-    end
+	local modeFrameText = mainFrame.modeFrame and mainFrame.modeFrame.text
+	if modeFrameText then
+		modeFrameText:Hide()
+	end
 
-    local commonModeWidth = (width or LoathebRotate.db.profile.windows[1].width)/nbButtonsVisible
-    local minX = 0
-    local maxX = commonModeWidth
-    local fontSize = LoathebRotate.constants.modeFrameFontSize
-    local margin = LoathebRotate.constants.modeFrameMargin
+	local commonModeWidth = (width or LoathebRotate.db.profile.windows[1].width);
+	local minX = 0
+	local maxX = commonModeWidth
+	local fontSize = LoathebRotate.constants.modeFrameFontSize;
+	local margin = LoathebRotate.constants.modeFrameMargin;
 
-    for _, mapping in ipairs(modeFrameMapping) do
-        local modeName = mapping.modeName
-        local isVisible = LoathebRotate.db.profile[mapping.visibilityFlag]
-        local mode = mainFrame.modeFrames[modeName]
-        if (isVisible) then
-            mode:Show()
-            local text = LoathebRotate.db.profile[mapping.textVariable]
-            mode.text:SetText(text)
-            mode:SetPoint('TOPLEFT', minX+margin, -(LoathebRotate.constants.modeBarHeight-2*margin-fontSize)/2)
-            mode:SetWidth(maxX-minX-2*margin)
-            minX = maxX
-            maxX = maxX + commonModeWidth
-        else
-            mode:Hide()
-        end
-    end
+	local isVisible = LoathebRotate.db.profile[visibilityFlag];
+	local mode = mainFrame.modeFrames[modeName];
+    if (isVisible) then
+		mode:Show()
+		local text = LoathebRotate.db.profile[textVariable];
+		print('Test='..text);
+		mode.text:SetText(text);
+		mode:SetPoint('TOPLEFT', minX+margin, -(LoathebRotate.constants.modeBarHeight-2*margin-fontSize)/2);
+		mode:SetWidth(maxX-minX-2*margin);
+		minX = maxX;
+		maxX = maxX + commonModeWidth;
+	else
+		mode:Hide()
+	end
 end
 
 -- Create background frame

@@ -79,13 +79,13 @@ function LoathebRotate:CreateConfig()
                 order = 1,
                 args = {
 					descriptionText = {
-						name = "LoathebRotate " .. LoathebRotate.version .. " by Vinny-Illidan, based on the TranqRotate code by Slivo-Sulfuron\n",
+						name = "LoathebRotate " .. LoathebRotate.version .. " by Mimma-PyrewoodVillage.\nAddon is based on SilentRotate by Vinny-Illidan and TranqRotate by Slivo-Sulfuron\n",
 						type = "description",
 						width = "full",
 						order = 1,
 					},
 					repoLink = {
-						name = L['SETTING_GENERAL_REPORT'] .. " https://github.com/ennvina/LoathebRotate\n",
+						name = L['SETTING_GENERAL_REPORT'] .. " https://github.com/sentilix/LoathebRotate\n",
 						type = "description",
 						width = "full",
 						order = 2,
@@ -138,29 +138,29 @@ function LoathebRotate:CreateConfig()
                         order = 9,
                         width = "full",
                     },
-                    testHeader = {
-                        name = L["TEST_MODE_HEADER"],
-                        type = "header",
-                        order = 20,
-                    },
-                    ToggleArcaneShotTestingDesc = {
-                        name = L['ENABLE_ARCANE_SHOT_TESTING_DESC'],
-                        type = "description",
-                        width = "full",
-                        order = 21,
-                    },
-                    spacer12 = {
-                        name = ' ',
-                        type = "description",
-                        width = "full",
-                        order = 22,
-                    },
-                    ToggleArcaneShotTesting = {
-                        name = L["ENABLE_ARCANE_SHOT_TESTING"],
-                        type = "execute",
-                        order = 23,
-                        func = function() LoathebRotate.toggleArcaneShotTesting() end
-                    },
+                    --testHeader = {
+                    --    name = L["TEST_MODE_HEADER"],
+                    --    type = "header",
+                    --    order = 20,
+                    --},
+                    --ToggleArcaneShotTestingDesc = {
+                    --    name = L['ENABLE_ARCANE_SHOT_TESTING_DESC'],
+                    --    type = "description",
+                    --    width = "full",
+                    --    order = 21,
+                    --},
+                    --spacer12 = {
+                    --    name = ' ',
+                    --    type = "description",
+                    --    width = "full",
+                    --    order = 22,
+                    --},
+                    --ToggleArcaneShotTesting = {
+                    --    name = L["ENABLE_ARCANE_SHOT_TESTING"],
+                    --    type = "execute",
+                    --    order = 23,
+                    --    func = function() LoathebRotate.toggleArcaneShotTesting() end
+                    --},
                     showBlindIcon = {
                         name = L["DISPLAY_BLIND_ICON"],
                         desc = L["DISPLAY_BLIND_ICON_DESC"],
@@ -178,14 +178,14 @@ function LoathebRotate:CreateConfig()
                     },
                 }
             },
-            modes = {
-                name = L['SETTING_MODES'],
-                type = "group",
-                order = 2,
-                args = {
-                    -- Will be filled by the end of this script
-                }
-            },
+            --modes = {
+            --    name = L['SETTING_MODES'],
+            --    type = "group",
+            --    order = 2,
+            --    args = {
+            --        -- Will be filled by the end of this script
+            --    }
+            --},
             announces = {
                 name = L['SETTING_ANNOUNCES'],
                 type = "group",
@@ -464,91 +464,90 @@ function LoathebRotate:CreateConfig()
         }
 	}
 
-    local modeBaseIndex = 10
-    local announceIndex = 30
-    for modeName, mode in pairs(LoathebRotate.modes) do
-        options.args.modes.args[modeName.."ModeHeader"] = {
-            type = "header",
-            order = modeBaseIndex,
-        }
-        options.args.modes.args[modeName.."ModeButton"] = {
-            name = L[mode.modeNameUpper.."_MODE_FULL_NAME"],
-            desc = string.format(L["MODE_BUTTON_DESC"], L[mode.modeNameUpper.."_MODE_FULL_NAME"])..".\n"..L[mode.modeNameUpper.."_MODE_DETAILED_DESC"],
-            type = "toggle",
-            order = modeBaseIndex+1,
-            width = "full",
-            set = setForMode,
-        }
-        options.args.modes.args[modeName.."ModeText"] = {
-            name = L["MODE_LABEL"],
-            desc = string.format(L["MODE_LABEL_DESC"], L[mode.modeNameUpper.."_MODE_FULL_NAME"]),
-            type = "input",
-            order = modeBaseIndex+2,
-            width = "half",
-            set = setForMode,
-            hidden = function() return not LoathebRotate.db.profile[modeName.."ModeButton"] end,
-        }
-        if (mode.assignable) then
-            options.args.modes.args[modeName.."TrackFocus"] = {
-                name = L["MODE_TRACK_FOCUS"],
-                desc = L["MODE_TRACK_FOCUS_DESC"],
-                type = "toggle",
-                order = modeBaseIndex+3,
-                width = "full",
-                set = setForMode,
-            }
-        end
-        options.args.modes.args[modeName.."ModeInvisible"] = {
-            name = LoathebRotate.colors.lightRed:WrapTextInColorCode(L["MODE_INVISIBLE"]),
-            type = "description",
-            fontSize = "medium",
-            width = "full",
-            order = modeBaseIndex+4,
-            hidden = function() return LoathebRotate.db.profile[modeName.."ModeButton"] or LoathebRotate.db.profile.currentMode ~= modeName end,
-        }
-        modeBaseIndex = modeBaseIndex+10
+--    local modeBaseIndex = 10
+--    local announceIndex = 30
+--    for modeName, mode in pairs(LoathebRotate.modes) do
+--        options.args.modes.args[modeName.."ModeHeader"] = {
+--            type = "header",
+--            order = modeBaseIndex,
+--        }
+--        options.args.modes.args[modeName.."ModeButton"] = {
+--            name = L[mode.modeNameUpper.."_MODE_FULL_NAME"],
+--            desc = string.format(L["MODE_BUTTON_DESC"], L[mode.modeNameUpper.."_MODE_FULL_NAME"])..".\n"..L[mode.modeNameUpper.."_MODE_DETAILED_DESC"],
+--            type = "toggle",
+--            order = modeBaseIndex+1,
+--            width = "full",
+--            set = setForMode,
+--        }
+--        options.args.modes.args[modeName.."ModeText"] = {
+--            name = L["MODE_LABEL"],
+--            desc = string.format(L["MODE_LABEL_DESC"], L[mode.modeNameUpper.."_MODE_FULL_NAME"]),
+--            type = "input",
+--            order = modeBaseIndex+2,
+--            width = "half",
+--            set = setForMode,
+--            hidden = function() return not LoathebRotate.db.profile[modeName.."ModeButton"] end,
+--        }
+--        if (mode.assignable) then
+--            options.args.modes.args[modeName.."TrackFocus"] = {
+--                name = L["MODE_TRACK_FOCUS"],
+--                desc = L["MODE_TRACK_FOCUS_DESC"],
+--                type = "toggle",
+--                order = modeBaseIndex+3,
+--                width = "full",
+--                set = setForMode,
+--            }
+--        end
+--        options.args.modes.args[modeName.."ModeInvisible"] = {
+--            name = LoathebRotate.colors.lightRed:WrapTextInColorCode(L["MODE_INVISIBLE"]),
+--            type = "description",
+--            fontSize = "medium",
+--            width = "full",
+--            order = modeBaseIndex+4,
+--            hidden = function() return LoathebRotate.db.profile[modeName.."ModeButton"] or LoathebRotate.db.profile.currentMode ~= modeName end,
+--        }
+--        modeBaseIndex = modeBaseIndex+10
 
-        if (mode.canFail) then
-            options.args.announces.args["announce"..mode.modeNameFirstUpper.."SuccessMessage"] = {
-                name = string.format(L["SUCCESS_MESSAGE_LABEL"], L[mode.modeNameUpper.."_MODE_FULL_NAME"]),
-                type = "input",
-                order = announceIndex,
-                width = "full",
-            }
-            announceIndex = announceIndex+1
-            options.args.announces.args["announce"..mode.modeNameFirstUpper.."FailMessage"] = {
-                name = string.format(L["FAIL_MESSAGE_LABEL"], L[mode.modeNameUpper.."_MODE_FULL_NAME"]),
-                type = "input",
-                order = announceIndex,
-                width = "full",
-            }
-            announceIndex = announceIndex+1
-            if (mode.alertWhenFail) then
-                options.args.announces.args["announce"..mode.modeNameFirstUpper.."ReactMessage"] = {
-                    name = string.format(L["REACT_MESSAGE_LABEL"], L[mode.modeNameUpper.."_MODE_FULL_NAME"]),
-                    type = "input",
-                    order = announceIndex,
-                    width = "full",
-                }
-                announceIndex = announceIndex+1
-            end
-        else
-            options.args.announces.args["announce"..mode.modeNameFirstUpper.."Message"] = {
-                name = string.format(L["NEUTRAL_MESSAGE_LABEL"], L[mode.modeNameUpper.."_MODE_FULL_NAME"]),
-                type = "input",
-                order = announceIndex,
-                width = "full",
-            }
-            announceIndex = announceIndex+1
-        end
-
-    end
+--        if (mode.canFail) then
+--            options.args.announces.args["announce"..mode.modeNameFirstUpper.."SuccessMessage"] = {
+--                name = string.format(L["SUCCESS_MESSAGE_LABEL"], L[mode.modeNameUpper.."_MODE_FULL_NAME"]),
+--                type = "input",
+--                order = announceIndex,
+--                width = "full",
+--            }
+--            announceIndex = announceIndex+1
+--            options.args.announces.args["announce"..mode.modeNameFirstUpper.."FailMessage"] = {
+--                name = string.format(L["FAIL_MESSAGE_LABEL"], L[mode.modeNameUpper.."_MODE_FULL_NAME"]),
+--                type = "input",
+--                order = announceIndex,
+--                width = "full",
+--            }
+--            announceIndex = announceIndex+1
+--            if (mode.alertWhenFail) then
+--                options.args.announces.args["announce"..mode.modeNameFirstUpper.."ReactMessage"] = {
+--                    name = string.format(L["REACT_MESSAGE_LABEL"], L[mode.modeNameUpper.."_MODE_FULL_NAME"]),
+--                    type = "input",
+--                    order = announceIndex,
+--                    width = "full",
+--                }
+--                announceIndex = announceIndex+1
+--            end
+--        else
+--            options.args.announces.args["announce"..mode.modeNameFirstUpper.."Message"] = {
+--                name = string.format(L["NEUTRAL_MESSAGE_LABEL"], L[mode.modeNameUpper.."_MODE_FULL_NAME"]),
+--                type = "input",
+--                order = announceIndex,
+--                width = "full",
+--            }
+--            announceIndex = announceIndex+1
+--        end
+--    end
 
     AceConfigRegistry:RegisterOptionsTable(Addon, options, true)
 	options.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
 
     AceConfigDialog:AddToBlizOptions(Addon, nil, nil, "general")
-    AceConfigDialog:AddToBlizOptions(Addon, L['SETTING_MODES'], Addon, "modes")
+--    AceConfigDialog:AddToBlizOptions(Addon, L['SETTING_MODES'], Addon, "modes")
     AceConfigDialog:AddToBlizOptions(Addon, L['SETTING_ANNOUNCES'], Addon, "announces")
     AceConfigDialog:AddToBlizOptions(Addon, L["SETTING_NAMES"], Addon, "names")
     AceConfigDialog:AddToBlizOptions(Addon, L["SETTING_SOUNDS"], Addon, "sounds")

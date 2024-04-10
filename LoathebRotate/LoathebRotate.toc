@@ -1,5 +1,5 @@
 ## Interface: 11502
-## Title: LoathebRotate |cff88aaff0.1.0|r
+## Title: LoathebRotate |cff88aaff0.2.0|r
 ## Notes: Track Loatheb healing rotation in raid
 ## Author: Mimma@PyrewoodVillage, based on SilentRotate by Vinny
 ## Version: 0.2.0
@@ -21,10 +21,6 @@ libs\AceLocale-3.0\AceLocale-3.0.xml
 #@end-no-lib-strip@
 
 locale\enUS.lua
-locale\frFR.lua
-locale\zhCN.lua
-locale\zhTW.lua
-locale\ruRU.lua
 
 src\loathebRotate.lua
 src\events.lua

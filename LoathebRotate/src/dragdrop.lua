@@ -62,11 +62,6 @@ function LoathebRotate:configureHealerFrameDrag(healer)
 
 			local group, position = LoathebRotate:getDropPosition(healer.frame, MF);
 			LoathebRotate:handleDrop(healer, group, position);
-			--LoathebRotate:sendSyncOrder();
-			if position == 0 then
-				position = 1;
-			end;
-			LoathebRotate:requestMoveHealer(healer, group, position);
 		end
 	)
 end
@@ -174,19 +169,20 @@ function LoathebRotate:handleDrop(healer, group, position)
 
     if (destinationTable == originTable) then
 
-        if (position == originIndex or position == originIndex - 1 ) then
-            finalPosition = originIndex
-        else
-            if (position > originIndex) then
-                finalPosition = position
-            else
-                finalPosition = position + 1
-            end
-        end
+		if (position == originIndex or position == originIndex - 1 ) then
+			finalPosition = originIndex;
+		else
+			if (position > originIndex) then
+				finalPosition = position;
+			else
+				finalPosition = position + 1;
+			end
+		end
 
-    else
-        finalPosition = position + 1
-    end
+	else
+		finalPosition = position + 1;
+	end
 
-    LoathebRotate:moveHealer(healer, group, finalPosition)
+	LoathebRotate:moveHealer(healer, group, finalPosition);
+	LoathebRotate:requestMoveHealer(healer, group, finalPosition);
 end

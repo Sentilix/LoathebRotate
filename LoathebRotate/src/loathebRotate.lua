@@ -34,6 +34,8 @@ function LoathebRotate:init()
 
 	LoathebRotate:initComms()
 
+	LoathebRotate:requestSync();
+
 	LoathebRotate:printMessage(L['LOADED_MESSAGE'])
 end
 
@@ -174,24 +176,19 @@ end
 
 -- Sends rotation setup to raid channel
 function LoathebRotate:printRotationSetup()
+	if LoathebRotate:isActive() then
+		LoathebRotate:sendRotationMessage('--- ' .. LoathebRotate.constants.printPrefix .. LoathebRotate:getBroadcastHeaderText() .. ' ---')
 
-    if LoathebRotate:isActive() then
-        LoathebRotate:sendRotationMessage('--- ' .. LoathebRotate.constants.printPrefix .. LoathebRotate:getBroadcastHeaderText() .. ' ---')
+		if (LoathebRotate.db.profile.useMultilineRotationReport) then
+			LoathebRotate:printMultilineRotation(LoathebRotate.rotationTable);
+		else
+			LoathebRotate:sendRotationMessage(LoathebRotate:buildGroupMessage(L['BROADCAST_ROTATION_PREFIX'] .. ' : ', LoathebRotate.rotationTable));
+		end
 
-        if (LoathebRotate.db.profile.useMultilineRotationReport) then
-            LoathebRotate:printMultilineRotation(LoathebRotate.rotationTables.rotation)
-        else
-            LoathebRotate:sendRotationMessage(
-                LoathebRotate:buildGroupMessage(L['BROADCAST_ROTATION_PREFIX'] .. ' : ', LoathebRotate.rotationTables.rotation)
-            )
-        end
-
-        if (#LoathebRotate.rotationTables.backup > 0) then
-            LoathebRotate:sendRotationMessage(
-                LoathebRotate:buildGroupMessage(L['BROADCAST_BACKUP_PREFIX'] .. ' : ', LoathebRotate.rotationTables.backup)
-            )
-        end
-    end
+		if (#LoathebRotate.backupTable > 0) then
+			LoathebRotate:sendRotationMessage(LoathebRotate:buildGroupMessage(L['BROADCAST_BACKUP_PREFIX'] .. ' : ', LoathebRotate.backupTable));
+		end
+	end
 end
 
 -- Print the main rotation on multiple lines

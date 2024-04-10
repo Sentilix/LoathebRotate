@@ -142,7 +142,7 @@ end
 -- Player changed its main target
 function LoathebRotate:PLAYER_TARGET_CHANGED()
     if (LoathebRotate.db.profile.showWindowWhenTargetingBoss) then
-        if (self:isTranqableBoss(UnitGUID("target")) and not UnitIsDead('target')) then
+        if (self:isLoathebBoss(UnitGUID("target")) and not UnitIsDead('target')) then
             self.mainFrame:Show()
         end
     end

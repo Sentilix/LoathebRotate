@@ -11,8 +11,6 @@ function LoathebRotate:registerHealer(name)
 
 	local healer = LoathebRotate:getHealer(name);
 	if not healer then
-		print(string.format('Adding %s = %s', name, class));
-
 		healer = {};
 		healer.name = name;
 		healer.class = UnitClass(name);
@@ -634,8 +632,6 @@ function LoathebRotate:moveHealer(healer, group, position)
 
 	-- Defining finalIndex
 	if (sameTableMove) then
-		print('SameTable, position='..position);
-
 		if (position > #destinationTable or position == 0) then
 			if (#destinationTable > 0) then
 				finalIndex = #destinationTable

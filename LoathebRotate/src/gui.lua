@@ -3,7 +3,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale("LoathebRotate")
 
 -- Initialize GUI frames. Shouldn't be called more than once
 function LoathebRotate:initGui()
-	print('in initGui');
 	LoathebRotate.mainFrame = LoathebRotate:createMainFrame();
 
 	local titleFrame = LoathebRotate:createTitleFrame(LoathebRotate.mainFrame);

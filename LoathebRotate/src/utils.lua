@@ -149,68 +149,62 @@ function LoathebRotate:findAura(unitID, spellName)
     return nil
 end
 
--- Checks if the spell and the mob match a boss frenzy
-function LoathebRotate:isBossFrenzy(spellName, guid)
+---- Checks if the spell and the mob match a boss frenzy
+--function LoathebRotate:isBossFrenzy(spellName, guid)
 
-    local bosses = LoathebRotate.constants.tranqableBosses
+--    local bosses = LoathebRotate.constants.tranqableBosses
+--    local type, mobId = LoathebRotate:getIdFromGuid(guid)
+
+--    if (type == "Creature") then
+--        for bossId, frenzy in pairs(bosses) do
+--            if (bossId == mobId and spellName == GetSpellInfo(frenzy)) then
+--                return true
+--            end
+--        end
+--    end
+
+--    return false
+--end
+
+-- Checks if this is Loatheb!
+function LoathebRotate:isLoathebBoss(guid)
     local type, mobId = LoathebRotate:getIdFromGuid(guid)
 
-    if (type == "Creature") then
-        for bossId, frenzy in pairs(bosses) do
-            if (bossId == mobId and spellName == GetSpellInfo(frenzy)) then
-                return true
-            end
-        end
+    if (type == "Creature") and (bossId == 16011) then
+        return true
     end
 
     return false
 end
 
--- Checks if the mob is a tranq-able boss
-function LoathebRotate:isTranqableBoss(guid)
+---- Checks if a mob GUID is a boss from a specific list of IDs
+--function LoathebRotate:isBossInList(guid, bosses)
+--    local type, mobId = LoathebRotate:getIdFromGuid(guid)
 
-    local bosses = LoathebRotate.constants.tranqableBosses
-    local type, mobId = LoathebRotate:getIdFromGuid(guid)
+--    if type == "Creature" then
+--        for _, bossId in ipairs(bosses) do
+--            if bossId == mobId then
+--                return true
+--            end
+--        end
+--    end
 
-    if (type == "Creature") then
-        for bossId, frenzy in pairs(bosses) do
-            if (bossId == mobId) then
-                return true
-            end
-        end
-    end
+--    return false
+--end
 
-    return false
-end
+---- Checks if the spell is a boss frenzy
+--function LoathebRotate:isFrenzy(spellName)
 
--- Checks if a mob GUID is a boss from a specific list of IDs
-function LoathebRotate:isBossInList(guid, bosses)
-    local type, mobId = LoathebRotate:getIdFromGuid(guid)
+--    local bosses = LoathebRotate.constants.tranqableBosses
 
-    if type == "Creature" then
-        for _, bossId in ipairs(bosses) do
-            if bossId == mobId then
-                return true
-            end
-        end
-    end
+--    for bossId, frenzy in pairs(bosses) do
+--        if (spellName == GetSpellInfo(frenzy)) then
+--            return true
+--        end
+--    end
 
-    return false
-end
-
--- Checks if the spell is a boss frenzy
-function LoathebRotate:isFrenzy(spellName)
-
-    local bosses = LoathebRotate.constants.tranqableBosses
-
-    for bossId, frenzy in pairs(bosses) do
-        if (spellName == GetSpellInfo(frenzy)) then
-            return true
-        end
-    end
-
-    return false
-end
+--    return false
+--end
 
 -- Get a user-defined color or create it now
 function LoathebRotate:getUserDefinedColor(colorName)

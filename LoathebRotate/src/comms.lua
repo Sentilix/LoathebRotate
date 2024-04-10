@@ -28,7 +28,18 @@ function LoathebRotate.OnCommReceived(prefix, data, channel, sender)
 			--	MoveHealer:
 			elseif (message.type == LoathebRotate.constants.commsTypes.moveHealerRequest) then
 				LoathebRotate:receiveMoveHealerRequest(prefix, message, channel, sender)
+			--	Sync:
+			elseif (message.type == LoathebRotate.constants.commsTypes.syncRequest) then
+				LoathebRotate:receiveSyncRequest(prefix, message, channel, sender)
+			elseif (message.type == LoathebRotate.constants.commsTypes.syncResponse) then
+				LoathebRotate:receiveSyncResponse(prefix, message, channel, sender)
+			elseif (message.type == LoathebRotate.constants.commsTypes.syncBeginRequest) then
+				LoathebRotate:receiveBeginSyncRequest(prefix, message, channel, sender)
+			--	Reset:
+			elseif (message.type == LoathebRotate.constants.commsTypes.resetRequest) then
+				LoathebRotate:receiveResetRotation(prefix, message, channel, sender)
 			end;
+
 
             --if message.type == LoathebRotate.constants.commsTypes.syncOrder
             --or message.type == LoathebRotate.constants.commsTypes.syncRequest then
@@ -36,18 +47,18 @@ function LoathebRotate.OnCommReceived(prefix, data, channel, sender)
             --    LoathebRotate:updatePlayerAddonVersion(sender, message.addonVersion)
             --end
 
-            if (message.mode ~= LoathebRotate.db.profile.currentMode) then
-                -- Received a message from another mode
-                -- This may also happen if the message comes from an old version of the addon but it causes many problems so it's best to ignore the message
-                -- In a future version, all modes will be working simultaneously, but that will be in a distant future (probably not before v1.0)
+--            if (message.mode ~= LoathebRotate.db.profile.currentMode) then
+--                -- Received a message from another mode
+--                -- This may also happen if the message comes from an old version of the addon but it causes many problems so it's best to ignore the message
+--                -- In a future version, all modes will be working simultaneously, but that will be in a distant future (probably not before v1.0)
 
-                -- Special case for assignments: accept assignments from other modes because assignments can be set within another mode
-                if message.type == LoathebRotate.constants.commsTypes.syncOrder and message.assignment then
-                    LoathebRotate:applyAssignmentConfiguration(message.assignment, sender, message.mode)
-                end
+--                -- Special case for assignments: accept assignments from other modes because assignments can be set within another mode
+--                if message.type == LoathebRotate.constants.commsTypes.syncOrder and message.assignment then
+--                    LoathebRotate:applyAssignmentConfiguration(message.assignment, sender, message.mode)
+--                end
 
-                return
-            end
+--                return
+--            end
 
 				
             --if (message.type == LoathebRotate.constants.commsTypes.tranqshotDone) then
@@ -144,11 +155,64 @@ end;
 function LoathebRotate:receiveMoveHealerRequest(prefix, message, channel, sender)
 	local healer = LoathebRotate:getHealer(message.GUID);
 	if healer then
-		--LoathebRotate:printAll(message);
 		LoathebRotate:moveHealer(healer, message.group, message.position);
 	end;
 end;
 
+
+-----------------------------------------------------------------------------------------------------------------------
+-- SYNC request/response
+-----------------------------------------------------------------------------------------------------------------------
+
+function LoathebRotate:requestSync()
+	local message = LoathebRotate:createAddonMessage(LoathebRotate.constants.commsTypes.syncRequest);
+	LoathebRotate:sendRaidAddonMessage(message);
+end;
+
+local readyToReceiveSyncResponse = true;
+function LoathebRotate:receiveSyncRequest(prefix, message, channel, sender)
+	local message = LoathebRotate:createAddonMessage(LoathebRotate.constants.commsTypes.syncResponse);
+
+	readyToReceiveSyncResponse = true;
+	LoathebRotate:sendRaidAddonMessage(message);
+end;
+
+function LoathebRotate:receiveSyncResponse(prefix, message, channel, sender)
+	if (readyToReceiveSyncResponse == true) then
+		readyToReceiveSyncResponse = false;
+
+		--	This person kindly offered to synchronize all data. Begin synchronizing.
+		local message = LoathebRotate:createAddonMessage(LoathebRotate.constants.commsTypes.syncBeginRequest);
+		LoathebRotate:sendRaidAddonMessage(message);
+	end;
+end;
+
+function LoathebRotate:receiveBeginSyncRequest(prefix, message, channel, sender)
+	for position, healer in pairs(LoathebRotate.rotationTable) do
+		LoathebRotate:requestMoveHealer(healer, 'ROTATION', position);
+	end
+
+	for position, healer in pairs(LoathebRotate.backupTable) do
+		LoathebRotate:requestMoveHealer(healer, 'BACKUP', position);
+	end
+end;
+
+
+
+-----------------------------------------------------------------------------------------------------------------------
+-- RESET ROTATION SYNC request (no response)
+-----------------------------------------------------------------------------------------------------------------------
+
+function LoathebRotate:requestResetRotation()
+	local message = LoathebRotate:createAddonMessage(LoathebRotate.constants.commsTypes.resetRequest);
+	LoathebRotate:sendRaidAddonMessage(message);
+end;
+
+function LoathebRotate:receiveResetRotation(prefix, message, channel, sender)
+	LoathebRotate:resetRotation();
+
+	LoathebRotate:printPrefixedMessage(string.format('Rotation was reset by %s.', sender));
+end;
 
 
 
@@ -157,19 +221,19 @@ end;
 -- OUTPUT
 -----------------------------------------------------------------------------------------------------------------------
 
--- Broadcast a tranqshot event
-function LoathebRotate:sendSyncTranq(hunter, fail, timestamp, targetGUID)
-    local message = {
-        ['type'] = LoathebRotate.constants.commsTypes.tranqshotDone,
-        ['mode'] = LoathebRotate.db.profile.currentMode,
-        ['timestamp'] = timestamp,
-        ['player'] = hunter.GUID,
-        ['fail'] = fail,
-        ['target'] = targetGUID,
-    }
+---- Broadcast a tranqshot event
+--function LoathebRotate:sendSyncTranq(hunter, fail, timestamp, targetGUID)
+--    local message = {
+--        ['type'] = LoathebRotate.constants.commsTypes.tranqshotDone,
+--        ['mode'] = LoathebRotate.db.profile.currentMode,
+--        ['timestamp'] = timestamp,
+--        ['player'] = hunter.GUID,
+--        ['fail'] = fail,
+--        ['target'] = targetGUID,
+--    }
 
-    LoathebRotate:sendRaidAddonMessage(message)
-end
+--    LoathebRotate:sendRaidAddonMessage(message)
+--end
 
 -- Broadcast current rotation configuration
 function LoathebRotate:sendSyncOrder(whisperName)
@@ -225,22 +289,22 @@ function LoathebRotate:receiveSyncTranq(prefix, message, channel, sender)
     end
 end
 
--- Rotation configuration received
-function LoathebRotate:receiveSyncOrder(prefix, message, channel, sender)
+---- Rotation configuration received
+--function LoathebRotate:receiveSyncOrder(prefix, message, channel, sender)
 
-    LoathebRotate:updateRaidStatus()
+--    LoathebRotate:updateRaidStatus()
 
-    if (LoathebRotate:isVersionEligible(message.version, sender)) then
-        LoathebRotate.syncVersion = (message.version)
-        LoathebRotate.syncLastSender = sender
+--    if (LoathebRotate:isVersionEligible(message.version, sender)) then
+--        LoathebRotate.syncVersion = (message.version)
+--        LoathebRotate.syncLastSender = sender
 
-        LoathebRotate:printPrefixedMessage('Received new rotation configuration from ' .. sender)
-        LoathebRotate:applyRotationConfiguration(message.rotation)
-        LoathebRotate:applyAssignmentConfiguration(message.assignment, sender, message.mode)
-    end
-end
+--        LoathebRotate:printPrefixedMessage('Received new rotation configuration from ' .. sender)
+--        LoathebRotate:applyRotationConfiguration(message.rotation)
+--        LoathebRotate:applyAssignmentConfiguration(message.assignment, sender, message.mode)
+--    end
+--end
 
--- Request to send current roration configuration received
-function LoathebRotate:receiveSyncRequest(prefix, message, channel, sender)
-    LoathebRotate:sendSyncOrder(sender)
-end
+---- Request to send current roration configuration received
+--function LoathebRotate:receiveSyncRequest(prefix, message, channel, sender)
+--    LoathebRotate:sendSyncOrder(sender)
+--end

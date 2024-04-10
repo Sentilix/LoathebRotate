@@ -22,19 +22,19 @@ L["HIDE_WINDOW_NOT_IN_RAID"] = "Masquer la fenêtre principale hors raid"
 L["HIDE_WINDOW_NOT_IN_RAID_DESC"] = "Masquer la fenêtre principale hors raid"
 L["DO_NOT_SHOW_WHEN_JOINING_RAID"] = "Ne pas afficher la fenêtre principale lorsque vous rejoignez un raid"
 L["DO_NOT_SHOW_WHEN_JOINING_RAID_DESC"] = "Ne pas afficher la fenêtre principale lorsque vous rejoignez un raid"
-L["SHOW_WHEN_TARGETING_BOSS"] = "Afficher la fenêtre principale lorsque vous ciblez un boss tranquilisable"
-L["SHOW_WHEN_TARGETING_BOSS_DESC"] = "Afficher la fenêtre principale lorsque vous ciblez un boss tranquilisable"
+L["SHOW_WHEN_TARGETING_BOSS"] = "Afficher la fenêtre principale lorsque vous ciblez Loatheb"
+L["SHOW_WHEN_TARGETING_BOSS_DESC"] = "Afficher la fenêtre principale lorsque vous ciblez Loatheb"
 L["WINDOW_LOCKED"] = "LoathebRotate: Fenêtre verrouillée"
 L["WINDOW_UNLOCKED"] = "LoathebRotate: Fenêtre déverrouillée"
 
-L["TEST_MODE_HEADER"] = "Test mode"
-L["ENABLE_ARCANE_SHOT_TESTING"] = "Activer/désactiver le mode test"
-L["ENABLE_ARCANE_SHOT_TESTING_DESC"] =
-        "Tant que le mode de test est activé, arcane shot sera considéré comme un tir tranquilisant\n" ..
-        "Le mode de test durera 60 minutes ou jusqu'a désactivation\n" ..
-        "Pour Loatheb, le test consiste à utiliser le débuff Un bandage a été récemment appliqué"
-L["ARCANE_SHOT_TESTING_ENABLED"] = "Test mode activé pour 60 minutes"
-L["ARCANE_SHOT_TESTING_DISABLED"] = "Test mode désactivé"
+--L["TEST_MODE_HEADER"] = "Test mode"
+--L["ENABLE_ARCANE_SHOT_TESTING"] = "Activer/désactiver le mode test"
+--L["ENABLE_ARCANE_SHOT_TESTING_DESC"] =
+--        "Tant que le mode de test est activé, arcane shot sera considéré comme un tir tranquilisant\n" ..
+--        "Le mode de test durera 60 minutes ou jusqu'a désactivation\n" ..
+--        "Pour Loatheb, le test consiste à utiliser le débuff Un bandage a été récemment appliqué"
+--L["ARCANE_SHOT_TESTING_ENABLED"] = "Test mode activé pour 60 minutes"
+--L["ARCANE_SHOT_TESTING_DISABLED"] = "Test mode désactivé"
 
     --- Announces
 L["SETTING_ANNOUNCES"] = "Annonces"
