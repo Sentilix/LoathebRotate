@@ -3,29 +3,30 @@ local L = LibStub("AceLocale-3.0"):GetLocale("LoathebRotate")
 
 -- Create main window
 function LoathebRotate:createMainFrame()
-    local mainFrame = CreateFrame("Frame", 'mainFrame', UIParent)
+	local mainFrame = CreateFrame("Frame", 'mainFrame', UIParent)
 
-    mainFrame:SetWidth(LoathebRotate.db.profile.windows[1].width)
-    mainFrame:SetHeight(LoathebRotate.constants.rotationFramesBaseHeight * 2 + LoathebRotate.constants.titleBarHeight + LoathebRotate.constants.modeBarHeight)
-    mainFrame:Show()
+	mainFrame:SetWidth(LoathebRotate.db.profile.windows[1].width)
+	mainFrame:SetHeight(LoathebRotate.constants.rotationFramesBaseHeight * 2 + LoathebRotate.constants.titleBarHeight + LoathebRotate.constants.modeBarHeight)
+	mainFrame:Show()
 
-    mainFrame:RegisterForDrag("LeftButton")
-    mainFrame:SetClampedToScreen(true)
-    mainFrame:SetScript("OnDragStart", function() mainFrame:StartMoving() end)
+	mainFrame:RegisterForDrag("LeftButton")
+	mainFrame:SetClampedToScreen(true)
+	mainFrame:SetScript("OnDragStart", function() mainFrame:StartMoving() end)
 
-    --mainFrame.windowIndex = LoathebRotate.mainFrames and #(LoathebRotate.mainFrames)+1 or 1
+	--mainFrame.windowIndex = LoathebRotate.mainFrames and #(LoathebRotate.mainFrames)+1 or 1
 
-    mainFrame:SetScript(
-        "OnDragStop",
-        function()
-            mainFrame:StopMovingOrSizing()
+	mainFrame:SetScript(
+		"OnDragStop",
+		function()
+			mainFrame:StopMovingOrSizing()
+			local config = LoathebRotate.db.profile.windows[1];
+			config.point = 'TOPLEFT';
+			config.y = mainFrame:GetTop();
+			config.x = mainFrame:GetLeft();
+		end
+	)
 
-            local config = LoathebRotate.mainFrame
-            config.point = 'TOPLEFT'
-            config.y = mainFrame:GetTop()
-            config.x = mainFrame:GetLeft()
-        end
-    )
+	LoathebRotate.mainFrame = mainFrame;
 
     --if not LoathebRotate.mainFrames then
     --    LoathebRotate.mainFrames = { mainFrame }
@@ -660,21 +661,21 @@ function LoathebRotate:createBlindIconFrame(healer)
     healer.frame.blindIconFrame:Hide()
 end
 
--- Blind icon tooltip show
-function LoathebRotate.onBlindIconEnter(frame)
-    if (LoathebRotate.db.profile.showBlindIconTooltip) then
-        GameTooltip:SetOwner(frame, "ANCHOR_BOTTOMRIGHT")
-        GameTooltip:SetText(L["TOOLTIP_PLAYER_WITHOUT_ADDON"])
-        GameTooltip:AddLine(L["TOOLTIP_MAY_RUN_OUDATED_VERSION"])
-        GameTooltip:AddLine(L["TOOLTIP_DISABLE_SETTINGS"])
-        GameTooltip:Show()
-    end
-end
+---- Blind icon tooltip show
+--function LoathebRotate.onBlindIconEnter(frame)
+--    if (LoathebRotate.db.profile.showBlindIconTooltip) then
+--        GameTooltip:SetOwner(frame, "ANCHOR_BOTTOMRIGHT")
+--        GameTooltip:SetText(L["TOOLTIP_PLAYER_WITHOUT_ADDON"])
+--        GameTooltip:AddLine(L["TOOLTIP_MAY_RUN_OUDATED_VERSION"])
+--        GameTooltip:AddLine(L["TOOLTIP_DISABLE_SETTINGS"])
+--        GameTooltip:Show()
+--    end
+--end
 
--- Blind icon tooltip hide
-function LoathebRotate.onBlindIconLeave(frame, motion)
-    GameTooltip:Hide()
-end
+---- Blind icon tooltip hide
+--function LoathebRotate.onBlindIconLeave(frame, motion)
+--    GameTooltip:Hide()
+--end
 
 -- Healer frame tooltip show
 function LoathebRotate.onHealerEnter(frame)

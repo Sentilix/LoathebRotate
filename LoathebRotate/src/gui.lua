@@ -132,36 +132,40 @@ end
 function LoathebRotate:refreshHealerFrame(healer)
 	LoathebRotate:setHealerFrameColor(healer);
 	LoathebRotate:setHealerName(healer);
-	LoathebRotate:updateBlindIcon(healer);
+	--LoathebRotate:updateBlindIcon(healer);
 end
 
 -- Toggle blind icon display based on addonVersion
-function LoathebRotate:updateBlindIcon(healer)
-    if (
-        not LoathebRotate.db.profile.showBlindIcon or
-        healer.addonVersion ~= nil or
-        healer.name == UnitName('player') or
-        not LoathebRotate:isHealerOnline(healer)
-    ) then
-        healer.frame.blindIconFrame:Hide()
-    else
-        healer.frame.blindIconFrame:Show()
-    end
-end
+--function LoathebRotate:updateBlindIcon(healer)
+--    if (
+--        not LoathebRotate.db.profile.showBlindIcon or
+--        healer.addonVersion ~= nil or
+--        healer.name == UnitName('player') or
+--        not LoathebRotate:isHealerOnline(healer)
+--    ) then
+--        healer.frame.blindIconFrame:Hide()
+--    else
+--        healer.frame.blindIconFrame:Show()
+--    end
+--end
 
 -- Refresh all blind icons
-function LoathebRotate:refreshBlindIcons()
-	for _, healer in pairs(LoathebRotate.rotationTable) do
-		LoathebRotate:updateBlindIcon(healer);
-	end
+--function LoathebRotate:refreshBlindIcons()
+--	for _, healer in pairs(LoathebRotate.rotationTable) do
+--		LoathebRotate:updateBlindIcon(healer);
+--	end
 
-	for _, healer in pairs(LoathebRotate.backupTable) do
-		LoathebRotate:updateBlindIcon(healer);
-	end
-end
+--	for _, healer in pairs(LoathebRotate.backupTable) do
+--		LoathebRotate:updateBlindIcon(healer);
+--	end
+--end
 
 -- Set the healer frame color regarding it's status
 function LoathebRotate:setHealerFrameColor(healer)
+	if not healer then
+		return;
+	end
+
 	local color = LoathebRotate:getUserDefinedColor('neutral');
 
 	if (not LoathebRotate:isHealerOnline(healer)) then
@@ -177,6 +181,10 @@ end
 
 -- Set the healer's name regarding its class and group index
 function LoathebRotate:setHealerName(healer)
+	if not healer then
+		return;
+	end
+
 	local currentText = healer.frame.text:GetText() or '';
 	local currentFont, _, currentOutline = healer.frame.text:GetFont();
 

@@ -26,6 +26,7 @@ function LoathebRotate:init()
 	LoathebRotate.raidInitialized = false
 	LoathebRotate.testMode = false
 	LoathebRotate.mainFrame = nil;
+	LoathebRotate.openWindowRequestSent = false;
 
 	LoathebRotate:initGui()
 	LoathebRotate:loadHistory()

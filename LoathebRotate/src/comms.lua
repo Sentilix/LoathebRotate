@@ -45,6 +45,9 @@ function LoathebRotate.OnCommReceived(prefix, data, channel, sender)
 			--	Reset:
 			elseif (message.type == LoathebRotate.constants.commsTypes.resetRequest) then
 				LoathebRotate:receiveResetRotation(prefix, message, channel, sender)
+			--	showWindow:
+			elseif (message.type == LoathebRotate.constants.commsTypes.showWindowRequest) then
+				LoathebRotate:receiveShowWindowRequest(prefix, message, channel, sender)
 			end;
 
 
@@ -218,6 +221,32 @@ function LoathebRotate:receiveResetRotation(prefix, message, channel, sender)
 	LoathebRotate:resetRotation();
 
 	LoathebRotate:printPrefixedMessage(string.format('Rotation was reset by %s.', sender));
+end;
+
+
+-----------------------------------------------------------------------------------------------------------------------
+-- OPEN ROTATION WINDOW request (no response)
+-----------------------------------------------------------------------------------------------------------------------
+
+function LoathebRotate:requestOpenWindow()
+	if not LoathebRotate:isActive() then
+		return;
+	end;
+
+	if not LoathebRotate.openWindowRequestSent then
+		LoathebRotate.openWindowRequestSent = true;
+		print('*** Sent OpenWindowRequest');
+		local message = LoathebRotate:createAddonMessage(LoathebRotate.constants.commsTypes.showWindowRequest);
+		LoathebRotate:sendRaidAddonMessage(message);
+	end;
+end;
+
+function LoathebRotate:receiveShowWindowRequest()
+	if LoathebRotate:isActive() then
+		print('*** Received OpenWindowRequest');
+		LoathebRotate.openWindowRequestSent = true;
+		LoathebRotate.mainFrame:Show();
+	end;
 end;
 
 

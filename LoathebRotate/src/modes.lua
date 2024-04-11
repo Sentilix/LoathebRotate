@@ -96,34 +96,35 @@ end
 
 -- Return true if the spellId/spellName matches one of the spells of spellWanted
 -- spellWanted can be either a spell id, a spell name, a list of ids and names, or a function(spellId, spellName)
-function LoathebRotate:isSpellInteresting(mode, spellId, spellName)
-    local spellWanted = mode.spell
+--function LoathebRotate:isSpellInteresting(mode, spellId, spellName)
+--	local spellWanted = mode.spell
 
-    if not spellWanted then
-        return false
+--	if not spellWanted then
+--		print('No spell wanted')
+--		return false
 
-    elseif type(spellWanted) == 'number' then -- Single spell ID
-        return spellWanted == spellId
+--	elseif type(spellWanted) == 'number' then -- Single spell ID
+--		return spellWanted == spellId
 
-    elseif type(spellWanted) == 'string' then -- Single spell name
-        return spellWanted == spellName
+--	elseif type(spellWanted) == 'string' then -- Single spell name
+--		return spellWanted == spellName
 
-    elseif type(spellWanted) == 'table' then -- List of spell IDs and/or names
-        for _, s in pairs(spellWanted) do
-            if type(s) == 'number' and s == spellId
-            or type(s) == 'string' and s == spellName then
-                return true
-            end
-        end
-        return false
+--	elseif type(spellWanted) == 'table' then -- List of spell IDs and/or names
+--		for _, s in pairs(spellWanted) do
+--			if type(s) == 'number' and s == spellId
+--			or type(s) == 'string' and s == spellName then
+--				return true
+--			end
+--		end
 
-    elseif type(spellWanted) == 'function' then -- Functor
-        return spellWanted(mode, spellId, spellName)
+--		return false
 
-    end
+--	elseif type(spellWanted) == 'function' then -- Functor
+--		return spellWanted(mode, spellId, spellName);
+--	end
 
-    return false
-end
+--	return false
+--end
 
 -- Get the default duration known for a specific mode
 -- If mode is nil, use the current mode instead

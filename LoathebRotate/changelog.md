@@ -1,5 +1,10 @@
 ## LoathebRotate Changelog
 
+#### v0.2.2 (2024-04-11)
+- Targetting Boss will now broadcast OpenWindow to all clients.
+- UI updates will now only be called every 10th second outside active periods.
+- Fixed more LUA errors.
+
 #### v0.2.1 (2024-04-10)
 - Fixed LUA error in history.
 - Fixed message delivery, including cross-realm handling.

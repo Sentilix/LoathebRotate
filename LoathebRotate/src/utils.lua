@@ -176,9 +176,10 @@ end
 
 -- Checks if this is Loatheb!
 function LoathebRotate:isLoathebBoss(guid)
-    local type, mobId = LoathebRotate:getIdFromGuid(guid)
+    local type, mobId = LoathebRotate:getIdFromGuid(guid);
 
-    if (type == "Creature") and (bossId == 16011) then
+	if (type == "Creature") and (mobId == 16011) then
+	--if (mobId == 5112) then		-- Gwenna Firebrew in Ironforge Inn - dangerous boss :-)
         return true
     end
 

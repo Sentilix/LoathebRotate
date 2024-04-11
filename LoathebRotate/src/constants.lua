@@ -66,6 +66,8 @@ LoathebRotate.constants = {
 		['syncBeginRequest']	= 'tx-sync-begin',
 		['resetRequest']		= 'tx-reset',
 		['resetResponse']		= 'rx-reset',		-- Dummy: There is no response to a tx-reset
+		['showWindowRequest']	= 'tx-showWindow',
+		['showWindowResponse']	= 'rx-showWindow',	-- Dummy: There is no response to a tx-showWindow
     },
 
     ['printPrefix'] = 'LoathebRotate - ',

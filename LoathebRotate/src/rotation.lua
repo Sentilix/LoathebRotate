@@ -556,17 +556,22 @@ end
 
 --	Force an update every second. This endures disconnects etc. are shown correct.
 function LoathebRotate:updateRaidStatusTask()
-	LoathebRotate:updateRaidStatus();
+	LoathebRotate:updateRaidStatus(true);
 
-	C_Timer.After(1, function()
-		LoathebRotate:updateRaidStatusTask()
+	local timerInterval = 10;
+	if LoathebRotate:isActive() then
+		timerInterval = 1;
+	end
+
+	C_Timer.After(timerInterval, function()
+		LoathebRotate:updateRaidStatusTask();
 	end);
 end;
 
 -- Iterate over all raid members to find healers and update their status
-function LoathebRotate:updateRaidStatus()
+function LoathebRotate:updateRaidStatus(forcedUpdate)
 
-	if LoathebRotate:isActive() then
+	if LoathebRotate:isActive() or forcedUpdate then
 		local playerCount = GetNumGroupMembers();
 
 		if (playerCount > 0) then
