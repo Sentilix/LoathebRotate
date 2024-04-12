@@ -214,7 +214,8 @@ function LoathebRotate:CreateConfig()
                             ["YELL"] = L["CHANNEL_YELL"],
                             ["PARTY"] = L["CHANNEL_PARTY"],
                             ["RAID"] = L["CHANNEL_RAID"],
-                            ["GUILD"] = L["CHANNEL_GUILD"]
+                            ["GUILD"] = L["CHANNEL_GUILD"],
+                            ["WHISPER"] = L["CHANNEL_WHISPER"]
                         },
                     },
                     spacer22 = {

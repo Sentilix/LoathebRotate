@@ -1,5 +1,13 @@
 ## LoathebRotate Changelog
 
+#### v0.2.3 (2024-04-12)
+- Announcements implemented.
+- Bugfix: Drag'n'Drop is no longer interrupted by the UI refresh task.
+- Bugfix: Window position is now saved and loaded correctly.
+- Bugfix: Aura and Spell rotation works again.
+- Fixed even more LUA errors. The addon seems a bit more stable now.
+- Added internal test mode: can trigger Corrupted Mind via power word: shield.
+
 #### v0.2.2 (2024-04-11)
 - Targetting Boss will now broadcast OpenWindow to all clients.
 - UI updates will now only be called every 10th second outside active periods.

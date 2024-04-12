@@ -22,11 +22,12 @@ function LoathebRotate:init()
 	--	Healers outside rotation (backup):
 	LoathebRotate.backupTable = {};
 
-	LoathebRotate.enableDrag = true
-	LoathebRotate.raidInitialized = false
-	LoathebRotate.testMode = false
+	LoathebRotate.enableDrag = true;
+	LoathebRotate.raidInitialized = false;
+	LoathebRotate.testMode = false;
 	LoathebRotate.mainFrame = nil;
 	LoathebRotate.openWindowRequestSent = false;
+	LoathebRotate.ignoreRaidStatusUpdates = false;
 
 	LoathebRotate:initGui()
 	LoathebRotate:loadHistory()
@@ -48,6 +49,7 @@ end
 
 -- Apply position, size, and visibility
 local function applyWindowSettings(frame, windowConfig)
+
     frame:ClearAllPoints()
     if windowConfig.point then
         frame:SetPoint(windowConfig.point, UIParent, 'BOTTOMLEFT', windowConfig.x, windowConfig.y)
@@ -76,7 +78,7 @@ end
 function LoathebRotate:applySettings()
 	local config = LoathebRotate.db.profile;
 
-	applyWindowSettings(LoathebRotate.mainFrame, config.windows);
+	applyWindowSettings(LoathebRotate.mainFrame, config.windows[1]);
 
 	applyWindowSettings(LoathebRotate.historyFrame, config.history);
 	LoathebRotate:setHistoryTimeVisible(config.historyTimeVisible);
@@ -201,15 +203,15 @@ function LoathebRotate:printMultilineRotation(rotationTable, channel)
     end
 end
 
--- Serialize hunters names of a given rotation group
+-- Serialize healers names of a given rotation group
 function LoathebRotate:buildGroupMessage(prefix, rotationTable)
-    local hunters = {}
+    local healers = {}
 
-    for key, hunt in pairs(rotationTable) do
-        table.insert(hunters, hunt.name)
+    for key, healer in pairs(rotationTable) do
+        table.insert(healers, healer.name)
     end
 
-    return prefix .. table.concat(hunters, ', ')
+    return prefix .. table.concat(healers, ', ')
 end
 
 -- Print command options to chat
@@ -231,9 +233,9 @@ function LoathebRotate:colorText(text)
 end
 
 -- Check if unit is promoted
-function LoathebRotate:isHunterPromoted(name)
+function LoathebRotate:isHealerPromoted(name)
 
-    local raidIndex = UnitInRaid(name)
+	local raidIndex = UnitInRaid(name);
 
     if (raidIndex) then
         local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(raidIndex)

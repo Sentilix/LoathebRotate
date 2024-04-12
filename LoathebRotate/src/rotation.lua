@@ -130,11 +130,19 @@ function LoathebRotate:rotate(lastHealer, rotateWithoutCooldown, endTimeOfCooldo
 				end
 			end
 		end
+
+		local playerFullName = LoathebRotate:getFullPlayerName(nextHealer.name);
+		if playerFullName then
+			LoathebRotate:sendAnnounceMessage(L["ANNOUNCEMENT_YOU_ARE_NEXT"], playerFullName);
+		end;
+
+
+		--LoathebRotate:printPrefixedMessage(string.format(L["ANNOUNCEMENT_NEXTHEALER"], nextHealer.name));
 	end
 end
 
 -- Removes all nextHeal flags and set it true for next healer
-function LoathebRotate:setNextTranq(nextHealer)
+function LoathebRotate:setNextHeal(nextHealer)
 	for key, healer in pairs(LoathebRotate.rotationTable) do
 		if (healer.name == nextHealer.name) then
 			healer.nextHeal = true
@@ -556,7 +564,9 @@ end
 
 --	Force an update every second. This endures disconnects etc. are shown correct.
 function LoathebRotate:updateRaidStatusTask()
-	LoathebRotate:updateRaidStatus(true);
+	if not LoathebRotate.ignoreRaidStatusUpdates then
+		LoathebRotate:updateRaidStatus(true);
+	end
 
 	local timerInterval = 10;
 	if LoathebRotate:isActive() then
