@@ -14,7 +14,7 @@ function LoathebRotate:LoadDefaults()
 
 			-- Messaging
 			enableAnnounces = true,
-			channelType = "YELL",
+			channelType = "WHISPER",
 			rotationReportChannelType = "RAID",
 			useMultilineRotationReport = false,
 

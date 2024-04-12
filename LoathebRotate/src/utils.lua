@@ -42,8 +42,11 @@ end
 
 -- Checks if a healer is eligible to heal next
 function LoathebRotate:isEligibleForNextHeal(healer)
+	if not healer then
+		return false;
+	end;
 
-    local isCooldownShortEnough = healer.lastHealTime <= GetTime() - LoathebRotate.constants.minimumCooldownElapsedForEligibility
+    local isCooldownShortEnough = healer.lastHealTime <= GetTime() - LoathebRotate.constants.minimumCooldownElapsedForEligibility;
 
     return LoathebRotate:isHealerAliveAndOnline(healer) and isCooldownShortEnough;
 end
@@ -284,6 +287,8 @@ end;
 
 
 function LoathebRotate:getFullPlayerName(playerName)
+	if not playerName then return ''; end;
+
 	local _, _, name, realm = string.find(playerName, "([^-]*)-(%S*)");
 	
 	if realm then

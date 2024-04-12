@@ -299,82 +299,159 @@ function LoathebRotate:setHealerName(healer)
 	end
 end
 
-function LoathebRotate:startHunterCooldown(hunter, endTimeOfCooldown, endTimeOfEffect, targetGUID, buffName)
-    if not endTimeOfCooldown or endTimeOfCooldown == 0 then
-        local cooldown = LoathebRotate:getModeCooldown()
-        if cooldown then
-            endTimeOfCooldown = GetTime() + cooldown
-        end
-    end
+function LoathebRotate:startHealerCooldown(healer, endTimeOfCooldown, endTimeOfEffect, targetGUID, buffName)
+	if not endTimeOfCooldown or endTimeOfCooldown == 0 then
+		local cooldown = LoathebRotate:getModeCooldown();
+		if cooldown then
+			endTimeOfCooldown = GetTime() + cooldown;
+		end
+	end
 
-    if not endTimeOfEffect or endTimeOfEffect == 0 then
-        local effectDuration = LoathebRotate:getModeEffectDuration()
-        if effectDuration then
-            endTimeOfEffect = GetTime() + effectDuration
-        else
-            endTimeOfEffect = 0
-        end
-    end
-    hunter.endTimeOfEffect = endTimeOfEffect
+	if not endTimeOfEffect or endTimeOfEffect == 0 then
+		local effectDuration = LoathebRotate:getModeEffectDuration();
+		if effectDuration then
+			endTimeOfEffect = GetTime() + effectDuration;
+		else
+			endTimeOfEffect = 0;
+		end
+	end
+	healer.endTimeOfEffect = endTimeOfEffect;
 
-    hunter.cooldownStarted = GetTime()
+	healer.cooldownStarted = GetTime();
 
-    hunter.frame.cooldownFrame.statusBar:SetMinMaxValues(GetTime(), endTimeOfCooldown or GetTime())
-    hunter.expirationTime = endTimeOfCooldown
-    if endTimeOfCooldown and endTimeOfEffect and GetTime() < endTimeOfCooldown and GetTime() < endTimeOfEffect and endTimeOfEffect < endTimeOfCooldown then
-        local tickWidth = 3
-        local x = hunter.frame.cooldownFrame:GetWidth()*(endTimeOfEffect-GetTime())/(endTimeOfCooldown-GetTime())
-        if x < 5 then
-            -- If the tick is too early, it is graphically undistinguishable from the beginning of the cooldown bar, so don't bother displaying the tick
-            hunter.frame.cooldownFrame.statusTick:Hide()
-        else
-            local xmin = x-tickWidth/2
-            local xmax = xmin + tickWidth
-            hunter.frame.cooldownFrame.statusTick:ClearAllPoints()
-            hunter.frame.cooldownFrame.statusTick:SetPoint('TOPLEFT', xmin, 0)
-            hunter.frame.cooldownFrame.statusTick:SetPoint('BOTTOMRIGHT', xmax-hunter.frame.cooldownFrame:GetWidth(), 0)
-            hunter.frame.cooldownFrame.statusTick:Show()
-        end
-    else
-        -- If there is no tick or the tick is beyond the cooldown bar, do not display the tick
-        hunter.frame.cooldownFrame.statusTick:Hide()
-    end
-    hunter.frame.cooldownFrame:Show()
+	healer.frame.cooldownFrame.statusBar:SetMinMaxValues(GetTime(), endTimeOfCooldown or GetTime());
+	healer.expirationTime = endTimeOfCooldown;
+	if endTimeOfCooldown and endTimeOfEffect and GetTime() < endTimeOfCooldown and GetTime() < endTimeOfEffect and endTimeOfEffect < endTimeOfCooldown then
+		local tickWidth = 3;
+		local x = healer.frame.cooldownFrame:GetWidth()*(endTimeOfEffect-GetTime())/(endTimeOfCooldown-GetTime());
+		if x < 5 then
+			-- If the tick is too early, it is graphically undistinguishable from the beginning of the cooldown bar, so don't bother displaying the tick
+			healer.frame.cooldownFrame.statusTick:Hide();
+		else
+			local xmin = x - tickWidth/2;
+			local xmax = xmin + tickWidth;
+			healer.frame.cooldownFrame.statusTick:ClearAllPoints();
+			healer.frame.cooldownFrame.statusTick:SetPoint('TOPLEFT', xmin, 0);
+			healer.frame.cooldownFrame.statusTick:SetPoint('BOTTOMRIGHT', xmax - healer.frame.cooldownFrame:GetWidth(), 0);
+			healer.frame.cooldownFrame.statusTick:Show();
+		end
+		else
+			-- If there is no tick or the tick is beyond the cooldown bar, do not display the tick
+			healer.frame.cooldownFrame.statusTick:Hide();
+		end
+	healer.frame.cooldownFrame:Show();
 
-    hunter.targetGUID = targetGUID
-    hunter.buffName = buffName
-    if targetGUID and LoathebRotate.db.profile.appendTarget then
-        LoathebRotate:setHunterName(hunter)
-        if buffName and endTimeOfEffect > GetTime() then
+--    healer.targetGUID = targetGUID
+--    healer.buffName = buffName
+--    if targetGUID and LoathebRotate.db.profile.appendTarget then
+--        LoathebRotate:setHunterName(hunter)
+--        if buffName and endTimeOfEffect > GetTime() then
 
-            -- Create a ticker to refresh the name on a regular basis, for as long as the target name is displayed
-            if not hunter.nameRefreshTicker or hunter.nameRefreshTicker:IsCancelled() then
-                local nameRefreshInterval = 0.5
-                hunter.nameRefreshTicker = C_Timer.NewTicker(nameRefreshInterval, function()
-                    LoathebRotate:setHunterName(hunter)
-                    -- hunter.showingTarget is computed in the setHunterName() call; use this variable to tell when to stop refreshing
-                    if not hunter.showingTarget and not LoathebRotate:getMode().buffCanReturn then
-                        hunter.nameRefreshTicker:Cancel()
-                        hunter.nameRefreshTicker = nil
-                    end
-                end)
-            end
+--            -- Create a ticker to refresh the name on a regular basis, for as long as the target name is displayed
+--            if not hunter.nameRefreshTicker or hunter.nameRefreshTicker:IsCancelled() then
+--                local nameRefreshInterval = 0.5
+--                hunter.nameRefreshTicker = C_Timer.NewTicker(nameRefreshInterval, function()
+--                    LoathebRotate:setHunterName(hunter)
+--                    -- hunter.showingTarget is computed in the setHunterName() call; use this variable to tell when to stop refreshing
+--                    if not hunter.showingTarget and not LoathebRotate:getMode().buffCanReturn then
+--                        hunter.nameRefreshTicker:Cancel()
+--                        hunter.nameRefreshTicker = nil
+--                    end
+--                end)
+--            end
 
-            -- Also create a timer that will be triggered shortly after the expiration time of the buff
-            if hunter.nameRefreshTimer and not hunter.nameRefreshTimer:IsCancelled() then
-                hunter.nameRefreshTimer:Cancel()
-            end
-            hunter.nameRefreshTimer = C_Timer.NewTimer(endTimeOfEffect - GetTime() + 1, function()
-                LoathebRotate:setHunterName(hunter)
-                hunter.nameRefreshTimer = nil
-            end)
-        end
-    end
+--            -- Also create a timer that will be triggered shortly after the expiration time of the buff
+--            if hunter.nameRefreshTimer and not hunter.nameRefreshTimer:IsCancelled() then
+--                hunter.nameRefreshTimer:Cancel()
+--            end
+--            hunter.nameRefreshTimer = C_Timer.NewTimer(endTimeOfEffect - GetTime() + 1, function()
+--                LoathebRotate:setHunterName(hunter)
+--                hunter.nameRefreshTimer = nil
+--            end)
+--        end
+--    end
 
-    if hunter.buffName and hunter.endTimeOfEffect > GetTime() then
-        LoathebRotate:trackHistoryBuff(hunter)
+    if healer.buffName and healer.endTimeOfEffect > GetTime() then
+        LoathebRotate:trackHistoryBuff(healer)
     end
 end
+
+--function LoathebRotate:startHunterCooldown(hunter, endTimeOfCooldown, endTimeOfEffect, targetGUID, buffName)
+--    if not endTimeOfCooldown or endTimeOfCooldown == 0 then
+--        local cooldown = LoathebRotate:getModeCooldown()
+--        if cooldown then
+--            endTimeOfCooldown = GetTime() + cooldown
+--        end
+--    end
+
+--    if not endTimeOfEffect or endTimeOfEffect == 0 then
+--        local effectDuration = LoathebRotate:getModeEffectDuration()
+--        if effectDuration then
+--            endTimeOfEffect = GetTime() + effectDuration
+--        else
+--            endTimeOfEffect = 0
+--        end
+--    end
+--    hunter.endTimeOfEffect = endTimeOfEffect
+
+--    hunter.cooldownStarted = GetTime()
+
+--    hunter.frame.cooldownFrame.statusBar:SetMinMaxValues(GetTime(), endTimeOfCooldown or GetTime())
+--    hunter.expirationTime = endTimeOfCooldown
+--    if endTimeOfCooldown and endTimeOfEffect and GetTime() < endTimeOfCooldown and GetTime() < endTimeOfEffect and endTimeOfEffect < endTimeOfCooldown then
+--        local tickWidth = 3
+--        local x = hunter.frame.cooldownFrame:GetWidth()*(endTimeOfEffect-GetTime())/(endTimeOfCooldown-GetTime())
+--        if x < 5 then
+--            -- If the tick is too early, it is graphically undistinguishable from the beginning of the cooldown bar, so don't bother displaying the tick
+--            hunter.frame.cooldownFrame.statusTick:Hide()
+--        else
+--            local xmin = x-tickWidth/2
+--            local xmax = xmin + tickWidth
+--            hunter.frame.cooldownFrame.statusTick:ClearAllPoints()
+--            hunter.frame.cooldownFrame.statusTick:SetPoint('TOPLEFT', xmin, 0)
+--            hunter.frame.cooldownFrame.statusTick:SetPoint('BOTTOMRIGHT', xmax-hunter.frame.cooldownFrame:GetWidth(), 0)
+--            hunter.frame.cooldownFrame.statusTick:Show()
+--        end
+--    else
+--        -- If there is no tick or the tick is beyond the cooldown bar, do not display the tick
+--        hunter.frame.cooldownFrame.statusTick:Hide()
+--    end
+--    hunter.frame.cooldownFrame:Show()
+
+--    hunter.targetGUID = targetGUID
+--    hunter.buffName = buffName
+--    if targetGUID and LoathebRotate.db.profile.appendTarget then
+--        LoathebRotate:setHunterName(hunter)
+--        if buffName and endTimeOfEffect > GetTime() then
+
+--            -- Create a ticker to refresh the name on a regular basis, for as long as the target name is displayed
+--            if not hunter.nameRefreshTicker or hunter.nameRefreshTicker:IsCancelled() then
+--                local nameRefreshInterval = 0.5
+--                hunter.nameRefreshTicker = C_Timer.NewTicker(nameRefreshInterval, function()
+--                    LoathebRotate:setHunterName(hunter)
+--                    -- hunter.showingTarget is computed in the setHunterName() call; use this variable to tell when to stop refreshing
+--                    if not hunter.showingTarget and not LoathebRotate:getMode().buffCanReturn then
+--                        hunter.nameRefreshTicker:Cancel()
+--                        hunter.nameRefreshTicker = nil
+--                    end
+--                end)
+--            end
+
+--            -- Also create a timer that will be triggered shortly after the expiration time of the buff
+--            if hunter.nameRefreshTimer and not hunter.nameRefreshTimer:IsCancelled() then
+--                hunter.nameRefreshTimer:Cancel()
+--            end
+--            hunter.nameRefreshTimer = C_Timer.NewTimer(endTimeOfEffect - GetTime() + 1, function()
+--                LoathebRotate:setHunterName(hunter)
+--                hunter.nameRefreshTimer = nil
+--            end)
+--        end
+--    end
+
+--    if hunter.buffName and hunter.endTimeOfEffect > GetTime() then
+--        LoathebRotate:trackHistoryBuff(hunter)
+--    end
+--end
 
 -- Lock/Unlock the mainFrame position
 function LoathebRotate:lock(lock)

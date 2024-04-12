@@ -270,11 +270,11 @@ end;
 --    LoathebRotate:sendRaidAddonMessage(message)
 --end
 
--- Broadcast current rotation configuration
-function LoathebRotate:sendSyncOrder(whisperName)
+---- Broadcast current rotation configuration
+--function LoathebRotate:sendSyncOrder(whisperName)
 
-    LoathebRotate.syncVersion = LoathebRotate.syncVersion + 1;
-    LoathebRotate.syncLastSender = UnitName("player");
+--    LoathebRotate.syncVersion = LoathebRotate.syncVersion + 1;
+--    LoathebRotate.syncLastSender = UnitName("player");
 
 --    local message = {
 --        ['type'] = LoathebRotate.constants.commsTypes.syncOrder,
@@ -290,7 +290,7 @@ function LoathebRotate:sendSyncOrder(whisperName)
 --    else
 --        LoathebRotate:sendRaidAddonMessage(message)
 --    end
-end
+--end
 
 ---- Broadcast a request for the current rotation configuration
 --function LoathebRotate:sendSyncOrderRequest()

@@ -31,6 +31,7 @@ function LoathebRotate:configureHealerFrameDrag(healer)
 	healer.frame:SetScript(
 		"OnDragStart",
 		function()
+			LoathebRotate.ignoreRaidStatusUpdates = true;
 			healer.frame:StartMoving()
 			healer.frame:SetFrameStrata("HIGH")
 
@@ -62,6 +63,7 @@ function LoathebRotate:configureHealerFrameDrag(healer)
 
 			local group, position = LoathebRotate:getDropPosition(healer.frame, MF);
 			LoathebRotate:handleDrop(healer, group, position);
+			LoathebRotate.ignoreRaidStatusUpdates = false;
 		end
 	)
 end

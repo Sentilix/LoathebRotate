@@ -1,4 +1,5 @@
 local LoathebRotate = select(2, ...)
+local L = LibStub("AceLocale-3.0"):GetLocale("LoathebRotate")
 
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("PLAYER_LOGIN")
@@ -21,7 +22,7 @@ eventFrame:SetScript(
 			--end);
 
 			C_Timer.After(5, function()
-				LoathebRotate:updateRaidStatusTask()
+				LoathebRotate:updateRaidStatusTask();
 			end);
 		else
 			LoathebRotate[event](LoathebRotate, ...)
@@ -110,6 +111,7 @@ eventFrame:SetScript(
 
 --	--local mode = self:getMode();
 
+--	Note: Loatheb mode has no interesting spell in it's setup!
 --	-- COMBAT_LOG_EVENT_UNFILTERED is used exclusively by spell-based modes
 --	--if self:isSpellInteresting(mode, spellId, spellName) then
 --	--local healer = self:getHealer(sourceGUID)
@@ -140,11 +142,12 @@ end
 
 -- Player left combat
 function LoathebRotate:PLAYER_REGEN_ENABLED()
-	self:updateRaidStatus()
-	self:callAllSecureFunctions()
+	self:updateRaidStatus();
+	self:callAllSecureFunctions();
 end
 
--- Player changed its main target
+-- Player changed its main target.
+--	If Loatheb is targetted then open the main window:
 function LoathebRotate:PLAYER_TARGET_CHANGED()
 	if (LoathebRotate.db.profile.showWindowWhenTargetingBoss) then
 		if (LoathebRotate:isLoathebBoss(UnitGUID('target')) and not UnitIsDead('target')) then
@@ -164,7 +167,7 @@ function LoathebRotate:UNIT_AURA(unitID, isEcho)
 	if not mode or type(mode.auraTest) ~= 'function' then return end
 
 	-- Whether the unit really got the debuff or not, it's pointless if the unit is not tracked (e.g. not a healer)
-	local healer = self:getHealer(UnitGUID(unitID))
+	local healer = self:getHealer(UnitGUID(unitID));
 	if not healer then 
 		return ;
 	end
@@ -180,13 +183,14 @@ function LoathebRotate:UNIT_AURA(unitID, isEcho)
     end
 
     -- Loop through the unit's debuffs to check if s/he is affected by a specific debuff, e.g. Loatheb's Corrupted Mind
-    local maxNbDebuffs = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) and 16 or 40
+    local maxNbDebuffs = 16;
     for i=1,maxNbDebuffs do
         local name, _,_,_,_, endTime ,_,_,_, spellId = UnitDebuff(unitID, i)
         if not name then
             -- name is not defined, meaning there is no other debuff left
             break
         end
+
         -- At this point:
         -- name and spellId correspond to the debuff at index i
         -- endTime knows exactly when the debuff ends if unitID is the player, i.e. if UnitIsUnit(unitID, "player")
@@ -200,14 +204,18 @@ function LoathebRotate:UNIT_AURA(unitID, isEcho)
                 -- If the current time is before the previously seen expirationTime for this player, it means the debuff was already registered
                 return
             end
-            -- Send the rotate order, this is the most important part of the addon
-            self:rotate(healer, false, nil, endTime)
-            self:addHistoryDebuffMessage(healer, healer.name, name, mode)
-            if (UnitIsUnit(unitID, "player")) then
-                -- Announce to the channel selected in the addon options, but announce only ourselves
-                self:sendAuraAnnounceMessage(mode, name, healer)
-            end
-            return
+			-- Send the rotate order, this is the most important part of the addon
+			self:rotate(healer, false, nil, endTime);
+			self:addHistoryDebuffMessage(healer, healer.name, name, mode);
+
+			if (UnitIsUnit(unitID, "player")) then
+				--	-- Announce to the channel selected in the addon options, but announce only ourselves
+				--	self:sendAuraAnnounceMessage(mode, name, healer)
+				--	Only shown locally:
+				LoathebRotate:printPrefixedMessage(string.format(L["ANNOUNCEMENT_CORRUPTED_MIND"], healer.name));
+			end
+
+			return
         end
     end
 

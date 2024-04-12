@@ -28,55 +28,53 @@ function LoathebRotate:sendSpellAnnounceMessage(mode, spellName, fail, hunter, d
     self:sendAnnounceMessage(self.db.profile[announceKey], announceArg)
 end
 
-function LoathebRotate:sendAuraAnnounceMessage(mode, spellName, hunter)
-    local announceArg = ''
-    if type(mode.announceArg) == 'string' then
-        if mode.announceArg == 'destName' then
-            announceArg = '' -- We do not know the destination for an aura
-        elseif mode.announceArg == 'sourceName' then
-            -- While counterintuitive, the source is the hunter
-            -- We do not know the exact 'source' which cast the buff, and maybe we never will
-            announceArg = hunter.name
-        elseif mode.announceArg == 'sourceGroup' then
-            announceArg = string.format(L["DEFAULT_GROUP_SUFFIX_MESSAGE"], hunter.subgroup or 0)
-        end
-    elseif type(mode.announceArg) == 'function' then
-        announceArg = mode.announceArg(mode, hunter, nil)
-    end
+--function LoathebRotate:sendAuraAnnounceMessage(mode, spellName, healer)
+--    local announceArg = ''
+--    if type(mode.announceArg) == 'string' then
+--        if mode.announceArg == 'destName' then
+--            announceArg = '' -- We do not know the destination for an aura
+--        elseif mode.announceArg == 'sourceName' then
+--            -- While counterintuitive, the source is the healer
+--            -- We do not know the exact 'source' which cast the buff, and maybe we never will
+--            announceArg = healer.name;
+--        elseif mode.announceArg == 'sourceGroup' then
+--            announceArg = string.format(L["DEFAULT_GROUP_SUFFIX_MESSAGE"], healer.subgroup or 0);
+--        end
+--    elseif type(mode.announceArg) == 'function' then
+--        announceArg = mode.announceArg(mode, healer, nil);
+--    end
 
-    local announceKey = "announce"..mode.modeNameFirstUpper
-    if mode.canFail then
-        announceKey = announceKey.."SuccessMessage"
-    else
-        announceKey = announceKey.."Message"
-    end
+--    local announceKey = "announce"..mode.modeNameFirstUpper
+--    if mode.canFail then
+--        announceKey = announceKey.."SuccessMessage"
+--    else
+--        announceKey = announceKey.."Message"
+--    end
 
-    self:sendAnnounceMessage(self.db.profile[announceKey], announceArg)
-end
+--	self:sendAnnounceMessage(self.db.profile[announceKey], announceArg);
+--end
 
--- Send an annouce message to a given channel
+-- Send an annouce message to a given channel, including whisper (if targetname is set)
 function LoathebRotate:sendAnnounceMessage(message, targetName)
-    if LoathebRotate.db.profile.enableAnnounces then
-        local channelType = LoathebRotate.db.profile.channelType
-        local targetChannel = LoathebRotate.db.profile.targetChannel
-        LoathebRotate:sendMessage(message, targetName, channelType, targetChannel)
-    end
+	if LoathebRotate.db.profile.enableAnnounces then
+        LoathebRotate:sendMessage(message, nil, LoathebRotate.db.profile.channelType, targetName);
+	end
 end
 
--- Write the rotation to a given channel
+-- Write the rotation to a given channel (general prints - not whisper)
 function LoathebRotate:sendRotationMessage(message)
     if LoathebRotate.db.profile.enableAnnounces then
-        local channelType = LoathebRotate.db.profile.rotationReportChannelType
-        local targetChannel = LoathebRotate.db.profile.setupBroadcastTargetChannel
-        LoathebRotate:sendMessage(message, nil, channelType, targetChannel)
+        local channelType = LoathebRotate.db.profile.rotationReportChannelType;
+        local targetChannel = LoathebRotate.db.profile.setupBroadcastTargetChannel;
+        LoathebRotate:sendMessage(message, nil, channelType, targetChannel);
     end
 end
 
 -- Send a message to a given channel
 function LoathebRotate:sendMessage(message, targetName, channelType, targetChannel)
-    local channelNumber = (channelType == "CHANNEL") and GetChannelName(targetChannel) or nil
-    if targetName then
-        message = string.format(message, targetName)
-    end
-    SendChatMessage(message, channelType, nil, channelNumber or targetChannel)
+	local channelNumber = (channelType == "CHANNEL") and GetChannelName(targetChannel) or nil
+	if targetName then
+		message = string.format(message, targetName);
+	end
+	SendChatMessage(message, channelType, nil, channelNumber or targetChannel)
 end

@@ -482,7 +482,6 @@ function LoathebRotate:applyModeFrameSettings(mainFrame, width)
     if (isVisible) then
 		mode:Show()
 		local text = LoathebRotate.db.profile[textVariable];
-		print('Test='..text);
 		mode.text:SetText(text);
 		mode:SetPoint('TOPLEFT', minX+margin, -(LoathebRotate.constants.modeBarHeight-2*margin-fontSize)/2);
 		mode:SetWidth(maxX-minX-2*margin);
@@ -722,7 +721,7 @@ function LoathebRotate.onHealerEnter(frame)
 					local effectRemaining = healer and healer.endTimeOfEffect-GetTime() or 0
 					local cooldownRemaining = healer and healer.expirationTime-GetTime() or 0
 
-					local assignmentText, targetText = getAssignmentAndTarget(healer)
+					--local assignmentText, targetText = getAssignmentAndTarget(healer);
 
 					local text = ''
 					local appendText = function(newtext)
@@ -732,12 +731,12 @@ function LoathebRotate.onHealerEnter(frame)
 						text = text..newtext
 					end
 
-					if assignmentText then
-						appendText(assignmentText)
-					end
-					if targetText then
-						appendText(targetText)
-					end
+					--if assignmentText then
+					--	appendText(assignmentText)
+					--end
+					--if targetText then
+					--	appendText(targetText)
+					--end
 
 					if effectRemaining > 0 or cooldownRemaining > 0 then
 						local hrEffect
