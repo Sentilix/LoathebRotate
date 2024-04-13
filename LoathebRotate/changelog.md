@@ -1,5 +1,12 @@
 ## LoathebRotate Changelog
 
+#### v0.2.4 (2024-04-13)
+- Added configurable debug mode, removed old testMode
+- Removed lots of unused code, such as right-click hunter assignments
+- Moved icons to 2nd row of main frame
+- Non-healer classes will no longer see window unless they do /loa show
+- Announcements updated - Whisper added and set as default option.
+
 #### v0.2.3 (2024-04-12)
 - Announcements implemented.
 - Bugfix: Drag'n'Drop is no longer interrupted by the UI refresh task.

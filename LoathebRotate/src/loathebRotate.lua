@@ -24,7 +24,6 @@ function LoathebRotate:init()
 
 	LoathebRotate.enableDrag = true;
 	LoathebRotate.raidInitialized = false;
-	LoathebRotate.testMode = false;
 	LoathebRotate.mainFrame = nil;
 	LoathebRotate.openWindowRequestSent = false;
 	LoathebRotate.ignoreRaidStatusUpdates = false;
@@ -43,8 +42,8 @@ end
 
 -- Apply setting on profile change
 function LoathebRotate:ProfilesChanged()
-	self.db:RegisterDefaults(self.defaults)
-    self:applySettings()
+	self.db:RegisterDefaults(self.defaults);
+    self:applySettings();
 end
 
 -- Apply position, size, and visibility
@@ -114,8 +113,6 @@ SlashCmdList["LOATHEBROTATE"] = function(msg)
         LoathebRotate:lock(false)
     elseif (cmd == 'rotate') then -- @todo decide if this should be removed or not
         LoathebRotate:testRotation()
-    elseif (cmd == 'test') then -- @todo: remove this
-        LoathebRotate:test()
     elseif (cmd == 'report') then
         LoathebRotate:printRotationSetup()
     elseif (cmd == 'settings') then
@@ -130,9 +127,7 @@ SlashCmdList["LOATHEBROTATE"] = function(msg)
 end
 
 function LoathebRotate:showDisplay()
---	if not LoathebRotate.mainFrame:IsShown() then
-		LoathebRotate.mainFrame:Show();
---	end
+	LoathebRotate.mainFrame:Show();
 end
 
 function LoathebRotate:hideDisplay()
@@ -158,12 +153,6 @@ function LoathebRotate:toggleHistory()
         LoathebRotate.historyFrame:Show()
         LoathebRotate.db.profile.history.visible = true
     end
-end
-
--- @todo: remove this
-function LoathebRotate:test()
-    LoathebRotate:printMessage('test')
-    LoathebRotate:toggleArcaneShotTesting()
 end
 
 -- Toggle Ace settings
@@ -224,12 +213,12 @@ function LoathebRotate:printHelp()
     LoathebRotate:printMessage(spacing .. LoathebRotate:colorText('lock') .. ' : Lock the main window position')
     LoathebRotate:printMessage(spacing .. LoathebRotate:colorText('unlock') .. ' : Unlock the main window position')
     LoathebRotate:printMessage(spacing .. LoathebRotate:colorText('report') .. ' : Print the rotation setup to the configured channel')
-    LoathebRotate:printMessage(spacing .. LoathebRotate:colorText('check') .. ' : Print user versions of LoathebRotate')
+    LoathebRotate:printMessage(spacing .. LoathebRotate:colorText('version') .. ' : Print user versions of LoathebRotate')
 end
 
 -- Adds color to given text
 function LoathebRotate:colorText(text)
-    return '|cffffbf00' .. text .. '|r'
+    return string.format('|c%s%s|r', LoathebRotate.constants.printColor, text);
 end
 
 -- Check if unit is promoted
@@ -247,41 +236,6 @@ function LoathebRotate:isHealerPromoted(name)
 
     return false
 end
-
--- Toggle arcane shot testing mode
-function LoathebRotate:toggleArcaneShotTesting(disable)
-
-    if (not disable and not LoathebRotate.testMode) then
-        LoathebRotate:printPrefixedMessage(L['ARCANE_SHOT_TESTING_ENABLED'])
-        LoathebRotate.testMode = true
-
-        -- Disable testing after 60 minutes
-        C_Timer.After(3600, function()
-            LoathebRotate:toggleArcaneShotTesting(true)
-        end)
-    else
-        LoathebRotate.testMode = false
-        LoathebRotate:printPrefixedMessage(L['ARCANE_SHOT_TESTING_DISABLED'])
-    end
-
-    LoathebRotate:updateRaidStatus()
-end
-
---function LoathebRotate:updatePlayerAddonVersion(playerName, version)
-
---    LoathebRotate.addonVersions[playerName] = version
-
---    local hunter = LoathebRotate:getHunter(playerName)
---    if (hunter) then
---        hunter.addonVersion = version
---        LoathebRotate:updateBlindIcon(hunter)
---    end
-
---    local updateRequired, breakingUpdate = LoathebRotate:isUpdateRequired(version)
---    if (updateRequired) then
---        LoathebRotate:notifyUserAboutAvailableUpdate(breakingUpdate)
---    end
---end
 
 function LoathebRotate:checkVersions()
     LoathebRotate:printPrefixedMessage(string.format(L["VERSION_INFO"], UnitName('player'), LoathebRotate.version));
@@ -302,47 +256,3 @@ function LoathebRotate:parseVersionString(versionString)
 
     return tonumber(major), tonumber(minor), tonumber(fix), versionType == nil
 end
-
----- Check if the given version would require updating
----- @return requireUpdate, breakingUpdate
---function LoathebRotate:isUpdateRequired(versionString)
-
---    local remoteMajor, remoteMinor, remoteFix, isRemoteStable = self:parseVersionString(versionString)
---    local localMajor, localMinor, localFix, isLocalStable = self:parseVersionString(LoathebRotate.version)
-
---    if (isRemoteStable) then
-
---        if (remoteMajor > localMajor) then
---            return true, true
---        elseif (remoteMajor < localMajor) then
---            return false, false
---        end
-
---        if (remoteMinor > localMinor) then
---            return true, false
---        elseif (remoteMinor < localMinor) then
---            return false, false
---        end
-
---        if (remoteFix > localFix) then
---            return true, false
---        end
---    end
-
---    return false, false
---end
-
----- Notify user about a new version available
---function LoathebRotate:notifyUserAboutAvailableUpdate(isBreakingUpdate)
---    if (isBreakingUpdate) then
---        if (LoathebRotate.notifiedBreakingUpdate ~= true) then
---            LoathebRotate:printPrefixedMessage('|cffff3d3d' .. L['BREAKING_UPDATE_AVAILABLE'] .. '|r')
---            LoathebRotate.notifiedBreakingUpdate = true
---        end
---    else
---        if (LoathebRotate.notifiedUpdate ~= true and LoathebRotate.notifiedBreakingUpdate ~= true) then
---            LoathebRotate:printPrefixedMessage(L['UPDATE_AVAILABLE'])
---            LoathebRotate.notifiedUpdate = true
---        end
---    end
---end

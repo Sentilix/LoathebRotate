@@ -34,8 +34,8 @@ LoathebRotate.constants = {
     ['healerFrameSpacing'] = 4,
     ['titleBarHeight'] = 18,
     ['modeBarHeight'] = 18,
-    ['modeFrameFontSize'] = 12,
-    ['modeFrameMargin'] = 2,
+    ['bottomFrameFontSize'] = 12,
+    ['bottomFrameMargin'] = 2,
     ['rotationFramesBaseHeight'] = 20,
 
 	['healerClasses'] = {
@@ -44,6 +44,9 @@ LoathebRotate.constants = {
 		['Priest'] = 3,
 		['Shaman'] = 4,
 	},
+
+    ['printPrefix'] = 'Loatheb Rotate - ',
+	['printColor'] = 'ff40c900',	-- light green color used for local output
 
     history = {
         fontFace = "Fonts\\ARIALN.ttf",
@@ -70,13 +73,9 @@ LoathebRotate.constants = {
 		['showWindowResponse']	= 'rx-showWindow',	-- Dummy: There is no response to a tx-showWindow
     },
 
-    ['printPrefix'] = 'LoathebRotate - ',
-    ['duplicateTranqshotDelayThreshold'] = 10,
-
     ['minimumCooldownElapsedForEligibility'] = 10,
 
     ['sounds'] = {
-		--['nextToTranq'] = 'Interface\\AddOns\\LoathebRotate\\sounds\\ding.ogg',
 		['nextToHeal'] = 'Interface\\AddOns\\LoathebRotate\\sounds\\ding.ogg',
         ['alarms'] = {
             ['alarm1'] = 'Interface\\AddOns\\LoathebRotate\\sounds\\alarm.ogg',
@@ -87,7 +86,7 @@ LoathebRotate.constants = {
         }
     },
 
-    ['tranqNowSounds'] = {
+    ['healNowSounds'] = {
         ['alarm1'] = 'Loud BUZZ',
         ['alarm2'] = 'Gentle beeplip',
         ['alarm3'] = 'Gentle dong',
@@ -95,22 +94,44 @@ LoathebRotate.constants = {
         ['flagtaken'] = 'Flag Taken (DBM)',
     },
 
---    ['tranqableBosses'] = {
---        [11982] = 19451, -- Magmadar (MC)
---        [11981] = 23342, -- Flamegor (BWL)
---        [14020] = 23342, -- Chromaggus (BWL)
---        [15509] = 19451, -- Huhuran (AQ40)
---        [15932] = 19451, -- Gluth (Naxx)
---    },
-
---    ['scorpidableBosses'] = {
---        -- 17842, -- Azgalor (Hyjal)
---        17968, -- Archimonde (Hyjal)
---        22898, -- Supremus (BT)
---        22871, -- Teron Gorefiend (BT)
---        22948, -- Gurtogg Bloodboil (BT)
---        22947, -- Mother Shahraz (BT)
---        22949, -- Gathios The Shatterer (BT)
---        22917, -- Illidan Stormrage (BT)
---    },
 }
+
+
+-- Each mode has a specific Broadcast text so that it does not conflict with other modes
+function LoathebRotate:getBroadcastHeaderText()
+    return string.format(L['BROADCAST_HEADER_TEXT'], L["LOATHEB_MODE_FULL_NAME"]);
+end
+
+LoathebRotate.loathebMode = {
+    oldModeName = 'healerz',
+    default = true,
+    raidOnly = true,
+    color = 'ff3fe7cc', -- Green-ish gooey of Loatheb HS card
+    wanted = {'PRIEST', 'PALADIN', 'SHAMAN', 'DRUID'},
+    cooldown = 60,
+    -- effectDuration = nil,
+    -- canFail = nil,
+    -- alertWhenFail = nil,
+    -- spell = nil,
+    auraTest = function(self, spellId, spellName)
+        return false
+			or spellId == 29184 -- priest debuff
+			or spellId == 29195 -- druid debuff
+			or spellId == 29197 -- paladin debuff
+			or spellId == 29199 -- shaman debuff
+			--or (LoathebRotate.db.profile.enableDebug and spellId == 1*(LoathebRotate.db.profile.emulatedSpellId or 0))
+    end,
+    -- customCombatlogFunc = nil,
+    -- effectDuration = nil,
+    -- targetGUID = nil,
+    -- buffName = nil,
+    -- buffCanReturn = nil,
+    -- customTargetName = nil,
+    -- customHistoryFunc = nil,
+    -- groupChangeFunc = nil,
+    announceArg = 'sourceName',
+    -- tooltip = nil,
+    -- assignable = nil,
+    -- metadata = nil
+}
+

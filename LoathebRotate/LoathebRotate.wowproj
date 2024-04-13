@@ -234,12 +234,6 @@
     <Content Include="src\history.lua">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="src\modes.lua">
-      <SubType>Code</SubType>
-    </Content>
-    <Content Include="src\rightclick.lua">
-      <SubType>Code</SubType>
-    </Content>
     <Content Include="src\rotation.lua">
       <SubType>Code</SubType>
     </Content>

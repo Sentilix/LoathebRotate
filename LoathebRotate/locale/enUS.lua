@@ -16,6 +16,15 @@ L["SETTING_GENERAL"] = "General"
 L["SETTING_GENERAL_REPORT"] = "Please report any issue at"
 L["SETTING_GENERAL_DESC"] = "Work in Progress: LoathebRotate is an extension of TranqRotate but without the dedicated hunter tranqshots."
 
+L["SETTING_DEBUG"] = "Debug"
+L["SETTING_DEBUG_ENABLED"] = "Enable debug mode"
+L["SETTING_DEBUG_ENABLED_DESC"] = "Debug mode: simulate Boss and Boss spells."
+L["SETTING_DEBUG_BOSS"] = "Boss ID"
+L["SETTING_DEBUG_BOSS_DESC"] = "Pretend this NPC is Loatheb!"
+L["SETTING_DEBUG_SPELL"] = "Spell ID"
+L["SETTING_DEBUG_SPELL_DESC"] = "Pretend this spell is Corrupted Mind!"
+
+
 L["LOCK_WINDOW"] = "Lock window"
 L["LOCK_WINDOW_DESC"] = "Lock window"
 L["HIDE_WINDOW_NOT_IN_RAID"] = "Hide the window when not in a raid"
@@ -115,45 +124,8 @@ L["FILTER_SHOW_SCORPID"] = "Scorpid"
 L["NO_MODE_AVAILABLE"] = "<Choose modes in settings>"
 L["MODE_INVISIBLE"] = "This is the currently selected mode and it will stay that way even though the button is not visible.\nYou may want to click a visible button mode in order to select another mode."
 
-L["TRANQSHOT_MODE_FULL_NAME"] = "Tranquilizing Shot"
 L["LOATHEB_MODE_FULL_NAME"] = "Loatheb"
-L["DISTRACT_MODE_FULL_NAME"] = "Distract"
-L["FEARWARD_MODE_FULL_NAME"] = "Fear Ward"
-L["AOETAUNT_MODE_FULL_NAME"] = "Area of Effect Taunt"
-L["MISDI_MODE_FULL_NAME"] = "Misdirection"
-L["BLOODLUST_MODE_FULL_NAME"] = "Bloodlust/Heroism"
-L["GROUNDING_MODE_FULL_NAME"] = "Grounding Totem"
-L["BREZ_MODE_FULL_NAME"] = "Battle Rez"
-L["INNERV_MODE_FULL_NAME"] = "Innervate"
-L["BOP_MODE_FULL_NAME"] = "Blessing of Protection"
-L["BOF_MODE_FULL_NAME"] = "Blessing of Freedom"
-L["SOULSTONE_MODE_FULL_NAME"] = "Soulstone"
-L["SOULWELL_MODE_FULL_NAME"] = "Soulwell"
-L["SCORPID_MODE_FULL_NAME"] = "Scorpid Sting"
-
-L["TRANQSHOT_MODE_DETAILED_DESC"] = "This mode tracks raid bosses when they enter a Frenzy status and tells hunters to cast the Tranquilizing Shot ability."
 L["LOATHEB_MODE_DETAILED_DESC"] = "This mode tracks Loatheb's ability that prevents healers from casting healing spells for 60 seconds."
-L["DISTRACT_MODE_DETAILED_DESC"] = "This mode tracks whenever a rogue has cast the Distract ability to pause the movement and reorient patrolling enemies."
-L["FEARWARD_MODE_DETAILED_DESC"] = "This mode tracks whenever a priest has cast the Fear Ward spell to prevent the next fear effect.\n"..
-    "Works only on effects classified as Fear, such as Psychic Scream. Does not work on Horror effects, such as Death Coil."
-L["AOETAUNT_MODE_DETAILED_DESC"] = "This mode tracks whenever a warrior has cast the Challenging Shout ability, or when a druid has cast the Challenging Roar ability, to taunt all surrounding mobs."
-L["MISDI_MODE_DETAILED_DESC"] = "This mode tracks whenever a hunter redirects his/her next 3 attacks thanks to the Misdirection ability."
-L["BLOODLUST_MODE_DETAILED_DESC"] = "This mode tracks whenever a shaman has cast the Bloodlust or Heroism spell for his/her group."
-L["GROUNDING_MODE_DETAILED_DESC"] = "This mode tracks whenever a shaman protects his/her teammates with a Grounding Totem to prevent the next harmful single-target spell cast on someone in the group.\n"..
-    "The target of the harmful spell must be in range of the totem to be protected and must in the same group of the shaman.\n"..
-    "Works only on spells, not abilities. Does not work on area-of-effet spells."
-L["BREZ_MODE_DETAILED_DESC"] = "This mode tracks whenever a druid resurrects someone with the Rebirth spell.\n"..
-    "Unlike most resurrection spells, Rebirth can be cast in combat."
-L["INNERV_MODE_DETAILED_DESC"] = "This mode tracks whenever a druid regenerates mana to someone with the Innervate spell.\n"..
-    "Mana regeneration is greatly increased and continues even if the target keeps on casting spells."
-L["BOP_MODE_DETAILED_DESC"] = "This mode tracks whenever a paladin protects someone from physical damage with Blessing of Protection at the cost of making impossible to perform physical attacks.\n"..
-    "This effect also removes the target temporarily from the threat table."
-L["BOF_MODE_DETAILED_DESC"] = "This mode tracks whenever a paladin frees someone and prevents movement-impairing effects, such as roots and slows, with Blessing of Freedom.\n"..
-    "This effects removes current movement-impairing effects as well as preventing new ones for the next 10 seconds."
-L["SOULSTONE_MODE_DETAILED_DESC"] = "This mode tracks whenever a warlock saves the soul of a player within a soulstone, allowing this player to resurrect immediately after dying, even in combat."
-L["SOULWELL_MODE_DETAILED_DESC"] = "This mode tracks whenever a warlock casts Ritual of Souls to create a Soulwell, which can be clicked by any player in the party or raid to create a healthstone."
-L["SCORPID_MODE_DETAILED_DESC"] = "This mode tracks when hunters use the Scorpid Sting ability.\n"..
-    "Since the ability does have really have a cooldown, a fake cooldown is displayed for the duration of the debuff."
 
 L["MODE_BUTTON_DESC"] = "Show the button for activating the mode '%s'"
 L["MODE_LABEL"] = "Button Text"

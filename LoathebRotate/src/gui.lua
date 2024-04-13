@@ -7,15 +7,21 @@ function LoathebRotate:initGui()
 
 	local titleFrame = LoathebRotate:createTitleFrame(LoathebRotate.mainFrame);
 	LoathebRotate:createMainFrameButtons(titleFrame);
-	LoathebRotate:createModeFrame(LoathebRotate.mainFrame);
+	
+	local bottomFrame = LoathebRotate:createBottomFrame(LoathebRotate.mainFrame);
+	LoathebRotate:createBottomFrameButtons(bottomFrame);
+
 	local rotationFrame = LoathebRotate:createRotationFrame(LoathebRotate.mainFrame);
+	
 	local backupFrame = LoathebRotate:createBackupFrame(LoathebRotate.mainFrame, rotationFrame);
 	LoathebRotate:createHorizontalResizer(LoathebRotate.mainFrame, LoathebRotate.db.profile.windows[1], "LEFT", rotationFrame, backupFrame);
 	LoathebRotate:createHorizontalResizer(LoathebRotate.mainFrame, LoathebRotate.db.profile.windows[1], "RIGHT", rotationFrame, backupFrame);
 
 	local historyFrame = LoathebRotate:createHistoryFrame();
+	
 	local historyTitleFrame = LoathebRotate:createTitleFrame(historyFrame, L['SETTING_HISTORY']);
 	LoathebRotate:createHistoryFrameButtons(historyTitleFrame);
+	
 	local historyBackgroundFrame = LoathebRotate:createBackgroundFrame(historyFrame, LoathebRotate.constants.titleBarHeight, LoathebRotate.db.profile.history.height);
 	LoathebRotate:createTextFrame(historyBackgroundFrame);
 	LoathebRotate:createCornerResizer(historyFrame, LoathebRotate.db.profile.history);
@@ -28,7 +34,7 @@ end
 
 -- Show/Hide main window based on user settings
 function LoathebRotate:updateDisplay()
-	if LoathebRotate:isActive() then
+	if LoathebRotate:isActive() and LoathebRotate:isHealerClass(UnitName('player')) then
 		LoathebRotate.mainFrame:Show()
 	else
 		if (LoathebRotate.db.profile.hideNotInRaid) then
@@ -54,13 +60,6 @@ function LoathebRotate:drawHealerFrames()
 	MF.backupFrame:SetHeight(LoathebRotate.constants.rotationFramesBaseHeight);
 	LoathebRotate:drawList(LoathebRotate.backupTable, MF.backupFrame);
 end
-
--- Method provided for convenience, until hunters will be dedicated to a specific mainFrame
---function LoathebRotate:drawHunterFramesOfAllMainFrames()
---    for _, mainFrame in pairs(LoathebRotate.mainFrames) do
---        LoathebRotate:drawHunterFrames(mainFrame)
---    end
---end
 
 -- Handle the render of a single healer frames group
 function LoathebRotate:drawList(healerList, parentFrame)
@@ -231,58 +230,6 @@ function LoathebRotate:setHealerName(healer)
 		end
 	end
 
-    --local targetName, buffMode, assignedName, assignedAt
-    --if LoathebRotate.db.profile.appendTarget then
-    --    if healer.targetGUID then
-    --        targetName, buffMode = self:getHealerTarget(healer)
-    --        if targetName == "" then targetName = nil end
-    --    end
-    --    assignedName, assignedAt = self:getHunterAssignment(hunter)
-    --    if assignedName == "" then assignedName = nil end
-    --end
-    --local showTarget
-    --if assignedName then
-    --    showTarget = true
-    --elseif not targetName then
-    --    showTarget = false
-    --else
-    --    showTarget = buffMode and (buffMode == 'not_a_buff' or buffMode == 'has_buff' or not LoathebRotate.db.profile.appendTargetBuffOnly)
-    --end
-    --hunter.showingTarget = showTarget
-
-    --if (LoathebRotate.db.profile.appendGroup and hunter.subgroup) then
-    --    if not showTarget or not LoathebRotate.db.profile.appendTargetNoGroup then -- Do not append the group if the target name hides the group for clarity
-    --        local groupText = string.format(LoathebRotate.db.profile.groupSuffix, hunter.subgroup)
-    --        local color = LoathebRotate:getUserDefinedColor('groupSuffix')
-    --        newText = newText.." "..color:WrapTextInColorCode(groupText)
-    --    end
-    --end
-
-    --if showTarget then
-    --    local targetColorName
-    --    local blameAssignment
-    --    if assignedName and targetName and (assignedName ~= targetName) then
-    --        blameAssignment = hunter.cooldownStarted and assignedAt and assignedAt < hunter.cooldownStarted
-    --    end
-    --    if     blameAssignment then                 targetColorName = 'flashyRed'
-    --    elseif assignedName and not targetName then targetColorName = 'white'
-    --    elseif buffMode == 'buff_expired' then      targetColorName = assignedName and 'white' or 'darkGray'
-    --    elseif buffMode == 'buff_lost' then         targetColorName = 'lightRed'
-    --    elseif buffMode == 'has_buff' then          targetColorName = 'white'
-    --    else                                        targetColorName = 'white'
-    --    end
-    --    local mode = self:getMode()
-    --    if assignedName and (not targetName or buffMode == 'buff_expired') then
-    --        targetName = assignedName
-    --    elseif type(mode.customTargetName) == 'function' then
-    --        targetName = mode.customTargetName(mode, hunter, targetName)
-    --    end
-    --    if targetName then
-    --        newText = newText..LoathebRotate.colors['white']:WrapTextInColorCode(" > ")
-    --        newText = newText..LoathebRotate.colors[targetColorName]:WrapTextInColorCode(targetName)
-    --    end
-    --end
-
 	if (newFont ~= currentFont or newOutline ~= currentOutline) then
 		healer.frame.text:SetFont(newFont, 12, newOutline);
 	end
@@ -301,19 +248,14 @@ end
 
 function LoathebRotate:startHealerCooldown(healer, endTimeOfCooldown, endTimeOfEffect, targetGUID, buffName)
 	if not endTimeOfCooldown or endTimeOfCooldown == 0 then
-		local cooldown = LoathebRotate:getModeCooldown();
+		local cooldown = LoathebRotate.loathebMode.cooldown;
 		if cooldown then
 			endTimeOfCooldown = GetTime() + cooldown;
 		end
 	end
 
 	if not endTimeOfEffect or endTimeOfEffect == 0 then
-		local effectDuration = LoathebRotate:getModeEffectDuration();
-		if effectDuration then
-			endTimeOfEffect = GetTime() + effectDuration;
-		else
-			endTimeOfEffect = 0;
-		end
+		endTimeOfEffect = 0;
 	end
 	healer.endTimeOfEffect = endTimeOfEffect;
 
@@ -340,127 +282,16 @@ function LoathebRotate:startHealerCooldown(healer, endTimeOfCooldown, endTimeOfE
 			healer.frame.cooldownFrame.statusTick:Hide();
 		end
 	healer.frame.cooldownFrame:Show();
-
---    healer.targetGUID = targetGUID
---    healer.buffName = buffName
---    if targetGUID and LoathebRotate.db.profile.appendTarget then
---        LoathebRotate:setHunterName(hunter)
---        if buffName and endTimeOfEffect > GetTime() then
-
---            -- Create a ticker to refresh the name on a regular basis, for as long as the target name is displayed
---            if not hunter.nameRefreshTicker or hunter.nameRefreshTicker:IsCancelled() then
---                local nameRefreshInterval = 0.5
---                hunter.nameRefreshTicker = C_Timer.NewTicker(nameRefreshInterval, function()
---                    LoathebRotate:setHunterName(hunter)
---                    -- hunter.showingTarget is computed in the setHunterName() call; use this variable to tell when to stop refreshing
---                    if not hunter.showingTarget and not LoathebRotate:getMode().buffCanReturn then
---                        hunter.nameRefreshTicker:Cancel()
---                        hunter.nameRefreshTicker = nil
---                    end
---                end)
---            end
-
---            -- Also create a timer that will be triggered shortly after the expiration time of the buff
---            if hunter.nameRefreshTimer and not hunter.nameRefreshTimer:IsCancelled() then
---                hunter.nameRefreshTimer:Cancel()
---            end
---            hunter.nameRefreshTimer = C_Timer.NewTimer(endTimeOfEffect - GetTime() + 1, function()
---                LoathebRotate:setHunterName(hunter)
---                hunter.nameRefreshTimer = nil
---            end)
---        end
---    end
-
-    if healer.buffName and healer.endTimeOfEffect > GetTime() then
-        LoathebRotate:trackHistoryBuff(healer)
-    end
 end
-
---function LoathebRotate:startHunterCooldown(hunter, endTimeOfCooldown, endTimeOfEffect, targetGUID, buffName)
---    if not endTimeOfCooldown or endTimeOfCooldown == 0 then
---        local cooldown = LoathebRotate:getModeCooldown()
---        if cooldown then
---            endTimeOfCooldown = GetTime() + cooldown
---        end
---    end
-
---    if not endTimeOfEffect or endTimeOfEffect == 0 then
---        local effectDuration = LoathebRotate:getModeEffectDuration()
---        if effectDuration then
---            endTimeOfEffect = GetTime() + effectDuration
---        else
---            endTimeOfEffect = 0
---        end
---    end
---    hunter.endTimeOfEffect = endTimeOfEffect
-
---    hunter.cooldownStarted = GetTime()
-
---    hunter.frame.cooldownFrame.statusBar:SetMinMaxValues(GetTime(), endTimeOfCooldown or GetTime())
---    hunter.expirationTime = endTimeOfCooldown
---    if endTimeOfCooldown and endTimeOfEffect and GetTime() < endTimeOfCooldown and GetTime() < endTimeOfEffect and endTimeOfEffect < endTimeOfCooldown then
---        local tickWidth = 3
---        local x = hunter.frame.cooldownFrame:GetWidth()*(endTimeOfEffect-GetTime())/(endTimeOfCooldown-GetTime())
---        if x < 5 then
---            -- If the tick is too early, it is graphically undistinguishable from the beginning of the cooldown bar, so don't bother displaying the tick
---            hunter.frame.cooldownFrame.statusTick:Hide()
---        else
---            local xmin = x-tickWidth/2
---            local xmax = xmin + tickWidth
---            hunter.frame.cooldownFrame.statusTick:ClearAllPoints()
---            hunter.frame.cooldownFrame.statusTick:SetPoint('TOPLEFT', xmin, 0)
---            hunter.frame.cooldownFrame.statusTick:SetPoint('BOTTOMRIGHT', xmax-hunter.frame.cooldownFrame:GetWidth(), 0)
---            hunter.frame.cooldownFrame.statusTick:Show()
---        end
---    else
---        -- If there is no tick or the tick is beyond the cooldown bar, do not display the tick
---        hunter.frame.cooldownFrame.statusTick:Hide()
---    end
---    hunter.frame.cooldownFrame:Show()
-
---    hunter.targetGUID = targetGUID
---    hunter.buffName = buffName
---    if targetGUID and LoathebRotate.db.profile.appendTarget then
---        LoathebRotate:setHunterName(hunter)
---        if buffName and endTimeOfEffect > GetTime() then
-
---            -- Create a ticker to refresh the name on a regular basis, for as long as the target name is displayed
---            if not hunter.nameRefreshTicker or hunter.nameRefreshTicker:IsCancelled() then
---                local nameRefreshInterval = 0.5
---                hunter.nameRefreshTicker = C_Timer.NewTicker(nameRefreshInterval, function()
---                    LoathebRotate:setHunterName(hunter)
---                    -- hunter.showingTarget is computed in the setHunterName() call; use this variable to tell when to stop refreshing
---                    if not hunter.showingTarget and not LoathebRotate:getMode().buffCanReturn then
---                        hunter.nameRefreshTicker:Cancel()
---                        hunter.nameRefreshTicker = nil
---                    end
---                end)
---            end
-
---            -- Also create a timer that will be triggered shortly after the expiration time of the buff
---            if hunter.nameRefreshTimer and not hunter.nameRefreshTimer:IsCancelled() then
---                hunter.nameRefreshTimer:Cancel()
---            end
---            hunter.nameRefreshTimer = C_Timer.NewTimer(endTimeOfEffect - GetTime() + 1, function()
---                LoathebRotate:setHunterName(hunter)
---                hunter.nameRefreshTimer = nil
---            end)
---        end
---    end
-
---    if hunter.buffName and hunter.endTimeOfEffect > GetTime() then
---        LoathebRotate:trackHistoryBuff(hunter)
---    end
---end
 
 -- Lock/Unlock the mainFrame position
 function LoathebRotate:lock(lock)
-    LoathebRotate.db.profile.lock = lock
-    LoathebRotate:applySettings()
+	LoathebRotate.db.profile.lock = lock
+	LoathebRotate:applySettings()
 
-    if (lock) then
-        LoathebRotate:printMessage(L['WINDOW_LOCKED'])
-    else
-        LoathebRotate:printMessage(L['WINDOW_UNLOCKED'])
-    end
+	if (lock) then
+		LoathebRotate:printMessage(L['WINDOW_LOCKED'])
+	else
+		LoathebRotate:printMessage(L['WINDOW_UNLOCKED'])
+	end
 end

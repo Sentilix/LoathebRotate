@@ -7,13 +7,16 @@ function LoathebRotate:createMainFrame()
 
 	mainFrame:SetWidth(LoathebRotate.db.profile.windows[1].width)
 	mainFrame:SetHeight(LoathebRotate.constants.rotationFramesBaseHeight * 2 + LoathebRotate.constants.titleBarHeight + LoathebRotate.constants.modeBarHeight)
-	mainFrame:Show()
+
+	if LoathebRotate:isHealerClass(UnitName('player')) then
+		mainFrame:Show()
+	else
+		mainFrame:Hide()
+	end
 
 	mainFrame:RegisterForDrag("LeftButton")
 	mainFrame:SetClampedToScreen(true)
 	mainFrame:SetScript("OnDragStart", function() mainFrame:StartMoving() end)
-
-	--mainFrame.windowIndex = LoathebRotate.mainFrames and #(LoathebRotate.mainFrames)+1 or 1
 
 	mainFrame:SetScript(
 		"OnDragStop",
@@ -27,13 +30,6 @@ function LoathebRotate:createMainFrame()
 	)
 
 	LoathebRotate.mainFrame = mainFrame;
-
-    --if not LoathebRotate.mainFrames then
-    --    LoathebRotate.mainFrames = { mainFrame }
-    --else
-    --    table.insert(LoathebRotate.mainFrames, mainFrame)
-    --    LoathebRotate.db.profile.windows[mainFrame.windowIndex] = LoathebRotate.db.profile.windows[1]
-    --end
 
     return mainFrame
 end
@@ -68,29 +64,29 @@ end
 
 -- Create Title frame
 function LoathebRotate:createTitleFrame(baseFrame, subtitle)
-    local titleFrame = CreateFrame("Frame", 'rotationFrame', baseFrame)
-    titleFrame:SetPoint('TOPLEFT')
-    titleFrame:SetPoint('TOPRIGHT')
-    titleFrame:SetHeight(LoathebRotate.constants.titleBarHeight)
+	local titleFrame = CreateFrame("Frame", 'rotationFrame', baseFrame)
+	titleFrame:SetPoint('TOPLEFT')
+	titleFrame:SetPoint('TOPRIGHT')
+	titleFrame:SetHeight(LoathebRotate.constants.titleBarHeight)
 
-    titleFrame.texture = titleFrame:CreateTexture(nil, "BACKGROUND")
-    titleFrame.texture:SetColorTexture(LoathebRotate.colors.darkGreen:GetRGB())
-    titleFrame.texture:SetAllPoints()
+	titleFrame.texture = titleFrame:CreateTexture(nil, "BACKGROUND")
+	titleFrame.texture:SetColorTexture(LoathebRotate.colors.darkGreen:GetRGB())
+	titleFrame.texture:SetAllPoints()
 
-    titleFrame.text = titleFrame:CreateFontString(nil, "ARTWORK")
-    titleFrame.text:SetFont("Fonts\\ARIALN.ttf", 12, "")
-    titleFrame.text:SetShadowColor(0,0,0,0.5)
-    titleFrame.text:SetShadowOffset(1,-1)
-    titleFrame.text:SetPoint("LEFT",5,0)
-    if subtitle then
-        titleFrame.text:SetText(string.format('LoathebRotate - %s', subtitle))
-    else
-        titleFrame.text:SetText('LoathebRotate')
-    end
-    titleFrame.text:SetTextColor(1,1,1,1)
+	titleFrame.text = titleFrame:CreateFontString(nil, "ARTWORK")
+	titleFrame.text:SetFont("Fonts\\ARIALN.ttf", 12, "")
+	titleFrame.text:SetShadowColor(0,0,0,0.5)
+	titleFrame.text:SetShadowOffset(1,-1)
+	titleFrame.text:SetPoint("LEFT",5,0)
+	if subtitle then
+		titleFrame.text:SetText(string.format('Loatheb Rotate - %s', subtitle));
+	else
+		titleFrame.text:SetText(string.format('Loatheb Rotate v%s', LoathebRotate.version));
+	end
+	titleFrame.text:SetTextColor(1,1,1,1)
 
-    baseFrame.titleFrame = titleFrame
-    return titleFrame
+	baseFrame.titleFrame = titleFrame
+	return titleFrame
 end
 
 -- Create resizer for width and height
@@ -196,12 +192,10 @@ function LoathebRotate:createHorizontalResizer(baseFrame, windowConfig, side, ba
                 baseFrame:SetWidth(width)
             end
 
-            -- Resize other UI elements which may depend on it
-            if baseFrame.dropHintFrame then
-                baseFrame.dropHintFrame:SetWidth(width - 10)
-                -- Hack: we know mode frame settings must be re-applied when there is a drophint
-                LoathebRotate:applyModeFrameSettings(baseFrame, width)
-            end
+			-- Resize other UI elements which may depend on it
+			if baseFrame.dropHintFrame then
+				baseFrame.dropHintFrame:SetWidth(width - 10);
+			end
         end)
 
         baseFrame.resizers = { [side] = resizer }
@@ -226,6 +220,13 @@ function LoathebRotate:createMainFrameButtons(baseFrame)
             callback = LoathebRotate.toggleDisplay,
             texCoord = {0.08, 0.9, 0.1, 0.9},
         },
+    }
+
+    return LoathebRotate:createButtons(baseFrame, buttons)
+end
+
+function LoathebRotate:createBottomFrameButtons(baseFrame)
+    local buttons = {
         {
             texture = 'Interface/GossipFrame/BinderGossipIcon',
             callback = LoathebRotate.toggleSettings,
@@ -253,7 +254,7 @@ function LoathebRotate:createMainFrameButtons(baseFrame)
     }
 
     return LoathebRotate:createButtons(baseFrame, buttons)
-end
+end;
 
 -- Create title bar buttons for main frame
 function LoathebRotate:createHistoryFrameButtons(baseFrame)
@@ -378,118 +379,21 @@ function LoathebRotate:createTextFrame(baseFrame)
     return textFrame
 end
 
--- Create Mode frame
-function LoathebRotate:createModeFrame(baseFrame)
-    local modeFrame = CreateFrame("Frame", 'modeFrame', baseFrame)
-    modeFrame:SetPoint('LEFT')
-    modeFrame:SetPoint('RIGHT')
-    modeFrame:SetPoint('TOP', 0, -LoathebRotate.constants.titleBarHeight)
-    modeFrame:SetHeight(LoathebRotate.constants.modeBarHeight)
+-- Create bottom frame
+function LoathebRotate:createBottomFrame(baseFrame)
+    local bottomFrame = CreateFrame("Frame", 'bottomFrame', baseFrame)
+    bottomFrame:SetPoint('LEFT')
+    bottomFrame:SetPoint('RIGHT')
+    bottomFrame:SetPoint('TOP', 0, -LoathebRotate.constants.titleBarHeight)
+    bottomFrame:SetHeight(LoathebRotate.constants.modeBarHeight)
 
-    modeFrame.texture = modeFrame:CreateTexture(nil, "BACKGROUND")
-    modeFrame.texture:SetColorTexture(LoathebRotate.colors.darkBlue:GetRGB())
-    modeFrame.texture:SetAllPoints()
+    bottomFrame.texture = bottomFrame:CreateTexture(nil, "BACKGROUND")
+    bottomFrame.texture:SetColorTexture(LoathebRotate.colors.darkBlue:GetRGB())
+    bottomFrame.texture:SetAllPoints()
 
-    baseFrame.modeFrame = modeFrame
-    baseFrame.modeFrames = {}
-    local commonModeWidth = LoathebRotate.db.profile.windows[1].width/3;
+    baseFrame.bottomFrame = bottomFrame
 
-    --local modeIndex = 0
-    --for modeName, mode in pairs(LoathebRotate.modes) do
-    --    LoathebRotate:createSingleModeFrame(baseFrame, modeName, L["FILTER_SHOW_"..mode.modeNameUpper], modeIndex*commonModeWidth, (modeIndex+1)*commonModeWidth, true)
-    --    modeIndex = modeIndex+1
-    --end
-
-	local mode = LoathebRotate:getMode();
-    LoathebRotate:createSingleModeFrame(baseFrame, 'Loatheb', L["FILTER_SHOW_"..mode.modeNameUpper], commonModeWidth, 2*commonModeWidth, true);
-    LoathebRotate:applyModeFrameSettings(baseFrame);
-
-    return modeFrame;
-end
-
--- Create single mode button
-function LoathebRotate:createSingleModeFrame(baseFrame, modeName, text, minX, maxX, enabled)
-    local fontSize = LoathebRotate.constants.modeFrameFontSize
-    local margin = LoathebRotate.constants.modeFrameMargin
-    local modeFrame = CreateFrame("Frame", nil, baseFrame.modeFrame)
-    modeFrame:SetPoint('TOPLEFT', minX+margin, -(LoathebRotate.constants.modeBarHeight-2*margin-fontSize)/2)
-    modeFrame:SetWidth(maxX-minX-2*margin)
-    modeFrame:SetHeight(LoathebRotate.constants.modeBarHeight-2*margin)
-
-    -- Set Texture
-    modeFrame.texture = modeFrame:CreateTexture(nil, "BACKGROUND")
-    if enabled then
-        modeFrame.texture:SetColorTexture(LoathebRotate.colors.blue:GetRGB())
-    else
-        modeFrame.texture:SetColorTexture(LoathebRotate.colors.darkBlue:GetRGB())
-    end
-    modeFrame.texture:SetAllPoints()
-
-    -- Set Text
-    modeFrame.text = modeFrame:CreateFontString(nil, "ARTWORK")
-    modeFrame.text:SetFont("Fonts\\ARIALN.ttf", fontSize, "")
-    modeFrame.text:SetShadowColor(0,0,0,0.5)
-    modeFrame.text:SetShadowOffset(1,-1)
-    modeFrame.text:SetPoint('TOPLEFT',1,-1)
-    modeFrame.text:SetText(text)
-    modeFrame.text:SetTextColor(1,1,1,1)
-
-    -- Register the OnMouseDown event ; nb. the OnClick event is exclusive to Buttons (which we aren't)
-    modeFrame:SetScript(
-        "OnMouseDown",
-        function()
-            LoathebRotate:activateMode(modeName, baseFrame)
-            LoathebRotate:updateRaidStatus()
-            LoathebRotate:resetRotation()
-            LoathebRotate:sendSyncOrderRequest()
-        end
-    )
-
-    baseFrame.modeFrames[modeName] = modeFrame
-
-    return modeFrame
-end
-
--- Setup mode frame appearance, based on user-defined settings
-function LoathebRotate:applyModeFrameSettings(mainFrame, width)
---    local modeFrameMapping = {}
-
-    --for modeName, mode in pairs(LoathebRotate.modes) do
-    --    table.insert(modeFrameMapping, {
-    --        modeName = modeName,
-    --        visibilityFlag = modeName.."ModeButton",
-    --        textVariable = modeName.."ModeText",
-    --    })
-    --end
-
-	local modeName = 'Loatheb';
-	local visibilityFlag = "LoathebModeButton";
-	local textVariable = "LoathebModeText";
-
-	local modeFrameText = mainFrame.modeFrame and mainFrame.modeFrame.text
-	if modeFrameText then
-		modeFrameText:Hide()
-	end
-
-	local commonModeWidth = (width or LoathebRotate.db.profile.windows[1].width);
-	local minX = 0
-	local maxX = commonModeWidth
-	local fontSize = LoathebRotate.constants.modeFrameFontSize;
-	local margin = LoathebRotate.constants.modeFrameMargin;
-
-	local isVisible = LoathebRotate.db.profile[visibilityFlag];
-	local mode = mainFrame.modeFrames[modeName];
-    if (isVisible) then
-		mode:Show()
-		local text = LoathebRotate.db.profile[textVariable];
-		mode.text:SetText(text);
-		mode:SetPoint('TOPLEFT', minX+margin, -(LoathebRotate.constants.modeBarHeight-2*margin-fontSize)/2);
-		mode:SetWidth(maxX-minX-2*margin);
-		minX = maxX;
-		maxX = maxX + commonModeWidth;
-	else
-		mode:Hide()
-	end
+    return bottomFrame;
 end
 
 -- Create background frame
@@ -568,13 +472,13 @@ function LoathebRotate:createHealerFrame(healer, parentFrame)
 	LoathebRotate:createCooldownFrame(healer);
 	LoathebRotate:createBlindIconFrame(healer);
 	LoathebRotate:configureHealerFrameDrag(healer);
-	LoathebRotate:configureHealerFrameRightClick(healer);
+	--LoathebRotate:configureHealerFrameRightClick(healer);
 
 	if (LoathebRotate.enableDrag) then
 		LoathebRotate:enableHealerFrameDragging(healer, true);
 	end
 
-	LoathebRotate:enableHealerFrameRightClick(healer, true);
+--	LoathebRotate:enableHealerFrameRightClick(healer, true);
 end
 
 -- Create the cooldown frame
@@ -678,131 +582,60 @@ end
 
 -- Healer frame tooltip show
 function LoathebRotate.onHealerEnter(frame)
-	local mode = LoathebRotate:getMode();
-	if mode and mode.tooltip then
-		local tooltip
-		if type(mode.tooltip) == 'string' then
-			tooltip = mode.tooltip
-		elseif type(mode.tooltip) == 'function' then
-			local healer = LoathebRotate:getHealer(frame.GUID);
-			tooltip = mode.tooltip(mode, healer);
-		end
-		if tooltip then
-			GameTooltip:SetOwner(frame, "ANCHOR_TOP");
-			GameTooltip:SetText(tooltip);
-			GameTooltip:Show();
-		end
+	local healer = LoathebRotate:getHealer(frame.GUID)
+	if healer then
+		if (healer.endTimeOfEffect and GetTime() < healer.endTimeOfEffect) or (healer.expirationTime and GetTime() < healer.expirationTime) then
+			local tooltipRefreshFunc = function()
+				local effectRemaining = healer and healer.endTimeOfEffect-GetTime() or 0
+				local cooldownRemaining = healer and healer.expirationTime-GetTime() or 0
 
-	else
-		local healer = LoathebRotate:getHealer(frame.GUID)
-		if healer then
---            local getAssignmentAndTarget = function(healer)
---                local assignmentText, targetText
-
---				--local assignment = LoathebRotate:getHealerAssignment(healer);
---				--if assignment then
---				--	assignmentText = string.format(L['TOOLTIP_ASSIGNED_TO'], assignment);
---				--end
-
---                --local lastTarget, buffMode = LoathebRotate:getHunterTarget(healer)
---                --if lastTarget and lastTarget ~= '' and buffMode and buffMode ~= 'not_a_buff' then
---                --    if buffMode == 'has_buff' then
---                --        targetText = string.format(L['TOOLTIP_EFFECT_CURRENT'], lastTarget)
---                --    else
---                --        targetText = string.format(L['TOOLTIP_EFFECT_PAST'], lastTarget)
---                --    end
---                --end
-
---                return assignmentText, targetText
---            end
-
-			if (healer.endTimeOfEffect and GetTime() < healer.endTimeOfEffect) or (healer.expirationTime and GetTime() < healer.expirationTime) then
-				local tooltipRefreshFunc = function()
-					local effectRemaining = healer and healer.endTimeOfEffect-GetTime() or 0
-					local cooldownRemaining = healer and healer.expirationTime-GetTime() or 0
-
-					--local assignmentText, targetText = getAssignmentAndTarget(healer);
-
-					local text = ''
-					local appendText = function(newtext)
-						if text ~= '' then
-							text = text..'\n'
-						end
-						text = text..newtext
-					end
-
-					--if assignmentText then
-					--	appendText(assignmentText)
-					--end
-					--if targetText then
-					--	appendText(targetText)
-					--end
-
-					if effectRemaining > 0 or cooldownRemaining > 0 then
-						local hrEffect
-						if effectRemaining > 60 then
-							hrEffect = string.format(L['TOOLTIP_DURATION_MINUTES'], ceil(effectRemaining/60))
-						elseif effectRemaining > 0 then
-							hrEffect = string.format(L['TOOLTIP_DURATION_SECONDS'], ceil(effectRemaining))
-						end
-                        --if hrEffect then
-                        --    -- The effect is not real if the buff was lost
-                        --    local _, buffMode = LoathebRotate:getHealerTarget(healer)
-                        --    if buffMode == 'buff_lost' then
-                        --        local mode = LoathebRotate:getMode() -- @todo get mode of hunter
-                        --        if mode and not mode.buffCanReturn then
-                        --            hrEffect = nil
-                        --        end
-                        --    end
-                        --end
-
-						local hrCooldown
-						if cooldownRemaining > 60 then
-							hrCooldown = string.format(L['TOOLTIP_DURATION_MINUTES'], ceil(cooldownRemaining/60));
-						elseif cooldownRemaining > 0 then
-							hrCooldown = string.format(L['TOOLTIP_DURATION_SECONDS'], ceil(cooldownRemaining));
-						end
-
-						if hrEffect then
-							appendText(string.format(L['TOOLTIP_EFFECT_REMAINING'], hrEffect));
-						end
-						if hrCooldown then
-							appendText(string.format(L['TOOLTIP_COOLDOWN_REMAINING'], hrCooldown));
-						end 
-                    end
+				local text = ''
+				local appendText = function(newtext)
 					if text ~= '' then
-						GameTooltip:SetText(text);
-					else
-						frame.tooltipRefreshTicker:Cancel();
-						frame.tooltipRefreshTicker = nil;
-						GameTooltip:Hide();
+						text = text..'\n'
 					end
+					text = text..newtext
 				end
 
-				if not frame.tooltipRefreshTicker or frame.tooltipRefreshTicker:IsCancelled() then
-					local refreshInterval = 0.5;
-					frame.tooltipRefreshTicker = C_Timer.NewTicker(refreshInterval, tooltipRefreshFunc);
-				end
+				if effectRemaining > 0 or cooldownRemaining > 0 then
+					local hrEffect
+					if effectRemaining > 60 then
+						hrEffect = string.format(L['TOOLTIP_DURATION_MINUTES'], ceil(effectRemaining/60))
+					elseif effectRemaining > 0 then
+						hrEffect = string.format(L['TOOLTIP_DURATION_SECONDS'], ceil(effectRemaining))
+					end
 
-				GameTooltip:SetOwner(frame, "ANCHOR_TOP")
-				tooltipRefreshFunc()
-				GameTooltip:Show()
-			else
-                --local assignmentText, targetText = getAssignmentAndTarget(healer)
-                --if assignmentText or targetText then
-                --    local text = ''
-                --    if not assignmentText then
-                --        text = targetText
-                --    elseif not targetText then
-                --        text = assignmentText
-                --    else
-                --        text = assignmentText..'\n'..targetText
-                --    end
-                --    GameTooltip:SetOwner(frame, "ANCHOR_TOP")
-                --    GameTooltip:SetText(text)
-                --    GameTooltip:Show()
-                --end
-            end
+					local hrCooldown
+					if cooldownRemaining > 60 then
+						hrCooldown = string.format(L['TOOLTIP_DURATION_MINUTES'], ceil(cooldownRemaining/60));
+					elseif cooldownRemaining > 0 then
+						hrCooldown = string.format(L['TOOLTIP_DURATION_SECONDS'], ceil(cooldownRemaining));
+					end
+
+					if hrEffect then
+						appendText(string.format(L['TOOLTIP_EFFECT_REMAINING'], hrEffect));
+					end
+					if hrCooldown then
+						appendText(string.format(L['TOOLTIP_COOLDOWN_REMAINING'], hrCooldown));
+					end 
+                end
+				if text ~= '' then
+					GameTooltip:SetText(text);
+				else
+					frame.tooltipRefreshTicker:Cancel();
+					frame.tooltipRefreshTicker = nil;
+					GameTooltip:Hide();
+				end
+			end
+
+			if not frame.tooltipRefreshTicker or frame.tooltipRefreshTicker:IsCancelled() then
+				local refreshInterval = 0.5;
+				frame.tooltipRefreshTicker = C_Timer.NewTicker(refreshInterval, tooltipRefreshFunc);
+			end
+
+			GameTooltip:SetOwner(frame, "ANCHOR_TOP")
+			tooltipRefreshFunc()
+			GameTooltip:Show()
         end
     end
 end

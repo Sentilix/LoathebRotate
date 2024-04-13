@@ -18,14 +18,14 @@ function LoathebRotate:CreateConfig()
 	end
 
     local function refreshNames()
-        for _, hunter in pairs(LoathebRotate.hunterTable) do
-            LoathebRotate:setHunterName(hunter)
+        for _, healer in pairs(LoathebRotate.healerTable) do
+            LoathebRotate:setHealerName(healer)
         end
     end
 
     local function refreshFrameColors()
-        for _, hunter in pairs(LoathebRotate.hunterTable) do
-            LoathebRotate:setHunterFrameColor(hunter)
+        for _, healer in pairs(LoathebRotate.healerTable) do
+            LoathebRotate:setHealerFrameColor(healer)
         end
     end
 
@@ -59,12 +59,21 @@ function LoathebRotate:CreateConfig()
         refreshNames()
     end
 
-    local function setForMode(...)
-        set(...)
-        for _, mainFrame in pairs(LoathebRotate.mainFrames) do
-            LoathebRotate:applyModeFrameSettings(mainFrame)
-        end
-    end
+	local function getEmulatedBossId(info)
+		local value = LoathebRotate.db.profile[info[#info]];
+		return value or 5112;		-- Gwenna Firebrew
+	end
+	local function setEmulatedBossId(info, val)
+		LoathebRotate.db.profile[info[#info]] = val;
+	end
+
+	local function getEmulatedSpellId(info)
+		local value = LoathebRotate.db.profile[info[#info]];
+		return value or 6788;		-- Weakened Soul
+	end
+	local function setEmulatedSpellId(info, val)
+		LoathebRotate.db.profile[info[#info]] = val;
+	end
 
 	local options = {
 		name = "LoathebRotate",
@@ -138,29 +147,6 @@ function LoathebRotate:CreateConfig()
                         order = 9,
                         width = "full",
                     },
-                    --testHeader = {
-                    --    name = L["TEST_MODE_HEADER"],
-                    --    type = "header",
-                    --    order = 20,
-                    --},
-                    --ToggleArcaneShotTestingDesc = {
-                    --    name = L['ENABLE_ARCANE_SHOT_TESTING_DESC'],
-                    --    type = "description",
-                    --    width = "full",
-                    --    order = 21,
-                    --},
-                    --spacer12 = {
-                    --    name = ' ',
-                    --    type = "description",
-                    --    width = "full",
-                    --    order = 22,
-                    --},
-                    --ToggleArcaneShotTesting = {
-                    --    name = L["ENABLE_ARCANE_SHOT_TESTING"],
-                    --    type = "execute",
-                    --    order = 23,
-                    --    func = function() LoathebRotate.toggleArcaneShotTesting() end
-                    --},
                     --showBlindIcon = {
                     --    name = L["DISPLAY_BLIND_ICON"],
                     --    desc = L["DISPLAY_BLIND_ICON_DESC"],
@@ -178,18 +164,10 @@ function LoathebRotate:CreateConfig()
                     --},
                 }
             },
-            --modes = {
-            --    name = L['SETTING_MODES'],
-            --    type = "group",
-            --    order = 2,
-            --    args = {
-            --        -- Will be filled by the end of this script
-            --    }
-            --},
             announces = {
                 name = L['SETTING_ANNOUNCES'],
                 type = "group",
-                order = 3,
+                order = 2,
                 args = {
                     enableAnnounces = {
                         name = L["ENABLE_ANNOUNCES"],
@@ -264,7 +242,7 @@ function LoathebRotate:CreateConfig()
             names = {
                 name = L['SETTING_NAMES'],
                 type = "group",
-                order = 4,
+                order = 3,
                 args = {
                     nameTagHeader = {
                         name = L["NAME_TAG_HEADER"],
@@ -303,58 +281,6 @@ function LoathebRotate:CreateConfig()
                         get = getColor,
                         set = setFgColor,
                         hidden = function() return not LoathebRotate.db.profile.prependIndex end,
-                    },
-                    appendGroup = {
-                        name = L["APPEND_GROUP"],
-                        desc = L["APPEND_GROUP_DESC"],
-                        type = "toggle",
-                        order = 10,
-                        width = "full",
-                        set = setNameTag,
-                    },
-                    groupSuffix = {
-                        name = L["GROUP_SUFFIX_LABEL"],
-                        desc = L["GROUP_SUFFIX_LABEL_DESC"],
-                        type = "input",
-                        order = 11,
-                        width = "half",
-                        set = setNameTag,
-                        hidden = function() return not LoathebRotate.db.profile.appendGroup end,
-                    },
-                    groupSuffixColor = {
-                        name = L["GROUP_SUFFIX_COLOR"],
-                        desc = L["GROUP_SUFFIX_COLOR_DESC"],
-                        type = "color",
-                        order = 12,
-                        get = getColor,
-                        set = setFgColor,
-                        hidden = function() return not LoathebRotate.db.profile.appendGroup end,
-                    },
-                    appendTarget = {
-                        name = L["APPEND_TARGET"],
-                        desc = L["APPEND_TARGET_DESC"],
-                        type = "toggle",
-                        order = 13,
-                        width = "full",
-                        set = setNameTag,
-                    },
-                    appendTargetBuffOnly = {
-                        name = L["APPEND_TARGET_BUFFONLY"],
-                        desc = L["APPEND_TARGET_BUFFONLY_DESC"],
-                        type = "toggle",
-                        order = 14,
-                        width = "full",
-                        set = setNameTag,
-                        hidden = function() return not LoathebRotate.db.profile.appendTarget end,
-                    },
-                    appendTargetNoGroup = {
-                        name = L["APPEND_TARGET_NOGROUP"],
-                        desc = L["APPEND_TARGET_NOGROUP_DESC"],
-                        type = "toggle",
-                        order = 15,
-                        width = "full",
-                        set = setNameTag,
-                        hidden = function() return not LoathebRotate.db.profile.appendGroup or not LoathebRotate.db.profile.appendTarget end,
                     },
                     backgroundHeader = {
                         name = L["BACKGROUND_HEADER"],
@@ -402,7 +328,7 @@ function LoathebRotate:CreateConfig()
             sounds = {
                 name = L['SETTING_SOUNDS'],
                 type = "group",
-                order = 5,
+                order = 4,
                 args = {
 					enableNextToHealSound = {
 						name = L["ENABLE_NEXT_TO_HEAL_SOUND"],
@@ -424,7 +350,7 @@ function LoathebRotate:CreateConfig()
                         type = "select",
                         style = "dropdown",
                         order = 3,
-                        values = LoathebRotate.constants.tranqNowSounds,
+                        values = LoathebRotate.constants.healNowSounds,
                         set = function(info, value)
                             set(info, value)
                             PlaySoundFile(LoathebRotate.constants.sounds.alarms[value])
@@ -441,7 +367,7 @@ function LoathebRotate:CreateConfig()
             history = {
                 name = L['SETTING_HISTORY'],
                 type = "group",
-                order = 6,
+                order = 5,
                 args = {
                     historyTimeVisible = {
                         name = L["HISTORY_FADEOUT"],
@@ -462,97 +388,51 @@ function LoathebRotate:CreateConfig()
                     },
                 }
             },
+            debug = {
+                name = L['SETTING_DEBUG'],
+                type = "group",
+                order = 6,
+                args = {
+                    enableDebug = {
+                        name = L["SETTING_DEBUG_ENABLED"],
+                        desc = L["SETTING_DEBUG_ENABLED_DESC"],
+                        type = "toggle",
+                        order = 1,
+                        width = "full",
+                    },
+                    emulatedBossId = {
+						name = L["SETTING_DEBUG_BOSS"],
+						desc = L["SETTING_DEBUG_BOSS_DESC"],
+						type = "input",
+						order = 2,
+						width = "half",
+						get = getEmulatedBossId,
+						set = setEmulatedBossId,
+                    },
+                    emulatedSpellId = {
+						name = L["SETTING_DEBUG_SPELL"],
+						desc = L["SETTING_DEBUG_SPELL_DESC"],
+						type = "input",
+						order = 3,
+						width = "half",
+						get = getEmulatedSpellId,
+						set = setEmulatedSpellId,
+                    },
+                }
+            },
         }
 	}
 
---    local modeBaseIndex = 10
---    local announceIndex = 30
---    for modeName, mode in pairs(LoathebRotate.modes) do
---        options.args.modes.args[modeName.."ModeHeader"] = {
---            type = "header",
---            order = modeBaseIndex,
---        }
---        options.args.modes.args[modeName.."ModeButton"] = {
---            name = L[mode.modeNameUpper.."_MODE_FULL_NAME"],
---            desc = string.format(L["MODE_BUTTON_DESC"], L[mode.modeNameUpper.."_MODE_FULL_NAME"])..".\n"..L[mode.modeNameUpper.."_MODE_DETAILED_DESC"],
---            type = "toggle",
---            order = modeBaseIndex+1,
---            width = "full",
---            set = setForMode,
---        }
---        options.args.modes.args[modeName.."ModeText"] = {
---            name = L["MODE_LABEL"],
---            desc = string.format(L["MODE_LABEL_DESC"], L[mode.modeNameUpper.."_MODE_FULL_NAME"]),
---            type = "input",
---            order = modeBaseIndex+2,
---            width = "half",
---            set = setForMode,
---            hidden = function() return not LoathebRotate.db.profile[modeName.."ModeButton"] end,
---        }
---        if (mode.assignable) then
---            options.args.modes.args[modeName.."TrackFocus"] = {
---                name = L["MODE_TRACK_FOCUS"],
---                desc = L["MODE_TRACK_FOCUS_DESC"],
---                type = "toggle",
---                order = modeBaseIndex+3,
---                width = "full",
---                set = setForMode,
---            }
---        end
---        options.args.modes.args[modeName.."ModeInvisible"] = {
---            name = LoathebRotate.colors.lightRed:WrapTextInColorCode(L["MODE_INVISIBLE"]),
---            type = "description",
---            fontSize = "medium",
---            width = "full",
---            order = modeBaseIndex+4,
---            hidden = function() return LoathebRotate.db.profile[modeName.."ModeButton"] or LoathebRotate.db.profile.currentMode ~= modeName end,
---        }
---        modeBaseIndex = modeBaseIndex+10
-
---        if (mode.canFail) then
---            options.args.announces.args["announce"..mode.modeNameFirstUpper.."SuccessMessage"] = {
---                name = string.format(L["SUCCESS_MESSAGE_LABEL"], L[mode.modeNameUpper.."_MODE_FULL_NAME"]),
---                type = "input",
---                order = announceIndex,
---                width = "full",
---            }
---            announceIndex = announceIndex+1
---            options.args.announces.args["announce"..mode.modeNameFirstUpper.."FailMessage"] = {
---                name = string.format(L["FAIL_MESSAGE_LABEL"], L[mode.modeNameUpper.."_MODE_FULL_NAME"]),
---                type = "input",
---                order = announceIndex,
---                width = "full",
---            }
---            announceIndex = announceIndex+1
---            if (mode.alertWhenFail) then
---                options.args.announces.args["announce"..mode.modeNameFirstUpper.."ReactMessage"] = {
---                    name = string.format(L["REACT_MESSAGE_LABEL"], L[mode.modeNameUpper.."_MODE_FULL_NAME"]),
---                    type = "input",
---                    order = announceIndex,
---                    width = "full",
---                }
---                announceIndex = announceIndex+1
---            end
---        else
---            options.args.announces.args["announce"..mode.modeNameFirstUpper.."Message"] = {
---                name = string.format(L["NEUTRAL_MESSAGE_LABEL"], L[mode.modeNameUpper.."_MODE_FULL_NAME"]),
---                type = "input",
---                order = announceIndex,
---                width = "full",
---            }
---            announceIndex = announceIndex+1
---        end
---    end
 
     AceConfigRegistry:RegisterOptionsTable(Addon, options, true)
 	options.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
 
     AceConfigDialog:AddToBlizOptions(Addon, nil, nil, "general")
---    AceConfigDialog:AddToBlizOptions(Addon, L['SETTING_MODES'], Addon, "modes")
     AceConfigDialog:AddToBlizOptions(Addon, L['SETTING_ANNOUNCES'], Addon, "announces")
     AceConfigDialog:AddToBlizOptions(Addon, L["SETTING_NAMES"], Addon, "names")
     AceConfigDialog:AddToBlizOptions(Addon, L["SETTING_SOUNDS"], Addon, "sounds")
     AceConfigDialog:AddToBlizOptions(Addon, L["SETTING_HISTORY"], Addon, "history")
+    AceConfigDialog:AddToBlizOptions(Addon, L["SETTING_DEBUG"], Addon, "debug")
     AceConfigDialog:AddToBlizOptions(Addon, L["SETTING_PROFILES"], Addon, "profile")
 
     AceConfigDialog:SetDefaultSize(Addon, 895, 570)
