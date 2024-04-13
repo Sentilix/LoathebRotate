@@ -25,12 +25,12 @@ This feature is still in development, so feel free to report any bugs
 LoathebRotate offers a few commands to control the addon, although for daily use they are not really needed.
 Commands can be invoked by typing /loathebrotate <command> or using the short form /loa <command>.
  
-`/loa toggle` - show or hide the main window.
-`/loa show` - show the main window.
-`/loa hide` - hide the main window.
-`/loa lock` - lock the main window (it can no longer be moved)
-`/loa unlock` - unlock the main window. 
-`/loa report` - post healing rotation in raid.
-`/loa settings` - open / close the configuration window.
-`/loa history` - open / close the history window.
-`/loa version` - check other player's LoathebRotate version
+`/loa toggle` - show or hide the main window.<br>
+`/loa show` - show the main window.<br>
+`/loa hide` - hide the main window.<br>
+`/loa lock` - lock the main window (it can no longer be moved)<br>
+`/loa unlock` - unlock the main window. <br>
+`/loa report` - post healing rotation in raid.<br>
+`/loa settings` - open / close the configuration window.<br>
+`/loa history` - open / close the history window.<br>
+`/loa version` - check other player's LoathebRotate version<br>
