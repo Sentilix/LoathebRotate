@@ -12,7 +12,7 @@ eventFrame:SetScript(
 	"OnEvent",
 	function(self, event, ...)
 		if (event == "PLAYER_LOGIN") then
-			LoathebRotate:init()
+			LoathebRotate:init();
 			self:UnregisterEvent("PLAYER_LOGIN")
 
 			C_Timer.After(5, function()
@@ -26,6 +26,11 @@ eventFrame:SetScript(
 
 -- Raid group has changed
 function LoathebRotate:GROUP_ROSTER_UPDATE()
+	if not LoathebRotate.synchronizationDone then
+		LoathebRotate.synchronizationDone = true;
+		LoathebRotate:requestSync();
+	end
+
 	self:updateRaidStatus();
 	LoathebRotate:refreshHealerFrame(healer);
 end

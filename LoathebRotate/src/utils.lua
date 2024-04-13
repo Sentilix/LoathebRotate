@@ -194,7 +194,7 @@ end;
 
 
 function LoathebRotate:getFullPlayerName(playerName)
-	if not playerName then return ''; end;
+	if (playerName or '') == '' then return ''; end;
 
 	local _, _, name, realm = string.find(playerName, "([^-]*)-(%S*)");
 	

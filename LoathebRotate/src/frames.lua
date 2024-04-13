@@ -235,6 +235,9 @@ function LoathebRotate:createBottomFrameButtons(baseFrame)
         {
 			texture = 'Interface/Buttons/UI-RefreshButton',
 			callback = function()
+				if not LoathebRotate:isHealerPromoted(UnitName('player')) then
+					return;
+				end;
 				LoathebRotate:updateRaidStatus();
 				LoathebRotate:resetRotation();
 				LoathebRotate:requestResetRotation();

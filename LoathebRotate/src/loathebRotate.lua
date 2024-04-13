@@ -27,14 +27,15 @@ function LoathebRotate:init()
 	LoathebRotate.mainFrame = nil;
 	LoathebRotate.openWindowRequestSent = false;
 	LoathebRotate.ignoreRaidStatusUpdates = false;
+	LoathebRotate.synchronizationDone = false;
+	LoathebRotate.readyToReceiveSyncResponse = true;
 
 	LoathebRotate:initGui()
 	LoathebRotate:loadHistory()
 	LoathebRotate:updateRaidStatus()
 	LoathebRotate:applySettings()
 
-	LoathebRotate:initComms()
-
+	LoathebRotate:initComms();
 	LoathebRotate:requestSync();
 
 	LoathebRotate:printMessage(L['LOADED_MESSAGE'])
@@ -117,6 +118,8 @@ SlashCmdList["LOATHEBROTATE"] = function(msg)
         LoathebRotate:printRotationSetup()
     elseif (cmd == 'settings') then
         LoathebRotate:toggleSettings()
+	elseif (cmd == 'sync') then
+		LoathebRotate:syncRotation();
     elseif (cmd == 'history') then
         LoathebRotate:toggleHistory()
     elseif (cmd == 'check' or cmd== 'version') then
@@ -185,12 +188,19 @@ end
 
 -- Print the main rotation on multiple lines
 function LoathebRotate:printMultilineRotation(rotationTable, channel)
-    local position = 1;
-    for key, hunt in pairs(rotationTable) do
-        LoathebRotate:sendRotationMessage(tostring(position) .. ' - ' .. hunt.name)
-        position = position + 1;
-    end
+	local position = 1;
+	for _, healer in pairs(rotationTable) do
+		LoathebRotate:sendRotationMessage(tostring(position) .. ' - ' .. healer.name)
+		position = position + 1;
+	end
 end
+
+
+function LoathebRotate:syncRotation()
+	LoathebRotate.readyToReceiveSyncResponse = true;
+	LoathebRotate.synchronizationDone = false;
+	LoathebRotate:requestSync();
+end;
 
 -- Serialize healers names of a given rotation group
 function LoathebRotate:buildGroupMessage(prefix, rotationTable)
@@ -218,27 +228,48 @@ end
 
 -- Adds color to given text
 function LoathebRotate:colorText(text)
-    return string.format('|c%s%s|r', LoathebRotate.constants.printColor, text);
+	return string.format('|c%s%s|r', LoathebRotate.constants.printColor, text);
 end
 
 -- Check if unit is promoted
 function LoathebRotate:isHealerPromoted(name)
-
 	local raidIndex = UnitInRaid(name);
+	if (raidIndex) then
+		local _, rank = GetRaidRosterInfo(raidIndex);
 
-    if (raidIndex) then
-        local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(raidIndex)
+		if (rank > 0) then
+			return true;
+		end
+	end
 
-        if (rank > 0) then
-            return true
-        end
-    end
+	--	Check if there are other promoted healers - if not, we should allow anyone to alter the rotation:
+	for _, healer in pairs(LoathebRotate.rotationTable) do
+		raidIndex = UnitInRaid(healer.name);
+		if (raidIndex) then
+			local _, rank, _, _, _, _, _, online = GetRaidRosterInfo(raidIndex);
+			if (online and rank > 0) then
+				--	Another healer is promoted (and online) so current player is not allowed to modify rotation order.
+				return false;
+			end
+		end		
+	end
+	--	Same for backup table:
+	for _, healer in pairs(LoathebRotate.backupTable) do
+		raidIndex = UnitInRaid(healer.name);
+		if (raidIndex) then
+			local _, rank, _, _, _, _, _, online = GetRaidRosterInfo(raidIndex);
+			if (online and rank > 0) then
+				return false;
+			end
+		end		
+	end
 
-    return false
+	--	No promoted people was found - let the current player alter rotation.
+	return true;
 end
 
 function LoathebRotate:checkVersions()
-    LoathebRotate:printPrefixedMessage(string.format(L["VERSION_INFO"], UnitName('player'), LoathebRotate.version));
+	LoathebRotate:printPrefixedMessage(string.format(L["VERSION_INFO"], UnitName('player'), LoathebRotate.version));
 	LoathebRotate:requestVersionCheck();
 end
 

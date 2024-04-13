@@ -1,8 +1,8 @@
 ## Interface: 11502
-## Title: LoathebRotate |cff88aaff0.3.0|r
+## Title: LoathebRotate |cff88aaff0.3.1|r
 ## Notes: Track Loatheb healing rotation in raid
 ## Author: Mimma@PyrewoodVillage, based on SilentRotate by Vinny
-## Version: 0.3.0
+## Version: 0.3.1
 ## SavedVariables: LoathebRotateDb
 ## OptionalDeps: Ace3
 ## X-Curse-Project-ID: 997440

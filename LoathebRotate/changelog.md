@@ -1,5 +1,9 @@
 ## LoathebRotate Changelog
 
+#### v0.3.1 (2024-04-14)
+- Promotion is now needed to change or reset rotation order.
+- Bugfix: sync request sometimes didnt work correctly.
+
 #### v0.3.0 (2024-04-13)
 - Added configurable debug mode, removed old testMode
 - Removed lots of unused code, such as right-click hunter assignments

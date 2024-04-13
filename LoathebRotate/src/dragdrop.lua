@@ -2,20 +2,20 @@ local LoathebRotate = select(2, ...)
 
 -- Enable drag & drop for all healer frames
 function LoathebRotate:enableListSorting()
-	for key,healer in pairs(LoathebRotate.rotationTable) do
+	for _, healer in pairs(LoathebRotate.rotationTable) do
 		LoathebRotate:enableHealerFrameDragging(healer, true)
 	end
 
-	for key,healer in pairs(LoathebRotate.backupTable) do
+	for _, healer in pairs(LoathebRotate.backupTable) do
 		LoathebRotate:enableHealerFrameDragging(healer, true)
 	end
 end
 
 -- Enable or disable drag & drop for the healer frame
 function LoathebRotate:enableHealerFrameDragging(healer, movable)
-    healer.movable = movable
-    healer.frame:EnableMouse(healer.movable or healer.assignable)
-    healer.frame:SetMovable(movable)
+	healer.movable = movable;
+	healer.frame:EnableMouse(healer.movable);
+	healer.frame:SetMovable(movable);
 end
 
 -- configure healer frame drag behavior
@@ -31,9 +31,14 @@ function LoathebRotate:configureHealerFrameDrag(healer)
 	healer.frame:SetScript(
 		"OnDragStart",
 		function()
+			if not LoathebRotate:isHealerPromoted(UnitName('player')) then
+				return;
+			end
+
 			LoathebRotate.ignoreRaidStatusUpdates = true;
-			healer.frame:StartMoving()
-			healer.frame:SetFrameStrata("HIGH")
+
+			healer.frame:StartMoving();
+			healer.frame:SetFrameStrata("HIGH");
 
 			healer.frame:SetScript(
 				"OnUpdate",
@@ -42,8 +47,8 @@ function LoathebRotate:configureHealerFrameDrag(healer)
 				end
 			)
 
-			MF.dropHintFrame:Show()
-			MF.backupFrame:Show()
+			MF.dropHintFrame:Show();
+			MF.backupFrame:Show();
 		end
 	)
 

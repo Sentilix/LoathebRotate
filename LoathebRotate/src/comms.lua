@@ -18,11 +18,11 @@ function LoathebRotate.OnCommReceived(prefix, data, channel, sender)
     if not UnitIsUnit('player', sender) then
 
 		local success, message = AceSerializer:Deserialize(data);
-		if (success) then	
+		if (success) then
 			local myFullName = LoathebRotate:getPlayerAndRealm('player');
-			local senderFullName = LoathebRotate:getFullPlayerName(message.to);
+			local receiverFullName = LoathebRotate:getFullPlayerName(message.to);
 
-			if (message.to ~= '' and myFullName ~= senderFullName) then
+			if (message.to ~= '' and myFullName ~= receiverFullName) then
 				--	Skip if message is not for me!
 				return;
 			end;
@@ -145,21 +145,21 @@ end;
 -----------------------------------------------------------------------------------------------------------------------
 
 function LoathebRotate:requestSync()
+	if not UnitInRaid(UnitName('player')) then return; end
 	local message = LoathebRotate:createAddonMessage(LoathebRotate.constants.commsTypes.syncRequest);
 	LoathebRotate:sendRaidAddonMessage(message);
 end;
 
-local readyToReceiveSyncResponse = true;
 function LoathebRotate:receiveSyncRequest(prefix, message, channel, sender)
 	local message = LoathebRotate:createAddonMessage(LoathebRotate.constants.commsTypes.syncResponse);
-
-	readyToReceiveSyncResponse = true;
+	LoathebRotate.readyToReceiveSyncResponse = true;
 	LoathebRotate:sendRaidAddonMessage(message);
 end;
 
 function LoathebRotate:receiveSyncResponse(prefix, message, channel, sender)
-	if (readyToReceiveSyncResponse == true) then
-		readyToReceiveSyncResponse = false;
+	if (LoathebRotate.readyToReceiveSyncResponse == true) then
+		LoathebRotate.readyToReceiveSyncResponse = false;
+		LoathebRotate.synchronizationDone = true
 
 		--	This person kindly offered to synchronize all data. Begin synchronizing.
 		local message = LoathebRotate:createAddonMessage(LoathebRotate.constants.commsTypes.syncBeginRequest);
