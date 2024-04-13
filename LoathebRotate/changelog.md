@@ -1,6 +1,6 @@
 ## LoathebRotate Changelog
 
-#### v0.2.4 (2024-04-13)
+#### v0.3.0 (2024-04-13)
 - Added configurable debug mode, removed old testMode
 - Removed lots of unused code, such as right-click hunter assignments
 - Moved icons to 2nd row of main frame
