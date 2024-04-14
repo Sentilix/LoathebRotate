@@ -167,25 +167,23 @@ function LoathebRotate:handleDrop(healer, group, position)
 	local originTable = LoathebRotate:getHealerRotationTable(healer);
 	local originIndex = LoathebRotate:getHealerIndex(healer, originTable);
 
-    local destinationTable = LoathebRotate.rotationTable
-    local finalPosition = 1
+	local destinationTable = LoathebRotate.rotationTable;
+	local finalPosition = 1;
 
-    if (group == "BACKUP") then
-        destinationTable = LoathebRotate.backupTable
-    end
+	if (group == "BACKUP") then
+		destinationTable = LoathebRotate.backupTable;
+	end
 
-    if (destinationTable == originTable) then
-
+	if (destinationTable == originTable) then
 		if (position == originIndex or position == originIndex - 1 ) then
 			finalPosition = originIndex;
 		else
-			if (position > originIndex) then
-				finalPosition = position;
-			else
-				finalPosition = position + 1;
-			end
+		if (position > originIndex) then
+			finalPosition = position;
+		else
+			finalPosition = position + 1;
 		end
-
+	end
 	else
 		finalPosition = position + 1;
 	end

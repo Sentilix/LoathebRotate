@@ -7,9 +7,6 @@ local AceSerializer = LibStub("AceSerializer-3.0")
 
 -- Register comm prefix at initialization steps
 function LoathebRotate:initComms()
-	LoathebRotate.syncVersion = 0;
-	LoathebRotate.syncLastSender = '';
-
 	AceComm:RegisterComm(LoathebRotate.constants.commsPrefix, LoathebRotate.OnCommReceived);
 end
 
@@ -42,6 +39,8 @@ function LoathebRotate.OnCommReceived(prefix, data, channel, sender)
 				LoathebRotate:receiveSyncResponse(prefix, message, channel, sender)
 			elseif (message.type == LoathebRotate.constants.commsTypes.syncBeginRequest) then
 				LoathebRotate:receiveBeginSyncRequest(prefix, message, channel, sender)
+			elseif (message.type == LoathebRotate.constants.commsTypes.syncBatchRequest) then
+				LoathebRotate:receiveSyncBatchRequest(prefix, message, channel, sender)
 			--	Reset:
 			elseif (message.type == LoathebRotate.constants.commsTypes.resetRequest) then
 				LoathebRotate:receiveResetRotation(prefix, message, channel, sender)
@@ -53,11 +52,6 @@ function LoathebRotate.OnCommReceived(prefix, data, channel, sender)
 			LoathebRotate:printPrefixedMessage('could not serialize data');
         end
     end
-end
-
--- Checks if a given version from a given sender should be applied
-function LoathebRotate:isVersionEligible(version, sender)
-	return version > LoathebRotate.syncVersion or (version == LoathebRotate.syncVersion and sender < LoathebRotate.syncLastSender)
 end
 
 
@@ -91,6 +85,8 @@ function LoathebRotate:createAddonMessage(requestType, target)
         ['type'] = requestType,
         ['from'] = UnitName('player'),
         ['to'] = target or '',
+		['ver'] = LoathebRotate.version,
+		['vernum'] = LoathebRotate:calculateVersionNumber(),
     }
 
 	return request;
@@ -109,13 +105,11 @@ end;
 
 function LoathebRotate:receiveVersionRequest(prefix, message, channel, sender)
 	local message = LoathebRotate:createAddonMessage(LoathebRotate.constants.commsTypes.versionResponse, sender);
-	message['version'] = LoathebRotate.version;
-
     LoathebRotate:sendRaidAddonMessage(message);
 end;
 
 function LoathebRotate:receiveVersionResponse(prefix, message, channel, sender)
-    LoathebRotate:printPrefixedMessage(string.format(L["VERSION_INFO"], sender, message.version));
+    LoathebRotate:printPrefixedMessage(string.format(L["VERSION_INFO"], sender, message.ver));
 end;
 
 
@@ -125,7 +119,7 @@ end;
 
 function LoathebRotate:requestMoveHealer(healer, group, position)
 	local message = LoathebRotate:createAddonMessage(LoathebRotate.constants.commsTypes.moveHealerRequest);
-	message['GUID'] = healer.GUID;
+	message['fullName'] = healer.fullName;
 	message['group'] = group;
 	message['position'] = position;
 
@@ -133,7 +127,9 @@ function LoathebRotate:requestMoveHealer(healer, group, position)
 end;
 
 function LoathebRotate:receiveMoveHealerRequest(prefix, message, channel, sender)
-	local healer = LoathebRotate:getHealer(message.GUID);
+	if readyToReceiveSyncResponse then return end;
+
+	local healer = LoathebRotate:getHealer(message.fullName);
 	if healer then
 		LoathebRotate:moveHealer(healer, message.group, message.position);
 	end;
@@ -151,29 +147,95 @@ function LoathebRotate:requestSync()
 end;
 
 function LoathebRotate:receiveSyncRequest(prefix, message, channel, sender)
+	--	Only respond to sync requests from clients version 0.4.0 or above:
+	if not message.vernum or message.vernum < 400 then return end;
+	
 	local message = LoathebRotate:createAddonMessage(LoathebRotate.constants.commsTypes.syncResponse);
+	message.to = sender;
 	LoathebRotate.readyToReceiveSyncResponse = true;
 	LoathebRotate:sendRaidAddonMessage(message);
 end;
 
 function LoathebRotate:receiveSyncResponse(prefix, message, channel, sender)
+	--	Only accept sync requests from version 0.4.0 or above:
+	if not message.vernum or message.vernum < 400 then return end;
+
 	if (LoathebRotate.readyToReceiveSyncResponse == true) then
 		LoathebRotate.readyToReceiveSyncResponse = false;
 		LoathebRotate.synchronizationDone = true
 
 		--	This person kindly offered to synchronize all data. Begin synchronizing.
 		local message = LoathebRotate:createAddonMessage(LoathebRotate.constants.commsTypes.syncBeginRequest);
+		message.to = sender;
 		LoathebRotate:sendRaidAddonMessage(message);
 	end;
 end;
 
+--	Send healer table to the requesting client. However, due to throttling we package
+--	healers into batches to keep number of messages down.
 function LoathebRotate:receiveBeginSyncRequest(prefix, message, channel, sender)
-	for position, healer in pairs(LoathebRotate.rotationTable) do
-		LoathebRotate:requestMoveHealer(healer, 'ROTATION', position);
-	end
+	--	Only accept sync requests from clients version 0.4.0 or above:
+	if not message.vernum or message.vernum < 400 then return end;
 
-	for position, healer in pairs(LoathebRotate.backupTable) do
-		LoathebRotate:requestMoveHealer(healer, 'BACKUP', position);
+	local position, healer;
+	local healersPerBatch = 5;
+	local batch = {
+		['g'] = 'R',		-- R=ROTATION,B=BACKUP - need to keep message short
+		['h'] = {}
+	}
+
+	--	ROTATION table:
+	for position = 1, #LoathebRotate.rotationTable, 1 do
+		healer = LoathebRotate.rotationTable[position];
+		table.insert(batch.h, { ['F'] = healer.fullName, ['I'] = position });
+
+		if #batch.h >= healersPerBatch then
+			LoathebRotate:requestSyncBatch(sender, batch);
+			batch.h = { };
+		end;
+	end;
+	if #batch.h > 0 then
+		LoathebRotate:requestSyncBatch(sender, batch);
+	end;
+
+	--	BACKUP table:
+	batch.g = 'B';
+	batch.h = { };
+	for position = 1, #LoathebRotate.backupTable, 1 do
+		healer = LoathebRotate.backupTable[position];
+		table.insert(batch.h, { ['F'] = healer.fullName, ['I'] = position });
+
+		if #batch.h >= healersPerBatch then
+			LoathebRotate:requestSyncBatch(sender, batch);
+			batch.h = {};
+		end;
+	end;
+	if #batch.h > 0 then
+		LoathebRotate:requestSyncBatch(sender, batch);
+	end;
+end;
+
+function LoathebRotate:requestSyncBatch(receiver, batch)
+	local message = LoathebRotate:createAddonMessage(LoathebRotate.constants.commsTypes.syncBatchRequest);
+	message.to = receiver;
+	message.batch = batch;
+
+	LoathebRotate:sendRaidAddonMessage(message);
+end;
+
+function LoathebRotate:receiveSyncBatchRequest(prefix, message, channel, sender)
+	--LoathebRotate:printAll(message);
+
+	local position, heal, healer;
+	local group = 'ROTATION';
+	if message.batch.g == 'B' then
+		group = 'BACKUP';
+	end;
+	for position, heal in pairs(message.batch.h) do
+		healer = LoathebRotate:getHealer(heal.F);
+		if healer and heal.I then
+			LoathebRotate:setHealerPosition(healer, group, heal.I);
+		end;
 	end
 end;
 
@@ -190,7 +252,6 @@ end;
 
 function LoathebRotate:receiveResetRotation(prefix, message, channel, sender)
 	LoathebRotate:resetRotation();
-
 	LoathebRotate:printPrefixedMessage(string.format('Rotation was reset by %s.', sender));
 end;
 

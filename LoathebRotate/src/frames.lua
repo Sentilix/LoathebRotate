@@ -8,11 +8,11 @@ function LoathebRotate:createMainFrame()
 	mainFrame:SetWidth(LoathebRotate.db.profile.windows[1].width)
 	mainFrame:SetHeight(LoathebRotate.constants.rotationFramesBaseHeight * 2 + LoathebRotate.constants.titleBarHeight + LoathebRotate.constants.modeBarHeight)
 
-	if LoathebRotate:isHealerClass(UnitName('player')) then
-		mainFrame:Show()
+	if LoathebRotate.db.profile.alwaysShowWindow then
+		mainFrame:Show();
 	else
-		mainFrame:Hide()
-	end
+		mainFrame:Hide();
+	end;
 
 	mainFrame:RegisterForDrag("LeftButton")
 	mainFrame:SetClampedToScreen(true)
@@ -70,7 +70,7 @@ function LoathebRotate:createTitleFrame(baseFrame, subtitle)
 	titleFrame:SetHeight(LoathebRotate.constants.titleBarHeight)
 
 	titleFrame.texture = titleFrame:CreateTexture(nil, "BACKGROUND")
-	titleFrame.texture:SetColorTexture(LoathebRotate.colors.darkGreen:GetRGB())
+	titleFrame.texture:SetColorTexture(LoathebRotate.colors.headerBar:GetRGB())
 	titleFrame.texture:SetAllPoints()
 
 	titleFrame.text = titleFrame:CreateFontString(nil, "ARTWORK")
@@ -391,7 +391,7 @@ function LoathebRotate:createBottomFrame(baseFrame)
     bottomFrame:SetHeight(LoathebRotate.constants.modeBarHeight)
 
     bottomFrame.texture = bottomFrame:CreateTexture(nil, "BACKGROUND")
-    bottomFrame.texture:SetColorTexture(LoathebRotate.colors.darkBlue:GetRGB())
+    bottomFrame.texture:SetColorTexture(LoathebRotate.colors.buttonBar:GetRGB())
     bottomFrame.texture:SetAllPoints()
 
     baseFrame.bottomFrame = bottomFrame
@@ -456,7 +456,7 @@ end
 function LoathebRotate:createHealerFrame(healer, parentFrame)
 	healer.frame = CreateFrame("Frame", nil, parentFrame);
 	healer.frame:SetHeight(LoathebRotate.constants.healerFrameHeight);
-	healer.frame.GUID = healer.GUID;
+	healer.frame.fullName = healer.fullName;
 
 	-- Set Texture
 	healer.frame.texture = healer.frame:CreateTexture(nil, "ARTWORK");
@@ -513,7 +513,7 @@ function LoathebRotate:createCooldownFrame(healer)
         function(self, elapsed)
             self.statusBar:SetValue(GetTime())
 
-            local hunter = LoathebRotate:getHealer(self:GetParent().GUID)
+            local healer = LoathebRotate:getHealer(self:GetParent().fullName);
             if healer and healer.expirationTime and GetTime() > healer.expirationTime then
                 self:Hide()
             end
@@ -585,7 +585,7 @@ end
 
 -- Healer frame tooltip show
 function LoathebRotate.onHealerEnter(frame)
-	local healer = LoathebRotate:getHealer(frame.GUID)
+	local healer = LoathebRotate:getHealer(frame.fullName)
 	if healer then
 		if (healer.endTimeOfEffect and GetTime() < healer.endTimeOfEffect) or (healer.expirationTime and GetTime() < healer.expirationTime) then
 			local tooltipRefreshFunc = function()

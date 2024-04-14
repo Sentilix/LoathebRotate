@@ -1,8 +1,12 @@
 ## LoathebRotate Changelog
 
-#### v0.3.1 (2024-04-14)
+#### v0.4.0 (2024-04-14)
+- Bugfix: sync request was messed up between clients and has been rewritten to
+  circumvent a bug in Blizzard's UnitGUID API function.
+  This is a breaking change - versions below 0.4.0 will not be able to synchronize data.
+- Bugfix: Window will no longer show at Login unless configured to do so.
 - Promotion is now needed to change or reset rotation order.
-- Bugfix: sync request sometimes didnt work correctly.
+- Colours updated.
 
 #### v0.3.0 (2024-04-13)
 - Added configurable debug mode, removed old testMode
@@ -28,7 +32,7 @@
 - Fixed LUA error in history.
 - Fixed message delivery, including cross-realm handling.
 - Fixed disconnect status not being shown correctly.
-- Fixed loading/joining raid nut being updated correctly.
+- Fixed loading/joining raid not being updated correctly.
 
 #### v0.2.0 (2024-04-10)
 - All modes except Loatheb removed

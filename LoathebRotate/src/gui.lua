@@ -34,13 +34,16 @@ end
 
 -- Show/Hide main window based on user settings
 function LoathebRotate:updateDisplay()
-	if LoathebRotate:isActive() and LoathebRotate:isHealerClass(UnitName('player')) then
-		LoathebRotate.mainFrame:Show()
-	else
-		if (LoathebRotate.db.profile.hideNotInRaid) then
-			LoathebRotate.mainFrame:Hide()
-		end
+	if LoathebRotate.db.profile.alwaysShowWindow then
+		LoathebRotate.mainFrame:Show();
+		return;
 	end
+
+	if not LoathebRotate:isActive() then
+		if LoathebRotate.db.profile.hideNotInRaid then
+			LoathebRotate.mainFrame:Hide();
+		end
+	end;
 end
 
 -- render / re-render healer frames to reflect table changes.

@@ -185,18 +185,6 @@
     <Content Include="locale\enUS.lua">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="locale\frFR.lua">
-      <SubType>Code</SubType>
-    </Content>
-    <Content Include="locale\ruRU.lua">
-      <SubType>Code</SubType>
-    </Content>
-    <Content Include="locale\zhCN.lua">
-      <SubType>Code</SubType>
-    </Content>
-    <Content Include="locale\zhTW.lua">
-      <SubType>Code</SubType>
-    </Content>
     <Content Include="README.md" />
     <Content Include="LoathebRotate.toc">
       <SubType>TableOfContents</SubType>

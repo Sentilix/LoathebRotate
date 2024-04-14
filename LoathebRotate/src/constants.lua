@@ -2,24 +2,21 @@ local LoathebRotate = select(2, ...)
 
 LoathebRotate.colors = {
     ['white']       = CreateColor(1,1,1),
-
     ['lightRed']    = CreateColor(1.0, 0.4, 0.4),
     ['red']         = CreateColor(0.7, 0.3, 0.3),
     ['flashyRed']   = CreateColor(1, 0, 0),
-
     ['green']       = CreateColor(0.67, 0.83, 0.45),
     ['darkGreen']   = CreateColor(0.1, 0.4, 0.1),
-
     ['blue']        = CreateColor(0.3, 0.3, 0.7),
     ['darkBlue']    = CreateColor(0.1, 0.1, 0.4),
-
     ['lightGray']   = CreateColor(0.8, 0.8, 0.8),
     ['darkGray']    = CreateColor(0.3, 0.3, 0.3),
-
     ['lightCyan']   = CreateColor(0.5, 0.8, 1),
-
     ['purple']      = CreateColor(0.71, 0.45, 0.75),
 
+	--	Colors used by LoathebRotate:
+    ['headerBar']    = CreateColor(0.1, 0.1, 0.4),
+    ['buttonBar']    = CreateColor(0.1, 0.2, 0.6),
     -- Below are user-defined colors
     ['groupSuffix'] = nil,
     ['indexPrefix'] = nil,
@@ -46,7 +43,7 @@ LoathebRotate.constants = {
 	},
 
     ['printPrefix'] = 'Loatheb Rotate - ',
-	['printColor'] = 'ff40c900',	-- light green color used for local output
+	['printColor'] = 'ffffbf00',	-- Color used for local output
 
     history = {
         fontFace = "Fonts\\ARIALN.ttf",
@@ -67,6 +64,8 @@ LoathebRotate.constants = {
 		['syncRequest']			= 'tx-sync',
 		['syncResponse']		= 'rx-sync',
 		['syncBeginRequest']	= 'tx-sync-begin',
+		['syncBatchRequest']	= 'tx-batch',
+		['syncBatchResponse']	= 'rx-batch',		-- Dummy: There is no response to a tx-batch
 		['resetRequest']		= 'tx-reset',
 		['resetResponse']		= 'rx-reset',		-- Dummy: There is no response to a tx-reset
 		['showWindowRequest']	= 'tx-showWindow',

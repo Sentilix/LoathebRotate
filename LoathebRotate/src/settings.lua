@@ -133,9 +133,9 @@ function LoathebRotate:CreateConfig()
                         order = 7,
                         width = "double",
                     },
-                    doNotShowWindowOnRaidJoin = {
-                        name = L["DO_NOT_SHOW_WHEN_JOINING_RAID"],
-                        desc = L["DO_NOT_SHOW_WHEN_JOINING_RAID_DESC"],
+                    alwaysShowWindow = {
+                        name = L["ALWAYS_SHOW_WINDOW"],
+                        desc = L["ALWAYS_SHOW_WINDOW_DESC"],
                         type = "toggle",
                         order = 8,
                         width = "full",

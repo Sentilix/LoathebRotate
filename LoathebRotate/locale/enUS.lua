@@ -29,21 +29,12 @@ L["LOCK_WINDOW"] = "Lock window"
 L["LOCK_WINDOW_DESC"] = "Lock window"
 L["HIDE_WINDOW_NOT_IN_RAID"] = "Hide the window when not in a raid"
 L["HIDE_WINDOW_NOT_IN_RAID_DESC"] = "Hide the window when not in a raid"
-L["DO_NOT_SHOW_WHEN_JOINING_RAID"] = "Do not show window when joining a raid"
-L["DO_NOT_SHOW_WHEN_JOINING_RAID_DESC"] = "Check this if you don't want the window to show up each time you join a raid"
+L["ALWAYS_SHOW_WINDOW"] = "Always show window"
+L["ALWAYS_SHOW_WINDOW_DESC"] = "Check this if you want the window to show up at login - raid or not"
 L["SHOW_WHEN_TARGETING_BOSS"] = "Show window when you target Loatheb"
 L["SHOW_WHEN_TARGETING_BOSS_DESC"] = "Show window when you target the Loatheb boss"
 L["WINDOW_LOCKED"] = "LoathebRotate: Window locked"
 L["WINDOW_UNLOCKED"] = "LoathebRotate: Window unlocked"
-
---L["TEST_MODE_HEADER"] = "Test mode"
---L["ENABLE_ARCANE_SHOT_TESTING"] = "Toggle testing mode"
---L["ENABLE_ARCANE_SHOT_TESTING_DESC"] =
---        "While testing mode is enabled, arcane shot will be registered as a tranqshot\n" ..
---        "Testing mode will last 60 minutes unless you toggle it off\n" ..
---        "For Loatheb, testing consists in using the Recently Bandaged as the healer debuff"
---L["ARCANE_SHOT_TESTING_ENABLED"] = "Arcane shot testing mode enabled for 60 minutes"
---L["ARCANE_SHOT_TESTING_DISABLED"] = "Arcane shot testing mode disabled"
 
     --- Announces
 L["SETTING_ANNOUNCES"] = "Announces"

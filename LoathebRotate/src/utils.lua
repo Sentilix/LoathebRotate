@@ -1,5 +1,17 @@
 local LoathebRotate = select(2, ...)
 
+
+function LoathebRotate:calculateVersionNumber()
+	local _, _, major, minor, patch = string.find(LoathebRotate.version, "([^\.]*)\.([^\.]*)\.([^\.]*)");
+	local version = 0;
+
+	if (tonumber(major) and tonumber(minor) and tonumber(patch)) then
+		version = major * 10000 + minor * 100 + patch;
+	end
+	
+	return version;
+end;
+
 -- Check if a table contains the given element
 function LoathebRotate:tableContains(table, element)
 

@@ -59,7 +59,7 @@ function LoathebRotate:UNIT_AURA(unitID, isEcho)
 	if not self:isActive() then return end
 
 	-- Whether the unit really got the debuff or not, it's pointless if the unit is not tracked (e.g. not a healer)
-	local healer = self:getHealer(UnitGUID(unitID));
+	local healer = self:getHealer(UnitName(unitID));
 	if not healer then 
 		return ;
 	end

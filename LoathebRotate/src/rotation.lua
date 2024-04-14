@@ -11,17 +11,30 @@ function LoathebRotate:isHealerClass(name)
 end
 
 
-function LoathebRotate:registerHealer(name)
-	if not LoathebRotate:isHealerClass(name) then
+--	@playerName contains server name for crossrealm players
+function LoathebRotate:registerHealer(playerName)
+
+	if not LoathebRotate:isHealerClass(playerName) then
 		return nil;
 	end;
 
-	local healer = LoathebRotate:getHealer(name);
+	local healer = LoathebRotate:getHealer(playerName);
 	if not healer then
+		local fullName = LoathebRotate:getFullPlayerName(playerName);
+
+		--	GUID does not work correct cross-realm:
+		--	In case we have two people with same name (but different realms) the player from the 
+		--	foreign realm will get the same GUID as a player on the current realm if he is offline.
+		--	This makes it impossible to distinguish the two characters by GUID.
+		--
+		--	Therefore, as a workaround we will use the full playername instead of GUID. However,
+		--	this breaks the addon's backward compatibility so versions before 0.4 will not be
+		--	able to synchronize or more characters correctly. The comm object must shield newer
+		--	clients against "malicious" versions.
+
 		healer = {};
-		healer.name = name;
-		healer.class = UnitClass(name);
-		healer.GUID = UnitGUID(name);
+		healer.name = playerName;
+		healer.fullName = fullName;
 		healer.nextHeal = false;
 		healer.lastHealTime = 0;
 		healer.frame = nil;
@@ -29,8 +42,6 @@ function LoathebRotate:registerHealer(name)
 		-- New healers are automatically moved to backup table:
 		table.insert(LoathebRotate.backupTable, healer)
 	end;
-
-	LoathebRotate:drawHealerFrames();
 
     return healer
 end;
@@ -110,7 +121,7 @@ end
 
 -- Check if the player is the next in position to heal
 function LoathebRotate:isPlayerNextHeal()
-	local player = LoathebRotate:getHealer(UnitGUID("player"))
+	local player = LoathebRotate:getHealer(UnitName("player"))
 
 	if (not player.nextHeal) then
 		local isRotationInitialized = false;
@@ -203,14 +214,14 @@ end
 function LoathebRotate:getHealer(searchTerm)
 	if searchTerm ~= nil then
 		for _, healer in pairs(LoathebRotate.rotationTable) do
-			if (healer.GUID == searchTerm or healer.name == searchTerm) then
+			if (healer.fullName == searchTerm or healer.name == searchTerm) then
 				healer.group = 'ROTATION';
 				return healer;
 			end
 		end
 
 		for _, healer in pairs(LoathebRotate.backupTable) do
-			if (healer.GUID == searchTerm or healer.name == searchTerm) then
+			if (healer.fullName == searchTerm or healer.name == searchTerm) then
 				healer.group = 'BACKUP';
 				return healer;
 			end
@@ -288,9 +299,7 @@ function LoathebRotate:updateRaidStatus(forcedUpdate)
 		end
 
 		if (not LoathebRotate.raidInitialized) then
-			if (not LoathebRotate.db.profile.doNotShowWindowOnRaidJoin) then
-				LoathebRotate:updateDisplay();
-			end
+			LoathebRotate:updateDisplay();
 			LoathebRotate.raidInitialized = true;
 		end
 	else
@@ -301,6 +310,8 @@ function LoathebRotate:updateRaidStatus(forcedUpdate)
 	end
 
 	LoathebRotate:purgeHealerList();
+
+	LoathebRotate:drawHealerFrames();
 end
 
 -- Update healer status
@@ -318,8 +329,7 @@ function LoathebRotate:moveHealer(healer, group, position)
 	local originTable = LoathebRotate.rotationTable;
 	local destinationTable = LoathebRotate.rotationTable;
 
-	local curHealer = LoathebRotate:getHealer(healer.GUID);
-	if curHealer.group == 'BACKUP' then
+	if healer.group == 'BACKUP' then
 		originTable = LoathebRotate.backupTable;
 	end;
 
@@ -330,40 +340,57 @@ function LoathebRotate:moveHealer(healer, group, position)
 
 	local originIndex = LoathebRotate:getHealerIndex(healer, originTable);
 	local finalIndex = position;
-	local sameTableMove = originTable == destinationTable;
 
-	-- Defining finalIndex
-	if (sameTableMove) then
+	if (originTable == destinationTable) then
 		if (position > #destinationTable or position == 0) then
 			if (#destinationTable > 0) then
-				finalIndex = #destinationTable
+				finalIndex = #destinationTable;
 			else
-				finalIndex = 1
+				finalIndex = 1;
 			end
+		end
+
+		if (originIndex ~= finalIndex) then
+			table.remove(originTable, originIndex)
+			table.insert(originTable, finalIndex, healer)
 		end
 
 	else
 		if (position > #destinationTable + 1 or position == 0) then
 			if (#destinationTable > 0) then
-				finalIndex = #destinationTable  + 1
+				finalIndex = #destinationTable  + 1;
 			else
-				finalIndex = 1
+				finalIndex = 1;
 			end
 		end
-	end
 
-	if (sameTableMove) then
-		if (originIndex ~= finalIndex) then
-			table.remove(originTable, originIndex)
-			table.insert(originTable, finalIndex, healer)
-		end
-	else
 		table.remove(originTable, originIndex)
 		table.insert(destinationTable, finalIndex, healer)
 	end
 
-	LoathebRotate:drawHealerFrames()
+	LoathebRotate:drawHealerFrames();
 end
+
+function LoathebRotate:setHealerPosition(healer, group, position)
+	if not healer then return end;
+
+	local srcTable = LoathebRotate.rotationTable;
+	local destTable = LoathebRotate.rotationTable;
+
+	if healer.group == 'BACKUP' then
+		srcTable = LoathebRotate.backupTable;
+	end;
+	if group == 'BACKUP' then
+		destTable = LoathebRotate.backupTable;
+	end;
+
+	local srcIndex = LoathebRotate:getHealerIndex(healer, srcTable);
+	if srcIndex > 0 then
+		table.remove(srcTable, srcIndex);
+		table.insert(destTable, position, healer);
+	end;
+end;
+
 
 -- Find the table that contains given healer (rotation or backup)
 function LoathebRotate:getHealerRotationTable(healer)
@@ -380,7 +407,7 @@ function LoathebRotate:getHealerIndex(healer, table)
 	local originIndex = 0
 
 	for key, loopHealer in pairs(table) do
-		if (healer.name == loopHealer.name) then
+		if (healer.fullName == loopHealer.fullName) then
 			originIndex = key;
 			break
 		end
