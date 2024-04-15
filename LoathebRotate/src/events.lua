@@ -26,6 +26,12 @@ eventFrame:SetScript(
 
 -- Raid group has changed
 function LoathebRotate:GROUP_ROSTER_UPDATE()
+	if not UnitInRaid(UnitName('player')) then
+		LoathebRotate.synchronizationDone = false;
+		LoathebRotate.readyToReceiveSyncResponse = true;
+		return;
+	end;
+
 	if not LoathebRotate.synchronizationDone then
 		LoathebRotate.synchronizationDone = true;
 		LoathebRotate:requestSync();
