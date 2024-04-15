@@ -1,7 +1,8 @@
 ## LoathebRotate Changelog
 
-#### v0.4.1 (2024-04-??)
+#### v0.4.1 (2024-04-15)
 - Bugfix: Fixed a LUA error in Debug mode if bossId or spellId was not set.
+- Bugfix: Fixed an error where synchronization was not done when re-joining a raid.
 
 #### v0.4.0 (2024-04-14)
 - Bugfix: sync request was messed up between clients and has been rewritten to
