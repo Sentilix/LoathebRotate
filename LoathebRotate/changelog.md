@@ -1,5 +1,8 @@
 ## LoathebRotate Changelog
 
+#### v0.4.1 (2024-04-??)
+- Bugfix: Fixed a LUA error in Debug mode if bossId or spellId was not set.
+
 #### v0.4.0 (2024-04-14)
 - Bugfix: sync request was messed up between clients and has been rewritten to
   circumvent a bug in Blizzard's UnitGUID API function.

@@ -130,7 +130,7 @@ function LoathebRotate:isLoathebBoss(guid)
         return true;
     end
 
-	if (LoathebRotate.db.profile.enableDebug) and (1*LoathebRotate.db.profile.emulatedBossId == mobId) then
+	if (LoathebRotate.db.profile.enableDebug) and (1*(LoathebRotate.db.profile.emulatedBossId or 0) == mobId) then
 		return true;
 	end;
 

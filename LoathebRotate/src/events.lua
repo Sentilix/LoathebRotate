@@ -89,8 +89,7 @@ function LoathebRotate:UNIT_AURA(unitID, isEcho)
         -- endTime is set to 0 is unitID is not the player ; this is a known limitation in WoW Classic that makes buff/debuff duration much harder to track
 
         if LoathebRotate.loathebMode.auraTest(spellId, name) or
-			(LoathebRotate.db.profile.enableDebug and spellId == 1*LoathebRotate.db.profile.emulatedSpellId) then
-
+			(LoathebRotate.db.profile.enableDebug and spellId == 1*(LoathebRotate.db.profile.emulatedSpellId or 0)) then
 			if (endTime and endTime > 0 and previousExpirationTime == endTime) then
 				-- If the endTime matches exactly the previous expirationTime of the status bar, it means we are duplicating an already registered rotation
 				return
@@ -99,6 +98,7 @@ function LoathebRotate:UNIT_AURA(unitID, isEcho)
 				-- If the current time is before the previously seen expirationTime for this player, it means the debuff was already registered
 				return
 			end
+
 			-- Send the rotate order, this is the most important part of the addon
 			self:rotate(healer, false, nil, endTime);
 			self:addHistoryDebuffMessage(healer.name, name);
