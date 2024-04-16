@@ -253,7 +253,6 @@ function LoathebRotate:isHealerPromoted(name)
 				healer = LoathebRotate:getHealer(name);
 				if healer and (healer.version ~= '') then
 					--	Another healer is promoted (and online) so current player is not allowed to modify rotation order.
-					print(string.format('*** A rotation healer (%s - ver.%s) is promoted.', healer.name, healer.version));
 					return false;
 				end;
 			end
@@ -267,7 +266,6 @@ function LoathebRotate:isHealerPromoted(name)
 			if (online and rank > 0) then
 				healer = LoathebRotate:getHealer(name);
 				if healer and (healer.version ~= '') then
-					print(string.format('*** A backup healer (%s - ver.%s) is promoted.', healer.name, healer.version));
 					return false;
 				end;
 			end

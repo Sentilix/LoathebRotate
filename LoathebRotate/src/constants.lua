@@ -112,14 +112,14 @@ LoathebRotate.loathebMode = {
     -- canFail = nil,
     -- alertWhenFail = nil,
     -- spell = nil,
-    auraTest = function(self, spellId, spellName)
-        return false
-			or spellId == 29184 -- priest debuff
-			or spellId == 29195 -- druid debuff
-			or spellId == 29197 -- paladin debuff
-			or spellId == 29199 -- shaman debuff
-			--or (LoathebRotate.db.profile.enableDebug and spellId == 1*(LoathebRotate.db.profile.emulatedSpellId or 0))
-    end,
+   -- auraTest = function(self, spellId, spellName)
+   --     return false
+			--or spellId == 29184 -- priest debuff
+			--or spellId == 29195 -- druid debuff
+			--or spellId == 29197 -- paladin debuff
+			--or spellId == 29199 -- shaman debuff
+			----or (LoathebRotate.db.profile.enableDebug and spellId == 1*(LoathebRotate.db.profile.emulatedSpellId or 0))
+    --end,
     -- customCombatlogFunc = nil,
     -- effectDuration = nil,
     -- targetGUID = nil,
@@ -128,7 +128,7 @@ LoathebRotate.loathebMode = {
     -- customTargetName = nil,
     -- customHistoryFunc = nil,
     -- groupChangeFunc = nil,
-    announceArg = 'sourceName',
+    --announceArg = 'sourceName',
     -- tooltip = nil,
     -- assignable = nil,
     -- metadata = nil

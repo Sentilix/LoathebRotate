@@ -97,10 +97,12 @@ function LoathebRotate:rotate(lastHealer, rotateWithoutCooldown, endTimeOfCooldo
 			end
 		end
 
-		if nextHealer.name ~= UnitName('player') then
-			local playerFullName = LoathebRotate:getFullPlayerName(nextHealer.name);
-			if playerFullName then
-				LoathebRotate:sendAnnounceMessage(L["ANNOUNCEMENT_YOU_ARE_NEXT"], playerFullName);
+		if lastHealer.name == UnitName('player') then
+			if nextHealer.name ~= UnitName('player') then
+				local playerFullName = LoathebRotate:getFullPlayerName(nextHealer.name);
+				if playerFullName then
+					LoathebRotate:sendAnnounceMessage(L["ANNOUNCEMENT_YOU_ARE_NEXT"], playerFullName);
+				end
 			end
 		end
 	end

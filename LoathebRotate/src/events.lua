@@ -65,7 +65,7 @@ function LoathebRotate:UNIT_AURA(unitID, isEcho)
 	if not self:isActive() then return end
 
 	-- Whether the unit really got the debuff or not, it's pointless if the unit is not tracked (e.g. not a healer)
-	local healer = self:getHealer(UnitName(unitID));
+	local healer = self:getHealer(LoathebRotate:getPlayerAndRealm(unitID));
 	if not healer then 
 		return ;
 	end
@@ -80,22 +80,30 @@ function LoathebRotate:UNIT_AURA(unitID, isEcho)
         end)
     end
 
+	local simulatedSpellId = -1;
+	if LoathebRotate.db.profile.enableDebug and LoathebRotate.db.profile.emulatedSpellId then
+		simulatedSpellId = 1 * LoathebRotate.db.profile.emulatedSpellId;
+	end
+
     -- Loop through the unit's debuffs to check if s/he is affected by a specific debuff, e.g. Loatheb's Corrupted Mind
-    local maxNbDebuffs = 16;
-    for i=1,maxNbDebuffs do
-        local name, _,_,_,_, endTime ,_,_,_, spellId = UnitDebuff(unitID, i)
-        if not name then
-            -- name is not defined, meaning there is no other debuff left
-            break
-        end
+	local maxNbDebuffs = 16;
+	for i=1,maxNbDebuffs do
+		local name, _,_,_,_, endTime ,_,_,_, spellId = UnitDebuff(unitID, i);
+		if not name then
+			-- name is not defined, meaning there is no other debuff left
+			break
+		end
 
         -- At this point:
         -- name and spellId correspond to the debuff at index i
         -- endTime knows exactly when the debuff ends if unitID is the player, i.e. if UnitIsUnit(unitID, "player")
         -- endTime is set to 0 is unitID is not the player ; this is a known limitation in WoW Classic that makes buff/debuff duration much harder to track
-
-        if LoathebRotate.loathebMode.auraTest(spellId, name) or
-			(LoathebRotate.db.profile.enableDebug and spellId == 1*(LoathebRotate.db.profile.emulatedSpellId or 0)) then
+		-- priest / druid / paladin / shaman / simjlated buff:
+		if	(spellId == 29184)
+		 or (spellId == 29195)
+		 or (spellId == 29197)
+		 or (spellId == 29199)
+		 or (spellId == simulatedSpellId) then
 			if (endTime and endTime > 0 and previousExpirationTime == endTime) then
 				-- If the endTime matches exactly the previous expirationTime of the status bar, it means we are duplicating an already registered rotation
 				return
@@ -115,10 +123,10 @@ function LoathebRotate:UNIT_AURA(unitID, isEcho)
 			end
 
 			return
-        end
-    end
+		end
+	end
 
-    -- The unit is not affected by Corrupted Mind: reset its expiration time
+	-- The unit is not affected by Corrupted Mind: reset its expiration time
 	if previousExpirationTime and previousExpirationTime > 0 then
 		healer.expirationTime = 0
 	end
