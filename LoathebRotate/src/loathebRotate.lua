@@ -137,7 +137,7 @@ end
 function LoathebRotate:hideDisplay()
 	if LoathebRotate.mainFrame:IsShown() then
 		LoathebRotate.mainFrame:Hide();
-		LoathebRotate:printMessage(L['TRANQ_WINDOW_HIDDEN']);
+		LoathebRotate:printPrefixedMessage(L['MAIN_WINDOW_HIDDEN']);
 	end
 end
 

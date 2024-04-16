@@ -1,7 +1,7 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("LoathebRotate", "enUS", true, false)
 if not L then return end
 L["LOADED_MESSAGE"] = "LoathebRotate loaded, type /LoathebRotate for options"
-L["TRANQ_WINDOW_HIDDEN"] = "LoathebRotate window hidden. Use /loathebrotate toggle to get it back"
+L["MAIN_WINDOW_HIDDEN"] = "window hidden. Use /loa toggle to get it back"
 
     -- Buttons
 L["BUTTON_SETTINGS"] = "Settings"
@@ -64,28 +64,6 @@ L["NEUTRAL_MESSAGE_LABEL"] = "[%s] Effect announce message"
 L["SUCCESS_MESSAGE_LABEL"] = "[%s] Successful announce message"
 L["FAIL_MESSAGE_LABEL"] = "[%s] Fail announce message"
 L["REACT_MESSAGE_LABEL"] = "[%s] Local alert if a player failed and you're next in the rotation"
-
---L["DEFAULT_TRANQSHOT_SUCCESS_ANNOUNCE_MESSAGE"] = "Tranqshot done on %s"
---L["DEFAULT_TRANQSHOT_FAIL_ANNOUNCE_MESSAGE"] = "!!! TRANQSHOT FAILED ON %s !!!"
---L["DEFAULT_TRANQSHOT_REACTNOW_LOCAL_MESSAGE"] = "USE TRANQSHOT NOW !"
---L["DEFAULT_DISTRACT_SUCCESS_ANNOUNCE_MESSAGE"] = "Distract done"
---L["DEFAULT_DISTRACT_FAIL_ANNOUNCE_MESSAGE"] = "!!! DISTRACT FAILED !!!"
---L["DEFAULT_DISTRACT_REACTNOW_LOCAL_MESSAGE"] = "DISTRACT NOW !"
---L["DEFAULT_FEARWARD_ANNOUNCE_MESSAGE"] = "Fear Ward cast on %s"
---L["DEFAULT_AOETAUNT_SUCCESS_ANNOUNCE_MESSAGE"] = "AoE taunt for 6 seconds!"
---L["DEFAULT_AOETAUNT_FAIL_ANNOUNCE_MESSAGE"] = "!!! AOE TAUNT MISSED !!!"
---L["DEFAULT_MISDI_ANNOUNCE_MESSAGE"] = "Misdirection cast on %s"
---L["DEFAULT_BLOODLUST_ANNOUNCE_MESSAGE"] = "BLOODLUST %s"
---L["DEFAULT_GROUNDING_ANNOUNCE_MESSAGE"] = "Grounding Totem %s"
---L["DEFAULT_BREZ_ANNOUNCE_MESSAGE"] = "Battle-rez cast on %s"
---L["DEFAULT_INNERV_ANNOUNCE_MESSAGE"] = "Innervate cast on %s"
---L["DEFAULT_BOP_ANNOUNCE_MESSAGE"] = "BoP cast on %s"
---L["DEFAULT_BOF_ANNOUNCE_MESSAGE"] = "Freedom cast on %s"
---L["DEFAULT_SOULSTONE_ANNOUNCE_MESSAGE"] = "Soulstone on %s"
---L["DEFAULT_SOULWELL_ANNOUNCE_MESSAGE"] = "Soulwell created"
---L["DEFAULT_SCORPID_SUCCESS_ANNOUNCE_MESSAGE"] = "Scorpid done on %s"
---L["DEFAULT_SCORPID_FAIL_ANNOUNCE_MESSAGE"] = "!!! SCORPID FAILED ON %s !!!"
---L["DEFAULT_SCORPID_REACTNOW_LOCAL_MESSAGE"] = "USE SCORPID NOW !"
 
 L["ANNOUNCEMENT_CORRUPTED_MIND"] = "Corrupted Mind on %s"
 L["ANNOUNCEMENT_NEXTHEALER"] = "I've healed - %s is next!"
