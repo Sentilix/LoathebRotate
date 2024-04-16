@@ -38,6 +38,10 @@ function LoathebRotate:registerHealer(playerName)
 		healer.nextHeal = false;
 		healer.lastHealTime = 0;
 		healer.frame = nil;
+		healer.version = '';
+		if playerName == UnitName('player') then
+			healer.version = LoathebRotate.version;
+		end;
 
 		-- New healers are automatically moved to backup table:
 		table.insert(LoathebRotate.backupTable, healer)

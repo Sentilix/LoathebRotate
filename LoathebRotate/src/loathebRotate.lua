@@ -36,6 +36,7 @@ function LoathebRotate:init()
 	LoathebRotate:applySettings()
 
 	LoathebRotate:initComms();
+	LoathebRotate:requestVersionCheck(true);
 	LoathebRotate:requestSync();
 
 	LoathebRotate:printMessage(L['LOADED_MESSAGE'])
@@ -233,6 +234,7 @@ end
 
 -- Check if unit is promoted
 function LoathebRotate:isHealerPromoted(name)
+	local healer;
 	local raidIndex = UnitInRaid(name);
 	if (raidIndex) then
 		local _, rank = GetRaidRosterInfo(raidIndex);
@@ -246,10 +248,14 @@ function LoathebRotate:isHealerPromoted(name)
 	for _, healer in pairs(LoathebRotate.rotationTable) do
 		raidIndex = UnitInRaid(healer.name);
 		if (raidIndex) then
-			local _, rank, _, _, _, _, _, online = GetRaidRosterInfo(raidIndex);
+			local name, rank, _, _, _, _, _, online = GetRaidRosterInfo(raidIndex);
 			if (online and rank > 0) then
-				--	Another healer is promoted (and online) so current player is not allowed to modify rotation order.
-				return false;
+				healer = LoathebRotate:getHealer(name);
+				if healer and (healer.version ~= '') then
+					--	Another healer is promoted (and online) so current player is not allowed to modify rotation order.
+					print(string.format('*** A rotation healer (%s - ver.%s) is promoted.', healer.name, healer.version));
+					return false;
+				end;
 			end
 		end		
 	end
@@ -257,9 +263,13 @@ function LoathebRotate:isHealerPromoted(name)
 	for _, healer in pairs(LoathebRotate.backupTable) do
 		raidIndex = UnitInRaid(healer.name);
 		if (raidIndex) then
-			local _, rank, _, _, _, _, _, online = GetRaidRosterInfo(raidIndex);
+			local name, rank, _, _, _, _, _, online = GetRaidRosterInfo(raidIndex);
 			if (online and rank > 0) then
-				return false;
+				healer = LoathebRotate:getHealer(name);
+				if healer and (healer.version ~= '') then
+					print(string.format('*** A backup healer (%s - ver.%s) is promoted.', healer.name, healer.version));
+					return false;
+				end;
 			end
 		end		
 	end

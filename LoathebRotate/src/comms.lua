@@ -98,18 +98,27 @@ end;
 -- VERSION request/response
 -----------------------------------------------------------------------------------------------------------------------
 
-function LoathebRotate:requestVersionCheck()
-	local message = LoathebRotate:createAddonMessage(LoathebRotate.constants.commsTypes.versionRequest);
-    LoathebRotate:sendRaidAddonMessage(message);
+function LoathebRotate:requestVersionCheck(silentMode)
+	local request = LoathebRotate:createAddonMessage(LoathebRotate.constants.commsTypes.versionRequest);
+	request.silentMode = silentMode or false;
+    LoathebRotate:sendRaidAddonMessage(request);
 end;
 
 function LoathebRotate:receiveVersionRequest(prefix, message, channel, sender)
-	local message = LoathebRotate:createAddonMessage(LoathebRotate.constants.commsTypes.versionResponse, sender);
-    LoathebRotate:sendRaidAddonMessage(message);
+	local response = LoathebRotate:createAddonMessage(LoathebRotate.constants.commsTypes.versionResponse, sender);
+	response.silentMode = message.silentMode or false;
+    LoathebRotate:sendRaidAddonMessage(response);
 end;
 
 function LoathebRotate:receiveVersionResponse(prefix, message, channel, sender)
-    LoathebRotate:printPrefixedMessage(string.format(L["VERSION_INFO"], sender, message.ver));
+	if not message.silentMode then
+		LoathebRotate:printPrefixedMessage(string.format(L["VERSION_INFO"], sender, message.ver));
+	else
+		local healer = LoathebRotate:getHealer(sender);
+		if healer then
+			healer.version = message.ver;
+		end;
+	end;
 end;
 
 
