@@ -1,5 +1,11 @@
 ## LoathebRotate Changelog
 
+#### v0.4.2 (2024-04-16)
+- Bugfix: If no promoted people had the addon, LoathebRotate would not allow healers to modify rotation.
+- Bugfix: Detection of next healer in rotation was not working for people with same name.
+- Bugfix: Announcements was written for all instead for the current healer as intended.
+- Bugfix: Message when closing window used wrong (no) "styling".
+
 #### v0.4.1 (2024-04-15)
 - Bugfix: Fixed a LUA error in Debug mode if bossId or spellId was not set.
 - Bugfix: Fixed an error where synchronization was not done when re-joining a raid.
