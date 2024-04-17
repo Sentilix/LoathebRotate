@@ -38,7 +38,7 @@ function LoathebRotate:GROUP_ROSTER_UPDATE()
 	end
 
 	self:updateRaidStatus();
-	LoathebRotate:refreshHealerFrame(healer);
+	LoathebRotate:refreshHealerFrames();
 end
 
 -- Player left combat

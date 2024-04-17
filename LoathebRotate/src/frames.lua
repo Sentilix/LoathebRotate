@@ -541,13 +541,14 @@ function LoathebRotate:createBlindIconFrame(healer)
 
     -- Set Texture
     healer.frame.blindIconFrame.texture = healer.frame.blindIconFrame:CreateTexture(nil, "ARTWORK")
-    local blind_filename = ""
-    local relativeHeight = select(2,GetCurrentScaledResolution())*UIParent:GetEffectiveScale()
-    if relativeHeight <= 1080 then
-        blind_filename = "blind_32px.tga"
-    else
-        blind_filename = "blind_256px.tga"
-    end
+	local blind_filename = ""
+	local relativeHeight = select(2,GetCurrentScaledResolution())*UIParent:GetEffectiveScale()
+
+	if relativeHeight <= 1080 then
+		blind_filename = "blind_32px.tga"
+	else
+		blind_filename = "blind_256px.tga"
+	end
     healer.frame.blindIconFrame.texture:SetTexture("Interface\\AddOns\\LoathebRotate\\textures\\"..blind_filename)
     healer.frame.blindIconFrame.texture:SetAllPoints()
     healer.frame.blindIconFrame.texture:SetTexCoord(0, 1, 0, 1);
@@ -567,21 +568,21 @@ function LoathebRotate:createBlindIconFrame(healer)
     healer.frame.blindIconFrame:Hide()
 end
 
----- Blind icon tooltip show
---function LoathebRotate.onBlindIconEnter(frame)
---    if (LoathebRotate.db.profile.showBlindIconTooltip) then
---        GameTooltip:SetOwner(frame, "ANCHOR_BOTTOMRIGHT")
---        GameTooltip:SetText(L["TOOLTIP_PLAYER_WITHOUT_ADDON"])
---        GameTooltip:AddLine(L["TOOLTIP_MAY_RUN_OUDATED_VERSION"])
---        GameTooltip:AddLine(L["TOOLTIP_DISABLE_SETTINGS"])
---        GameTooltip:Show()
---    end
---end
+-- Blind icon tooltip show
+function LoathebRotate.onBlindIconEnter(frame)
+	if (LoathebRotate.db.profile.showBlindIconTooltip) then
+		GameTooltip:SetOwner(frame, "ANCHOR_BOTTOMRIGHT")
+		GameTooltip:SetText(L["TOOLTIP_PLAYER_WITHOUT_ADDON"])
+		GameTooltip:AddLine(L["TOOLTIP_MAY_RUN_OUDATED_VERSION"])
+		GameTooltip:AddLine(L["TOOLTIP_DISABLE_SETTINGS"])
+		GameTooltip:Show()
+	end
+end
 
----- Blind icon tooltip hide
---function LoathebRotate.onBlindIconLeave(frame, motion)
---    GameTooltip:Hide()
---end
+-- Blind icon tooltip hide
+function LoathebRotate.onBlindIconLeave(frame, motion)
+	GameTooltip:Hide()
+end
 
 -- Healer frame tooltip show
 function LoathebRotate.onHealerEnter(frame)

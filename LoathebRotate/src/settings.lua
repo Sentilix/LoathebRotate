@@ -147,21 +147,21 @@ function LoathebRotate:CreateConfig()
                         order = 9,
                         width = "full",
                     },
-                    --showBlindIcon = {
-                    --    name = L["DISPLAY_BLIND_ICON"],
-                    --    desc = L["DISPLAY_BLIND_ICON_DESC"],
-                    --    type = "toggle",
-                    --    order = 24,
-                    --    width = "full",
-                    --    set = function(info, value) set(info,value) LoathebRotate:refreshBlindIcons() end
-                    --},
-                    --showBlindIconTooltip = {
-                    --    name = L["DISPLAY_BLIND_ICON_TOOLTIP"],
-                    --    desc = L["DISPLAY_BLIND_ICON_TOOLTIP_DESC"],
-                    --    type = "toggle",
-                    --    order = 25,
-                    --    width = "full",
-                    --},
+                    showBlindIcon = {
+                        name = L["DISPLAY_BLIND_ICON"],
+                        desc = L["DISPLAY_BLIND_ICON_DESC"],
+                        type = "toggle",
+                        order = 24,
+                        width = "full",
+                        set = function(info, value) set(info,value) LoathebRotate:refreshBlindIcons() end
+                    },
+                    showBlindIconTooltip = {
+                        name = L["DISPLAY_BLIND_ICON_TOOLTIP"],
+                        desc = L["DISPLAY_BLIND_ICON_TOOLTIP_DESC"],
+                        type = "toggle",
+                        order = 25,
+                        width = "full",
+                    },
                 }
             },
             announces = {
