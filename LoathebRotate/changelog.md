@@ -1,5 +1,8 @@
 ## LoathebRotate Changelog
 
+#### v0.4.3 (2024-04-17)
+- Re-introduced Blind icon: shown if the healer does not have the addon installed.
+
 #### v0.4.2 (2024-04-16)
 - Bugfix: If no promoted people had the addon, LoathebRotate would not allow healers to modify rotation.
 - Bugfix: Detection of next healer in rotation was not working for people with same name.
