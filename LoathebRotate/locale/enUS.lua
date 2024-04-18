@@ -10,6 +10,7 @@ L["BUTTON_PRINT_ROTATION"] = "Print Rotation"
 L["BUTTON_HISTORY"] = "History"
 L["BUTTON_RESPAWN_HISTORY"] = "Respawn old messages"
 L["BUTTON_CLEAR_HISTORY"] = "Clear"
+L["BUTTON_APPLY_AZ_ROTATION"] = "Sort healers from A-Z"
 
     -- Settings
 L["SETTING_GENERAL"] = "General"

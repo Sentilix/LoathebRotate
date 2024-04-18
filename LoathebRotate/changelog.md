@@ -1,5 +1,9 @@
 ## LoathebRotate Changelog
 
+#### v0.4.4 (2024-04-18)
+- Clear Rotation is now hidden unless promoted.
+- New feature: Healers can now be sorted A-Z. Requires promotion.
+
 #### v0.4.3 (2024-04-17)
 - Re-introduced Blind icon: shown if the healer does not have the addon installed.
 

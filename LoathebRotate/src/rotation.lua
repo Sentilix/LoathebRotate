@@ -318,7 +318,48 @@ function LoathebRotate:updateRaidStatus(forcedUpdate)
 	LoathebRotate:purgeHealerList();
 
 	LoathebRotate:drawHealerFrames();
+
+	LoathebRotate:updateButtons();
 end
+
+function LoathebRotate:updateButtons()
+	if LoathebRotate:isHealerPromoted(UnitName('player')) then
+		_G['BtnMain_ResetRotation']:Show();
+		_G['BtnMain_ApplyAzRotation']:Show();
+	else
+		_G['BtnMain_ResetRotation']:Hide();
+		_G['BtnMain_ApplyAzRotation']:Hide();
+	end;
+end;
+
+function LoathebRotate:applyAzRotation()
+	--	Step 1: Disable sync
+	LoathebRotate.ignoreRaidStatusUpdates = true;
+	LoathebRotate.readyToReceiveSyncResponse = false;
+
+	--	Step 2: Move all players to Healer table	
+	local position;
+	for position = #LoathebRotate.backupTable, 1, -1 do
+		local healer = LoathebRotate.backupTable[position];
+		table.insert(LoathebRotate.rotationTable, healer);
+		table.remove(LoathebRotate.backupTable, position);
+	end
+
+	--	Step 3: Sort healer table in A-Z order:
+	table.sort(LoathebRotate.rotationTable, function (a, b) return a.fullName < b.fullName; end);
+
+	--	Step 4: Sync changes
+	--	A message object is needed to get the current addon version:
+	local message = LoathebRotate:createAddonMessage(LoathebRotate.constants.commsTypes.syncBeginRequest);
+	--	Prefix and Channel are unused but Sender must be blank since we want to broadcast to ALL:
+	LoathebRotate:receiveBeginSyncRequest('prefix', message, 'channel', '');
+
+	--	Step 5: Enable sync
+	LoathebRotate.ignoreRaidStatusUpdates = false;
+	LoathebRotate.readyToReceiveSyncResponse = true;
+
+	LoathebRotate:drawHealerFrames();
+end;
 
 -- Update healer status
 function LoathebRotate:updateHealerStatus(healer)

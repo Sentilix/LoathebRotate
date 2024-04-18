@@ -228,11 +228,25 @@ end
 function LoathebRotate:createBottomFrameButtons(baseFrame)
     local buttons = {
         {
+			name = 'BtnMain_Settings',
             texture = 'Interface/GossipFrame/BinderGossipIcon',
             callback = LoathebRotate.toggleSettings,
             tooltip = L["BUTTON_SETTINGS"],
         },
         {
+			name = 'BtnMain_ShowHistory',
+            texture = 'Interface/Buttons/UI-GuildButton-OfficerNote-Up',
+            callback = LoathebRotate.toggleHistory,
+            tooltip = L["BUTTON_HISTORY"],
+        },
+        {
+			name = 'BtnMain_PrintRotation',
+            texture = 'Interface/Buttons/UI-GuildButton-MOTD-Up',
+            callback = LoathebRotate.printRotationSetup,
+            tooltip = L["BUTTON_PRINT_ROTATION"],
+        },
+        {
+			name = 'BtnMain_ResetRotation',
 			texture = 'Interface/Buttons/UI-RefreshButton',
 			callback = function()
 				if not LoathebRotate:isHealerPromoted(UnitName('player')) then
@@ -245,14 +259,10 @@ function LoathebRotate:createBottomFrameButtons(baseFrame)
 			tooltip = L["BUTTON_RESET_ROTATION"],
         },
         {
-            texture = 'Interface/Buttons/UI-GuildButton-MOTD-Up',
-            callback = LoathebRotate.printRotationSetup,
-            tooltip = L["BUTTON_PRINT_ROTATION"],
-        },
-        {
-            texture = 'Interface/Buttons/UI-GuildButton-OfficerNote-Up',
-            callback = LoathebRotate.toggleHistory,
-            tooltip = L["BUTTON_HISTORY"],
+			name = 'BtnMain_ApplyAzRotation',
+            texture = 'Interface/Buttons/UI-SortArrow',
+            callback = LoathebRotate.applyAzRotation,
+            tooltip = L["BUTTON_APPLY_AZ_ROTATION"],
         },
     }
 
@@ -263,6 +273,7 @@ end;
 function LoathebRotate:createHistoryFrameButtons(baseFrame)
     local buttons = {
         {
+			name = 'BtnHistory_ToggleHistory',
             texture = {
                 normal = 'Interface/Buttons/UI-Panel-MinimizeButton-Up',
                 pushed = 'Interface/Buttons/UI-Panel-MinimizeButton-Down',
@@ -272,16 +283,19 @@ function LoathebRotate:createHistoryFrameButtons(baseFrame)
             texCoord = {0.08, 0.9, 0.1, 0.9},
         },
         {
+			name = 'BtnHistory_Settings',
             texture = 'Interface/GossipFrame/BinderGossipIcon',
             callback = LoathebRotate.toggleSettings,
             tooltip = L["BUTTON_SETTINGS"],
         },
         {
+			name = 'BtnHistory_RespawnHistory',
             texture = 'Interface/Buttons/UI-RefreshButton',
             callback = LoathebRotate.respawnHistory,
             tooltip = L["BUTTON_RESPAWN_HISTORY"],
         },
         {
+			name = 'BtnHistory_ClearHistory',
             texture = {
                 normal = 'Interface/Buttons/CancelButton-Up',
                 pushed = 'Interface/Buttons/CancelButton-Down',
@@ -301,15 +315,15 @@ function LoathebRotate:createButtons(baseFrame, buttons)
     local position = 5
 
     for key, button in pairs(buttons) do
-        LoathebRotate:createButton(baseFrame, position, button.texture, button.callback, button.texCoord, button.tooltip)
+        LoathebRotate:createButton(baseFrame, position, button.name, button.texture, button.callback, button.texCoord, button.tooltip)
         position = position + 15
     end
 end
 
 -- Create a single button in the title bar
-function LoathebRotate:createButton(baseFrame, position, texture, callback, texCoord, tooltip)
+function LoathebRotate:createButton(baseFrame, position, name, texture, callback, texCoord, tooltip)
 
-    local button = CreateFrame("Button", nil, baseFrame)
+    local button = CreateFrame("Button", name, baseFrame)
     button:SetPoint('RIGHT', -position, 0)
     button:SetWidth(14)
     button:SetHeight(14)
