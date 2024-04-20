@@ -1,6 +1,7 @@
 # Loatheb Rotate
 This addon helps setting up rotations for specific classes or specific roles in raid.
   
+<img src="https://github.com/Sentilix/LoathebRotate/blob/main/LoathebRotate/_assets/loatheb-rotate-0.4.4.png?raw=true" />
 
 While it is more efficient if all involved players can view the list by themselves, ultimately not all raid members need to install the addon, considering a raid leader/assistant is willing to tell the rotation e.g. with voice comm.
 
