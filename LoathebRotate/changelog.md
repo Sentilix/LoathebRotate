@@ -1,5 +1,10 @@
 ## LoathebRotate Changelog
 
+#### v0.4.5 (2024-04-24)
+- Bugfix: When players joined raid their version number was not checked, causing Blind Icon and Promotion check to fail.
+- Bugfix: Blind Icon defaults was not set (tiny bugfix!)
+- Bugfix: Changed cooldown grace period from 10 seconds to 1 second.
+
 #### v0.4.4 (2024-04-18)
 - Clear Rotation is now hidden unless promoted.
 - New feature: Healers can now be sorted A-Z. Requires promotion.
