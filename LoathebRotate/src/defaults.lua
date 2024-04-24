@@ -56,8 +56,8 @@ function LoathebRotate:LoadDefaults()
 			hideNotInRaid = false,
 			alwaysShowWindow = false,
 			showWindowWhenTargetingBoss = true,
-			--showBlindIcon = true,
-			--showBlindIconTooltip = true,
+			showBlindIcon = true,
+			showBlindIconTooltip = true,
 		},
 	}
 

@@ -72,7 +72,7 @@ LoathebRotate.constants = {
 		['showWindowResponse']	= 'rx-showWindow',	-- Dummy: There is no response to a tx-showWindow
     },
 
-    ['minimumCooldownElapsedForEligibility'] = 10,
+    ['minimumCooldownElapsedForEligibility'] = 1,
 
     ['sounds'] = {
 		['nextToHeal'] = 'Interface\\AddOns\\LoathebRotate\\sounds\\ding.ogg',
