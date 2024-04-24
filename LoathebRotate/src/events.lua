@@ -4,6 +4,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("LoathebRotate")
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("PLAYER_LOGIN")
 eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
+eventFrame:RegisterEvent("GROUP_JOINED")
 eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
 eventFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
 eventFrame:RegisterEvent("UNIT_AURA")
@@ -23,6 +24,14 @@ eventFrame:SetScript(
 		end
 	end
 )
+
+--	Called when a player (healer) joined a group.
+--	The player must broadcast version to other players:
+function LoathebRotate:GROUP_JOINED()
+	if LoathebRotate:isHealerClass('player') then
+		LoathebRotate:requestVersionCheck(true);
+	end;
+end
 
 -- Raid group has changed
 function LoathebRotate:GROUP_ROSTER_UPDATE()

@@ -83,7 +83,7 @@ end
 function LoathebRotate:createAddonMessage(requestType, target)
     local request = {
         ['type'] = requestType,
-        ['from'] = UnitName('player'),
+        ['from'] = LoathebRotate:getPlayerAndRealm('player'),
         ['to'] = target or '',
 		['ver'] = LoathebRotate.version,
 		['vernum'] = LoathebRotate:calculateVersionNumber(),
@@ -108,13 +108,27 @@ function LoathebRotate:receiveVersionRequest(prefix, message, channel, sender)
 	local response = LoathebRotate:createAddonMessage(LoathebRotate.constants.commsTypes.versionResponse, sender);
 	response.silentMode = message.silentMode or false;
     LoathebRotate:sendRaidAddonMessage(response);
+
+	--	Get this by checking the fullName:
+	local healer = LoathebRotate:getHealer(message.from);
+	if not healer then
+		--	Before 0.4.5 only local name was stored in message.
+		--	If healer was not found using fullName we can try the Sender:
+		healer = LoathebRotate:getHealer(sender);
+	end
+	if healer then
+		healer.version = message.ver;
+	end
 end;
 
 function LoathebRotate:receiveVersionResponse(prefix, message, channel, sender)
 	if not message.silentMode then
 		LoathebRotate:printPrefixedMessage(string.format(L["VERSION_INFO"], sender, message.ver));
 	else
-		local healer = LoathebRotate:getHealer(sender);
+		local healer = LoathebRotate:getHealer(message.from);
+		if not healer then
+			healer = LoathebRotate:getHealer(sender);
+		end
 		if healer then
 			healer.version = message.ver;
 		end;
@@ -233,8 +247,6 @@ function LoathebRotate:requestSyncBatch(receiver, batch)
 end;
 
 function LoathebRotate:receiveSyncBatchRequest(prefix, message, channel, sender)
-	--LoathebRotate:printAll(message);
-
 	local position, heal, healer;
 	local group = 'ROTATION';
 	if message.batch.g == 'B' then
