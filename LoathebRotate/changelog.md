@@ -1,5 +1,10 @@
 ## LoathebRotate Changelog
 
+
+#### v0.5.0 (2024-05-xx)
+- Players can now be set as Tank/DPS or Healers.
+- When a healer is having the Tank/DPS role, this healer will be ignored when a sort plan is used (staying in the backup table).
+
 #### v0.4.5 (2024-04-24)
 - Bugfix: When players joined raid their version number was not checked, causing Blind Icon and Promotion check to fail.
 - Bugfix: Blind Icon defaults was not set (tiny bugfix!)

@@ -35,4 +35,5 @@ src\settings.lua
 src\utils.lua
 src\history.lua
 src\announce.lua
+src\rightclick.lua
 src\secure.lua

@@ -18,9 +18,15 @@ function LoathebRotate:registerHealer(playerName)
 		return nil;
 	end;
 
+	local config = LoathebRotate.db.profile;
+	if not config.roles then
+		config.roles = { };
+	end;
+
 	local healer = LoathebRotate:getHealer(playerName);
 	if not healer then
 		local fullName = LoathebRotate:getFullPlayerName(playerName);
+		local _, classname = UnitClass(playerName);
 
 		--	GUID does not work correct cross-realm:
 		--	In case we have two people with same name (but different realms) the player from the 
@@ -39,9 +45,13 @@ function LoathebRotate:registerHealer(playerName)
 		healer.lastHealTime = 0;
 		healer.frame = nil;
 		healer.version = '';
+		healer.className = classname;
+
 		if playerName == UnitName('player') then
 			healer.version = LoathebRotate.version;
 		end;
+
+		LoathebRotate:readRoleFromConfig(healer);
 
 		-- New healers are automatically moved to backup table:
 		table.insert(LoathebRotate.backupTable, healer)
@@ -337,12 +347,14 @@ function LoathebRotate:applyAzRotation()
 	LoathebRotate.ignoreRaidStatusUpdates = true;
 	LoathebRotate.readyToReceiveSyncResponse = false;
 
-	--	Step 2: Move all players to Healer table	
+	--	Step 2: Move all players except healers marked as Tank/DPS to Healer table	
 	local position;
 	for position = #LoathebRotate.backupTable, 1, -1 do
 		local healer = LoathebRotate.backupTable[position];
-		table.insert(LoathebRotate.rotationTable, healer);
-		table.remove(LoathebRotate.backupTable, position);
+		if not healer.isTankDpsRole then
+			table.insert(LoathebRotate.rotationTable, healer);
+			table.remove(LoathebRotate.backupTable, position);
+		end;
 	end
 
 	--	Step 3: Sort healer table in A-Z order:

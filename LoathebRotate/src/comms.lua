@@ -258,6 +258,8 @@ function LoathebRotate:receiveSyncBatchRequest(prefix, message, channel, sender)
 			LoathebRotate:setHealerPosition(healer, group, heal.I);
 		end;
 	end
+
+	LoathebRotate:readRoleSettings();
 end;
 
 

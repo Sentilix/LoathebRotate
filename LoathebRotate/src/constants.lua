@@ -93,6 +93,12 @@ LoathebRotate.constants = {
         ['flagtaken'] = 'Flag Taken (DBM)',
     },
 
+	['icons'] = {
+		['healer'] = 135915,
+		['tankdps'] = 132155,
+		['unknown'] = 134400,
+	},
+
 }
 
 

@@ -39,6 +39,8 @@ function LoathebRotate:init()
 	LoathebRotate:requestVersionCheck(true);
 	LoathebRotate:requestSync();
 
+	LoathebRotate:readRoleSettings();
+
 	LoathebRotate:printMessage(L['LOADED_MESSAGE'])
 end
 
@@ -47,6 +49,78 @@ function LoathebRotate:ProfilesChanged()
 	self.db:RegisterDefaults(self.defaults);
     self:applySettings();
 end
+
+
+--	options.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
+function LoathebRotate:readRoleSettings()
+	local config = LoathebRotate.db.profile;
+
+	if not config.roles then
+		config.roles = { };
+	end;
+
+	--	Reset roles for all healers:
+	for _, healer in pairs(LoathebRotate.rotationTable) do
+		LoathebRotate:readRoleFromConfig(healer);
+	end
+
+	for _, healer in pairs(LoathebRotate.backupTable) do
+		LoathebRotate:readRoleFromConfig(healer);
+	end
+end;
+
+function LoathebRotate:readRoleFromConfig(healer)
+	local config = LoathebRotate.db.profile;
+	if not config.roles then
+		config.roles = { };
+	end;
+
+	healer.isHealerRole  = false;
+	healer.isTankDpsRole = false; 
+	healer.isUnknownRole = false;
+	healer.roleTimestamp = 0;
+	
+	local roleInfo = config.roles[healer.fullName];
+	if roleInfo then
+		if roleInfo.role == "Healer" then
+			healer.isHealerRole = true;
+			healer.roleTimestamp = roleInfo.timestamp or 0;
+		elseif roleInfo.role == "TankDps" then
+			healer.isTankDpsRole = true;
+			healer.roleTimestamp = roleInfo.timestamp or 0;
+		elseif roleInfo.role == "Unknown" then
+			healer.isUnknownRole = true;
+			healer.roleTimestamp = roleInfo.timestamp or 0;
+		end;
+	end;
+end;
+
+function LoathebRotate:applyRoleSettings()
+	local config = LoathebRotate.db.profile;
+
+	for _, healer in pairs(LoathebRotate.rotationTable) do
+		LoathebRotate:applyRoleSetting(healer, true);
+	end
+end;
+
+function LoathebRotate:applyRoleSetting(healer)
+	local config = LoathebRotate.db.profile;
+	if not config.roles then
+		config.roles = { };
+	end;
+
+	if healer.isHealerRole then
+		config.roles[healer.fullName] = { ["role"] = "Healer", ["timestamp"] = healer.roleTimestamp; }
+	elseif healer.isTankDpsRole then
+		config.roles[healer.fullName] = { ["role"] = "TankDps", ["timestamp"] = healer.roleTimestamp; }
+	elseif healer.isUnknownRole then
+		config.roles[healer.fullName] = { ["role"] = "Unknown", ["timestamp"] = healer.roleTimestamp; }
+	else
+		config.roles[healer.fullName] = nil;
+	end
+end;
+
+
 
 -- Apply position, size, and visibility
 local function applyWindowSettings(frame, windowConfig)

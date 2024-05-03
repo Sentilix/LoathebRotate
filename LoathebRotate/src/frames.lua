@@ -489,13 +489,13 @@ function LoathebRotate:createHealerFrame(healer, parentFrame)
 	LoathebRotate:createCooldownFrame(healer);
 	LoathebRotate:createBlindIconFrame(healer);
 	LoathebRotate:configureHealerFrameDrag(healer);
-	--LoathebRotate:configureHealerFrameRightClick(healer);
+	LoathebRotate:configureHealerFrameRightClick(healer);
 
 	if (LoathebRotate.enableDrag) then
 		LoathebRotate:enableHealerFrameDragging(healer, true);
 	end
 
---	LoathebRotate:enableHealerFrameRightClick(healer, true);
+	LoathebRotate:enableHealerFrameRightClick(healer, true);
 end
 
 -- Create the cooldown frame
