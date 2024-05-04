@@ -2,8 +2,11 @@
 
 
 #### v0.5.0 (2024-05-xx)
-- Players can now be set as Tank/DPS or Healers.
-- When a healer is having the Tank/DPS role, this healer will be ignored when a sort plan is used (staying in the backup table).
+- Players can now be set as Tank/DPS or Healers. Added healer and Dps icon to the main window.
+- When a healer is having the Tank/DPS role, healer will be ignored when a sort plan is used (staying in the backup table).
+- When a healer is having the Healer role, healer will be auto-moved to the rotation table.
+- Sort icon changed. This is still not perfect though.
+- Bugfix: Incoming version numbers was not always picked up, meaning the blind icon was sometimes shown when it shouldn't
 
 #### v0.4.5 (2024-04-24)
 - Bugfix: When players joined raid their version number was not checked, causing Blind Icon and Promotion check to fail.

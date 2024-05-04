@@ -260,9 +260,9 @@ function LoathebRotate:createBottomFrameButtons(baseFrame)
         },
         {
 			name = 'BtnMain_ApplyAzRotation',
-            texture = 'Interface/Buttons/UI-SortArrow',
-            callback = LoathebRotate.applyAzRotation,
-            tooltip = L["BUTTON_APPLY_AZ_ROTATION"],
+			texture = 'Interface/Buttons/JumpUpArrow',
+			callback = LoathebRotate.applyAzRotation,
+			tooltip = L["BUTTON_APPLY_AZ_ROTATION"],
         },
     }
 
