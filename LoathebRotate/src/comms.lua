@@ -127,14 +127,14 @@ end;
 function LoathebRotate:receiveVersionResponse(prefix, message, channel, sender)
 	if not message.silentMode then
 		LoathebRotate:printPrefixedMessage(string.format(L["VERSION_INFO"], sender, message.ver));
-	else
-		local healer = LoathebRotate:getHealer(message.from);
-		if not healer then
-			healer = LoathebRotate:getHealer(sender);
-		end
-		if healer then
-			healer.version = message.ver;
-		end;
+	end;
+
+	local healer = LoathebRotate:getHealer(message.from);
+	if not healer then
+		healer = LoathebRotate:getHealer(sender);
+	end
+	if healer then
+		healer.version = message.ver;
 	end;
 end;
 
