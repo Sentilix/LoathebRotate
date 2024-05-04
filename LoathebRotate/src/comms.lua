@@ -352,13 +352,17 @@ end;
 
 function LoathebRotate:requestUpdateRole(healer)
 	local message = LoathebRotate:createAddonMessage(LoathebRotate.constants.commsTypes.updateRoleRequest);
+
 	if healer.isHealerRole then
+		message.name = healer.fullName;
 		message.role = 'Healer';
 		message.timestamp = healer.roleTimestamp;
 	elseif healer.isTankDpsRole then
+		message.name = healer.fullName;
 		message.role = 'TankDps';
 		message.timestamp = healer.roleTimestamp;
 	elseif healer.isUnknownRole then
+		message.name = healer.fullName;
 		message.role = 'Unknown';
 		message.timestamp = healer.roleTimestamp;
 	end;
@@ -367,9 +371,12 @@ function LoathebRotate:requestUpdateRole(healer)
 end;
 
 function LoathebRotate:receiveUpdateRoleRequest(prefix, message, channel, sender)
-	local healer = LoathebRotate:getHealer(message.from);
+	if message.role and message.name then
+		local healer = LoathebRotate:getHealer(message.name);
+		if not healer then
+			return;
+		end;
 
-	if message.role and healer then
 		if healer.roleTimestamp > message.timestamp then
 			--	Local healer has a newer version. Can happend when updates are sent same time.
 			return;

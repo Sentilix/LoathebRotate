@@ -118,8 +118,9 @@ function LoathebRotate:applyRoleSetting(healer)
 	else
 		config.roles[healer.fullName] = nil;
 	end
-end;
 
+	LoathebRotate:updateRoleIcon(healer);
+end;
 
 
 -- Apply position, size, and visibility

@@ -487,6 +487,7 @@ function LoathebRotate:createHealerFrame(healer, parentFrame)
 	LoathebRotate:setHealerName(healer);
 
 	LoathebRotate:createCooldownFrame(healer);
+	LoathebRotate:createRoleIconFrame(healer);
 	LoathebRotate:createBlindIconFrame(healer);
 	LoathebRotate:configureHealerFrameDrag(healer);
 	LoathebRotate:configureHealerFrameRightClick(healer);
@@ -543,12 +544,44 @@ function LoathebRotate:createCooldownFrame(healer)
     healer.frame.cooldownFrame:Hide()
 end
 
+-- Create the role icon frame
+function LoathebRotate:createRoleIconFrame(healer)
+    -- Frame
+    healer.frame.roleIconFrame = CreateFrame("Frame", nil, healer.frame)
+    healer.frame.roleIconFrame:SetPoint('RIGHT', -5, 0)
+    healer.frame.roleIconFrame:SetPoint('CENTER', 0, 0)
+    healer.frame.roleIconFrame:SetWidth(16)
+    healer.frame.roleIconFrame:SetHeight(16)
+
+    -- Set Texture
+    healer.frame.roleIconFrame.texture = healer.frame.roleIconFrame:CreateTexture(nil, "ARTWORK")
+	local relativeHeight = select(2,GetCurrentScaledResolution())*UIParent:GetEffectiveScale();
+
+	healer.frame.roleIconFrame.texture:SetTexture(LoathebRotate.constants.icons.unknown);
+	healer.frame.roleIconFrame.texture:SetAllPoints();
+	healer.frame.roleIconFrame.texture:SetTexCoord(0, 1, 0, 1);
+
+	healer.frame.roleIconFrame:Hide()
+end
+
+function LoathebRotate:updateRoleIcon(healer)
+	if healer.isHealerRole then
+		healer.frame.roleIconFrame.texture:SetTexture(LoathebRotate.constants.icons.healer);
+		healer.frame.roleIconFrame:Show();
+	elseif healer.isTankDpsRole then
+		healer.frame.roleIconFrame.texture:SetTexture(LoathebRotate.constants.icons.tankdps);
+		healer.frame.roleIconFrame:Show();
+	else
+		healer.frame.roleIconFrame:Hide();	
+	end;
+end;
+
 -- Create the blind icon frame
 function LoathebRotate:createBlindIconFrame(healer)
 
     -- Frame
     healer.frame.blindIconFrame = CreateFrame("Frame", nil, healer.frame)
-    healer.frame.blindIconFrame:SetPoint('RIGHT', -5, 0)
+    healer.frame.blindIconFrame:SetPoint('RIGHT', -25, 0)
     healer.frame.blindIconFrame:SetPoint('CENTER', 0, 0)
     healer.frame.blindIconFrame:SetWidth(16)
     healer.frame.blindIconFrame:SetHeight(16)

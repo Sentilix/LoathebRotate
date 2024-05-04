@@ -53,8 +53,12 @@ function LoathebRotate:registerHealer(playerName)
 
 		LoathebRotate:readRoleFromConfig(healer);
 
-		-- New healers are automatically moved to backup table:
-		table.insert(LoathebRotate.backupTable, healer)
+		-- New healers are automatically moved to backup table unless they are already marked as Healers:
+		if healer.isHealerRole then
+			table.insert(LoathebRotate.rotationTable, healer);
+		else
+			table.insert(LoathebRotate.backupTable, healer);
+		end;
 	end;
 
     return healer

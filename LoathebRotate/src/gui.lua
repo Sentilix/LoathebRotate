@@ -108,6 +108,7 @@ function LoathebRotate:drawList(healerList, parentFrame)
 		healer.frame:Show();
 		healer.frame.healer = healer;
 
+		LoathebRotate:updateRoleIcon(healer);
 		LoathebRotate:updateBlindIcon(healer);
 
 		index = index + 1;
