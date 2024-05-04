@@ -47,6 +47,9 @@ function LoathebRotate.OnCommReceived(prefix, data, channel, sender)
 			--	showWindow:
 			elseif (message.type == LoathebRotate.constants.commsTypes.showWindowRequest) then
 				LoathebRotate:receiveShowWindowRequest(prefix, message, channel, sender)
+			--	updateRole:
+			elseif (message.type == LoathebRotate.constants.commsTypes.updateRoleRequest) then
+				LoathebRotate:receiveUpdateRoleRequest(prefix, message, channel, sender)
 			end;
 		else
 			LoathebRotate:printPrefixedMessage('could not serialize data');
@@ -210,7 +213,20 @@ function LoathebRotate:receiveBeginSyncRequest(prefix, message, channel, sender)
 	--	ROTATION table:
 	for position = 1, #LoathebRotate.rotationTable, 1 do
 		healer = LoathebRotate.rotationTable[position];
-		table.insert(batch.h, { ['F'] = healer.fullName, ['I'] = position });
+
+		local roleName, roleTimestamp;
+		if healer.isHealerRole then
+			roleName = 'H';
+			roleTimestamp = healer.roleTimestamp;
+		elseif healer.isTankDpsRole then
+			roleName = 'D';
+			roleTimestamp = healer.roleTimestamp;
+		elseif healer.isUnknownRole then
+			roleName = 'U';
+			roleTimestamp = healer.roleTimestamp;
+		end;	
+	
+		table.insert(batch.h, { ['F'] = healer.fullName, ['I'] = position, ['R'] = roleName, ['T'] = roleTimestamp });
 
 		if #batch.h >= healersPerBatch then
 			LoathebRotate:requestSyncBatch(sender, batch);
@@ -226,7 +242,20 @@ function LoathebRotate:receiveBeginSyncRequest(prefix, message, channel, sender)
 	batch.h = { };
 	for position = 1, #LoathebRotate.backupTable, 1 do
 		healer = LoathebRotate.backupTable[position];
-		table.insert(batch.h, { ['F'] = healer.fullName, ['I'] = position });
+
+		local roleName, roleTimestamp;
+		if healer.isHealerRole then
+			roleName = 'H';
+			roleTimestamp = healer.roleTimestamp;
+		elseif healer.isTankDpsRole then
+			roleName = 'D';
+			roleTimestamp = healer.roleTimestamp;
+		elseif healer.isUnknownRole then
+			roleName = 'U';
+			roleTimestamp = healer.roleTimestamp;
+		end;	
+
+		table.insert(batch.h, { ['F'] = healer.fullName, ['I'] = position, ['R'] = roleName, ['T'] = roleTimestamp });
 
 		if #batch.h >= healersPerBatch then
 			LoathebRotate:requestSyncBatch(sender, batch);
@@ -252,10 +281,25 @@ function LoathebRotate:receiveSyncBatchRequest(prefix, message, channel, sender)
 	if message.batch.g == 'B' then
 		group = 'BACKUP';
 	end;
-	for position, heal in pairs(message.batch.h) do
+
+	for _, heal in pairs(message.batch.h) do
 		healer = LoathebRotate:getHealer(heal.F);
 		if healer and heal.I then
 			LoathebRotate:setHealerPosition(healer, group, heal.I);
+
+			if heal.R then
+				if heal.R == 'H' then
+					healer.isHealerRole = true;
+					healer.roleTimestamp = heal.T;
+				elseif heal.R == 'D' then
+					healer.isTankDpsRole = true;
+					healer.roleTimestamp = heal.T;
+				elseif heal.R == 'U' then
+					healer.isUnknownRole = true;
+					healer.roleTimestamp = heal.T;
+				end;
+				LoathebRotate:applyRoleSetting(healer);
+			end;
 		end;
 	end
 
@@ -299,6 +343,54 @@ function LoathebRotate:receiveShowWindowRequest()
 	if LoathebRotate:isActive() then
 		LoathebRotate.openWindowRequestSent = true;
 		LoathebRotate.mainFrame:Show();
+	end;
+end;
+
+-----------------------------------------------------------------------------------------------------------------------
+-- UPDATE ROLE REQUEST (no response)
+-----------------------------------------------------------------------------------------------------------------------
+
+function LoathebRotate:requestUpdateRole(healer)
+	local message = LoathebRotate:createAddonMessage(LoathebRotate.constants.commsTypes.updateRoleRequest);
+	if healer.isHealerRole then
+		message.role = 'Healer';
+		message.timestamp = healer.roleTimestamp;
+	elseif healer.isTankDpsRole then
+		message.role = 'TankDps';
+		message.timestamp = healer.roleTimestamp;
+	elseif healer.isUnknownRole then
+		message.role = 'Unknown';
+		message.timestamp = healer.roleTimestamp;
+	end;
+
+	LoathebRotate:sendRaidAddonMessage(message);
+end;
+
+function LoathebRotate:receiveUpdateRoleRequest(prefix, message, channel, sender)
+	local healer = LoathebRotate:getHealer(message.from);
+
+	if message.role and healer then
+		if healer.roleTimestamp > message.timestamp then
+			--	Local healer has a newer version. Can happend when updates are sent same time.
+			return;
+		end;
+
+		healer.isHealerRole = false;
+		healer.isTankDpsRole = false;
+		healer.isUnknownRole = false;
+
+		if message.role == 'Healer' then
+			healer.isHealerRole = true;
+			healer.roleTimestamp = message.timestamp;
+		elseif message.role == 'TankDps' then
+			healer.isTankDpsRole = true;
+			healer.roleTimestamp = message.timestamp;
+		elseif message.role == 'Unknown' then
+			healer.isUnknownRole = true;
+			healer.roleTimestamp = message.timestamp;
+		end;
+
+		LoathebRotate:applyRoleSetting(healer);
 	end;
 end;
 

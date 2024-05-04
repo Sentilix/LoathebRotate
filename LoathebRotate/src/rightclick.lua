@@ -107,4 +107,5 @@ function LoathebRotate:onMenuClick(sender, item, ...)
 	healer.roleTimestamp = GetServerTime();
 
 	LoathebRotate:applyRoleSetting(healer);
+	LoathebRotate:requestUpdateRole(healer);
 end;

@@ -70,6 +70,8 @@ LoathebRotate.constants = {
 		['resetResponse']		= 'rx-reset',		-- Dummy: There is no response to a tx-reset
 		['showWindowRequest']	= 'tx-showWindow',
 		['showWindowResponse']	= 'rx-showWindow',	-- Dummy: There is no response to a tx-showWindow
+		['updateRoleRequest']	= 'tx-updateRole',
+		['updateRoleResponse']	= 'rx-updateRole',	-- Dummy: There is no response to a tx-updateRole
     },
 
     ['minimumCooldownElapsedForEligibility'] = 1,
