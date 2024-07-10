@@ -1,7 +1,10 @@
 ## LoathebRotate Changelog
 
 
-#### v0.5.0 (2024-05-xx)
+#### v0.5.1 (2024-07-10)
+- Bumped to classic API 1.15.3
+
+#### v0.5.0 (2024-05-02)
 - Players can now be set as Tank/DPS or Healers. Added healer and Dps icon to the main window.
 - When a healer is having the Tank/DPS role, healer will be ignored when a sort plan is used (staying in the backup table).
 - When a healer is having the Healer role, healer will be auto-moved to the rotation table.
