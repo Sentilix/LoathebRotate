@@ -2,7 +2,7 @@ local LoathebRotate = select(2, ...)
 local L = LibStub("AceLocale-3.0"):GetLocale("LoathebRotate")
 
 
--- Send an annouce message to a given channel, including whisper (if targetname is set)
+-- Send an announce message to a given channel, including whisper (if targetname is set)
 function LoathebRotate:sendAnnounceMessage(message, targetName)
 	if LoathebRotate.db.profile.enableAnnounces then
         LoathebRotate:sendMessage(message, nil, LoathebRotate.db.profile.channelType, targetName);

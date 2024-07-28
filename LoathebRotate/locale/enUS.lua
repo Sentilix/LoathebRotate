@@ -61,6 +61,9 @@ L["CHANNEL_WHISPER"] = "Whisper"
 
     ---- Messages
 L["ANNOUNCES_MESSAGE_HEADER"] = "Announce messages"
+L["ANNOUNCES_MESSAGE_TEXT_HEADER"] = "Next Healer Callout";
+L["ANNOUNCES_MESSAGE_TEXT_DESC"] = "Message sent to next healer in rotation when you cast a heal.";
+L["ANNOUNCES_MESSAGE_TEXT_DEFAULT"] = "YOU ARE NEXT TO HEAL !!!";
 L["NEUTRAL_MESSAGE_LABEL"] = "[%s] Effect announce message"
 L["SUCCESS_MESSAGE_LABEL"] = "[%s] Successful announce message"
 L["FAIL_MESSAGE_LABEL"] = "[%s] Fail announce message"
@@ -68,7 +71,6 @@ L["REACT_MESSAGE_LABEL"] = "[%s] Local alert if a player failed and you're next 
 
 L["ANNOUNCEMENT_CORRUPTED_MIND"] = "Corrupted Mind on %s"
 L["ANNOUNCEMENT_NEXTHEALER"] = "I've healed - %s is next!"
-L["ANNOUNCEMENT_YOU_ARE_NEXT"] = "YOU ARE NEXT to heal!!!"
 
 L["BROADCAST_MESSAGE_HEADER"] = "Rotation setup text broadcast"
 L["USE_MULTILINE_ROTATION_REPORT"] = "Use multiline for main rotation when reporting"

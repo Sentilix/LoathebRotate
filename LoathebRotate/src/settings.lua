@@ -181,11 +181,18 @@ function LoathebRotate:CreateConfig()
                         type = "header",
                         order = 20,
                     },
+                    announceText = {
+						name = L["ANNOUNCES_MESSAGE_TEXT_HEADER"],
+						desc = L["ANNOUNCES_MESSAGE_TEXT_DESC"],
+						type = "input",
+						order = 21,
+						width = "full",
+                    },
                     channelType = {
                         name = L["MESSAGE_CHANNEL_TYPE"],
                         desc = L["MESSAGE_CHANNEL_TYPE_DESC"],
                         type = "select",
-                        order = 21,
+                        order = 22,
                         values = {
                             ["RAID_WARNING"] = L["CHANNEL_RAID_WARNING"],
                             ["SAY"] = L["CHANNEL_SAY"],
@@ -196,11 +203,11 @@ function LoathebRotate:CreateConfig()
                             ["WHISPER"] = L["CHANNEL_WHISPER"]
                         },
                     },
-                    spacer22 = {
+                    spacer23 = {
                         name = ' ',
                         type = "description",
                         width = "normal",
-                        order = 22,
+                        order = 23,
                     },
                     -- Items of order 30+ will be filled by the end of this script
                     setupBroadcastHeader = {

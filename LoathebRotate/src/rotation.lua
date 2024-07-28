@@ -114,8 +114,8 @@ function LoathebRotate:rotate(lastHealer, rotateWithoutCooldown, endTimeOfCooldo
 		if lastHealer.name == UnitName('player') then
 			if nextHealer.name ~= UnitName('player') then
 				local playerFullName = LoathebRotate:getFullPlayerName(nextHealer.name);
-				if playerFullName then
-					LoathebRotate:sendAnnounceMessage(L["ANNOUNCEMENT_YOU_ARE_NEXT"], playerFullName);
+				if playerFullName and LoathebRotate.db.profile.announceText then
+					LoathebRotate:sendAnnounceMessage(LoathebRotate.db.profile.announceText, playerFullName);
 				end
 			end
 		end
@@ -362,7 +362,11 @@ function LoathebRotate:applyAzRotation()
 	end
 
 	--	Step 3: Sort healer table in A-Z order:
-	table.sort(LoathebRotate.rotationTable, function (a, b) return a.fullName < b.fullName; end);
+	table.sort(LoathebRotate.rotationTable, function (a, b)
+		if not a then return false; end;
+		if not b then return true; end;
+		return a.fullName < b.fullName; 
+	end);
 
 	--	Step 4: Sync changes
 	--	A message object is needed to get the current addon version:

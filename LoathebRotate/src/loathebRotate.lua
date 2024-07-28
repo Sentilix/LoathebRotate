@@ -160,6 +160,10 @@ function LoathebRotate:applySettings()
 	LoathebRotate:setHistoryTimeVisible(config.historyTimeVisible);
 	LoathebRotate:setHistoryFontSize(config.historyFontSize);
 
+	if not LoathebRotate.db.profile.announceText then
+		LoathebRotate.db.profile.announceText = L["ANNOUNCES_MESSAGE_TEXT_DEFAULT"];
+	end;
+
 	LoathebRotate:updateDisplay();
 end
 
