@@ -1,6 +1,9 @@
 ## LoathebRotate Changelog
 
 
+#### v0.5.3 (2024-09-25)
+- Bumped to classic API 1.15.4
+
 #### v0.5.2 (2024-07-28)
 - Announcement text is now configurable.
 - Bugfix: If sorting the list while raid is changed could throw a LUA error.
