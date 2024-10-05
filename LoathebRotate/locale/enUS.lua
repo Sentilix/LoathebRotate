@@ -190,7 +190,7 @@ L["TOOLTIP_EFFECT_CURRENT"] = "Currently on: %s"
 L["TOOLTIP_EFFECT_PAST"] = "Last used on: %s"
 
     --- Context Menu
-L["CONTEXT_ASSIGN_TITLE"] = "Assign %s to:"
+L["CONTEXT_ASSIGN_TITLE"] = "Please select role for %s:"
 L["CONTEXT_NOBODY"] = "Nobody"
 L["CONTEXT_CANCEL"] = "Cancel"
 L["CONTEXT_OTHERS"] = "Other players"
