@@ -1,4 +1,5 @@
 local LoathebRotate = select(2, ...)
+local L = LibStub("AceLocale-3.0"):GetLocale("LoathebRotate")
 
 LoathebRotate.colors = {
     ['white']       = CreateColor(1,1,1),
@@ -106,7 +107,7 @@ LoathebRotate.constants = {
 
 -- Each mode has a specific Broadcast text so that it does not conflict with other modes
 function LoathebRotate:getBroadcastHeaderText()
-    return string.format(L['BROADCAST_HEADER_TEXT'], L["LOATHEB_MODE_FULL_NAME"]);
+    return string.format(L["BROADCAST_HEADER_TEXT"], L["LOATHEB_MODE_FULL_NAME"]);
 end
 
 LoathebRotate.loathebMode = {

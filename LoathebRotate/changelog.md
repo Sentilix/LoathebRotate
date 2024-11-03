@@ -1,5 +1,7 @@
 ## LoathebRotate Changelog
 
+#### v0.5.5 (2024-11-03)
+- Fixed some texts not being translated as they should.
 
 #### v0.5.4 (2024-10-05)
 - Fixed right-click menu after Blizzard updated API.
