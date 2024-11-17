@@ -1,5 +1,8 @@
 ## LoathebRotate Changelog
 
+#### v0.5.6 (2024-11-17)
+- Bumped to classic API 1.15.5
+
 #### v0.5.5 (2024-11-03)
 - Fixed some texts not being translated as they should.
 
