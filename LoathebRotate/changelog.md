@@ -1,5 +1,8 @@
 ## LoathebRotate Changelog
 
+#### v0.5.6 (2025-01-07)
+- Bumped to classic API 1.15.6
+
 #### v0.5.6 (2024-11-17)
 - Bumped to classic API 1.15.5
 
