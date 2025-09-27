@@ -1,5 +1,9 @@
 ## LoathebRotate Changelog
 
+#### v0.5.9 (2025-09-27)
+- Changed rotation output format to avoid problems when exceeding 255 characters.
+- Bumped to classic API 1.15.7
+
 #### v0.5.8 (2025-03-20)
 - Bumped to classic API 1.15.7
 
