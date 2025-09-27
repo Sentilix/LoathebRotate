@@ -257,11 +257,11 @@ function LoathebRotate:printRotationSetup()
 		if (LoathebRotate.db.profile.useMultilineRotationReport) then
 			LoathebRotate:printMultilineRotation(LoathebRotate.rotationTable);
 		else
-			LoathebRotate:sendRotationMessage(LoathebRotate:buildGroupMessage(L['BROADCAST_ROTATION_PREFIX'] .. ' : ', LoathebRotate.rotationTable));
+			LoathebRotate:printSinglelineRotation(LoathebRotate.rotationTable);
 		end
 
 		if (#LoathebRotate.backupTable > 0) then
-			LoathebRotate:sendRotationMessage(LoathebRotate:buildGroupMessage(L['BROADCAST_BACKUP_PREFIX'] .. ' : ', LoathebRotate.backupTable));
+			LoathebRotate:sendRotationMessage(LoathebRotate:buildGroupMessage(L['BROADCAST_BACKUP_PREFIX'] .. ': ', LoathebRotate.backupTable));
 		end
 	end
 end
@@ -270,11 +270,33 @@ end
 function LoathebRotate:printMultilineRotation(rotationTable, channel)
 	local position = 1;
 	for _, healer in pairs(rotationTable) do
-		LoathebRotate:sendRotationMessage(tostring(position) .. ' - ' .. healer.name)
+		LoathebRotate:sendRotationMessage(tostring(position) .. ') ' .. healer.name)
 		position = position + 1;
 	end
 end
 
+-- Print the main rotation on one (or as few as possible) lines
+function LoathebRotate:printSinglelineRotation(rotationTable, channel)
+	local position = 1;
+	local maxLineLen = 200;
+	local line = '';
+	for _, healer in pairs(rotationTable) do
+		if line ~= '' then
+			line = line ..', ';
+		end;
+
+		line = line .. tostring(position) .. ') ' .. healer.name;
+		if strlen(line) >= maxLineLen then
+			LoathebRotate:sendRotationMessage(L['BROADCAST_ROTATION_PREFIX'] .. ': '..line);
+			line = '';
+		end;
+		position = position + 1;
+	end
+
+	if line ~= '' then
+		LoathebRotate:sendRotationMessage(L['BROADCAST_ROTATION_PREFIX'] .. ': '..line);
+	end;	
+end
 
 function LoathebRotate:syncRotation()
 	LoathebRotate.readyToReceiveSyncResponse = true;
