@@ -3,7 +3,7 @@ LoathebRotate = select(2, ...)
 local L = LibStub("AceLocale-3.0"):GetLocale("LoathebRotate")
 
 local parent = ...
-LoathebRotate.version = GetAddOnMetadata(parent, "Version")
+LoathebRotate.version = C_AddOns.GetAddOnMetadata(parent, "Version")
 
 -- Initialize addon - Shouldn't be call more than once
 function LoathebRotate:init()
